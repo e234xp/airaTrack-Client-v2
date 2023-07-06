@@ -31,6 +31,7 @@ import HelloWorld from './components/HelloWorld.vue';
   <h1 className="text-3xl font-bold underline">
     Hello world!
   </h1>
+  <p>{{ $t("Reports") }}</p>
 </template>
 
 <style scoped>
