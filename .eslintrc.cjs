@@ -12,6 +12,14 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   settings: {
+    'import/resolver': {
+      alias: {
+        map: [
+          ['@', './src'],
+        ],
+        extensions: ['.js', '.vue'],
+      },
+    },
     'import/core-modules': [
       'vite',
       '@vitejs/plugin-vue',
