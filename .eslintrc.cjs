@@ -1,6 +1,3 @@
-/* eslint-env node */
-require('@rushstack/eslint-patch/modern-module-resolution')
-
 module.exports = {
   root: true,
   env: {
@@ -8,17 +5,29 @@ module.exports = {
   },
   extends: [
     'plugin:vue/vue3-strongly-recommended',
-    '@vue/airbnb',
+    'eslint:recommended',
+    'airbnb-base',
   ],
   parserOptions: {
-    parser: 'babel-eslint',
+    ecmaVersion: 'latest',
+  },
+  settings: {
+    'import/core-modules': [
+      'vite',
+      '@vitejs/plugin-vue',
+      'vitest/config',
+    ],
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-use-before-define': ['error', { functions: false }],
     'no-underscore-dangle': ['error', { allow: ['_id'] }],
-    'max-len': ["error", { "ignoreStrings": true,"ignoreTemplateLiterals": true }]    
+    'max-len': ['error', {
+      code: 100,
+      ignoreStrings: true,
+      ignoreTemplateLiterals: true,
+      ignorePattern: 'd="([\\s\\S]*?)"',
+    }],
   },
 };
-
