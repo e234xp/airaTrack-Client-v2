@@ -106,26 +106,21 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref } from 'vue';
 
 import airaTrackLogo from '@/assets/base64-images/airaTrackLogo';
 import useSubmit from '@/composable/useSubmit';
+import useI18n from '@/composable/useI18n';
 import useSystemStore from '@/stores/system';
 
-const airaTrack = `data:image/png;base64, ${airaTrackLogo}`;
-
+const { language } = useI18n();
 const { version } = useSystemStore();
+
+const airaTrack = `data:image/png;base64, ${airaTrackLogo}`;
 
 const form = ref({
   username: '',
   password: '',
-});
-const language = ref('en');
-
-const i18n = useI18n();
-watch(language, async (lang) => {
-  i18n.locale.value = lang;
 });
 
 const { hasSubmitted, generateSubmit } = useSubmit();

@@ -2,6 +2,8 @@ import './assets/scss/main.scss';
 
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+
+import spiderman from '@/spiderman';
 import * as globalComponents from './components/global/index';
 
 import i18n from './plugins/i18n';
@@ -16,6 +18,8 @@ const app = createApp(App);
 Object.entries(globalComponents).forEach(([key, value]) => {
   app.component(key, value);
 });
+
+app.provide('$spiderman', spiderman);
 
 app
   .use(createPinia())
