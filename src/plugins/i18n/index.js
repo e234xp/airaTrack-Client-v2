@@ -4,8 +4,7 @@ import en from './en.json';
 import zh from './zh.json';
 import ja from './jp.json';
 
-// const locale = navigator.language;
-const locale = 'zh';
+const locale = 'en';
 
 const messages = {
   zh,
@@ -15,6 +14,8 @@ const messages = {
 
 const i18n = createI18n({
   locale,
+  legacy: false,
+  fallbackLocale: 'en',
   messages,
   formatter: {
     format: (message) => i18n.messages[i18n.locale][message],

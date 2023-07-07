@@ -9,7 +9,7 @@
         >
       </div>
       <div class="grid content-end text-white text-xl">
-        Version:
+        {{ $t('Version') }}: {{ version }}
       </div>
     </div>
     <form class="w-112 bg-secondary border-2 border-gray-500 shadow-md rounded mb-4 py-8 px-6">
@@ -53,9 +53,9 @@
           svg-icon="icon-language"
           :options="{
             English: 'en',
-            繁體中文: 'zn',
+            繁體中文: 'zh',
           }"
-          v-model:modelInput="form.language"
+          v-model:modelInput="language"
           :validator="{
             rule: 'required',
             field: 'language',
@@ -106,21 +106,29 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import airaTrackLogo from '@/assets/base64-images/airaTrackLogo';
 import useSubmit from '@/composable/useSubmit';
+import useSystemStore from '@/stores/system';
 
 const airaTrack = `data:image/png;base64, ${airaTrackLogo}`;
+
+const { version } = useSystemStore();
 
 const form = ref({
   username: '',
   password: '',
-  language: 'en',
+});
+const language = ref('en');
+
+const i18n = useI18n();
+watch(language, async (lang) => {
+  i18n.locale.value = lang;
 });
 
 const { hasSubmitted, generateSubmit } = useSubmit();
-
 const handleLogin = generateSubmit(login);
 
 function login() {

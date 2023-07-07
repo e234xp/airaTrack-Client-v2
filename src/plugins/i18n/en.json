@@ -354,6 +354,7 @@
   "LoginUsername": "Username",
   "LoginPassword": "Password",
   "Login": "Login",
+  "ForgotPassword": "Forgot Password",
   "Setup_Mode": "Setup Mode",
   "Welcome_Mode": "Welcome Board",
   "Occupancy_Mode": "Occupancy Status",
