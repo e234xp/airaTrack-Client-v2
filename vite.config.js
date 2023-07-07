@@ -16,7 +16,6 @@ export default defineConfig({
       // 执行icon name的格式
       symbolId: 'icon-[dir]-[name]',
     }),
-
   ],
   resolve: {
     alias: {

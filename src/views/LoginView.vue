@@ -21,74 +21,47 @@
       </div>
 
       <div class="mb-4">
-        <div class="flex justify-between mb-1">
-          <div class="border border-gray-500 bg-gray-700 rounded grid content-center">
-            <SvgIcon
-              name="icon-person"
-              class="text-gray-500 w-12 h-8"
-            />
-          </div>
-          <input
-            class="shadow appearance-none border border-gray-500 rounded w-full py-3 px-3
-          bg-secondary text-white"
-            type="text"
-            :placeholder="$t('LoginUsername')"
-          >
-        </div>
+        <AppInput
+          svg-icon="icon-person"
+          :placeholder="$t('LoginUsername')"
+          v-model:modelInput="form.username"
+          :validator="{
+            rule: 'required',
+            field: 'username',
+          }"
+          :has-submitted="hasSubmitted"
+        />
       </div>
 
       <div class="mb-4">
-        <div class="flex justify-between mb-1">
-          <div class="border border-gray-500 bg-gray-700 rounded grid content-center">
-            <SvgIcon
-              name="icon-lock"
-              class="text-gray-500 w-12 h-8"
-            />
-          </div>
-          <input
-            class="shadow appearance-none border border-gray-500 rounded w-full py-3 px-3
-          bg-secondary text-white
-          border-note-500"
-            type="text"
-            :placeholder="$t('LoginPassword')"
-          >
-        </div>
-
-        <div class="text-note-500 text-s">
-          The Username field is required
-        </div>
+        <AppInput
+          type="password"
+          svg-icon="icon-lock"
+          :placeholder="$t('LoginPassword')"
+          v-model:modelInput="form.password"
+          :validator="{
+            rule: 'required',
+            field: 'password',
+          }"
+          :has-submitted="hasSubmitted"
+        />
       </div>
 
       <div class="mb-4">
-        <div class="flex justify-between mb-1">
-          <div class="border border-gray-500 bg-gray-700 rounded grid content-center">
-            <SvgIcon
-              name="icon-language"
-              class="text-gray-500 w-12 h-8"
-            />
-          </div>
-
-          <div class="relative w-full">
-            <select
-              class="shadow appearance-none border border-gray-500 rounded w-full py-3 px-3 pr-8
-          bg-secondary text-white
-          "
-            >
-              <option>New Mexico</option>
-              <option>Missouri</option>
-              <option>Texas</option>
-            </select>
-            <div
-              class="pointer-events-none absolute inset-y-0 right-0
-            flex items-center px-2 text-gray-700"
-            >
-              <SvgIcon
-                name="icon-chevron-botton"
-                class="text-white w-4 h-4"
-              />
-            </div>
-          </div>
-        </div>
+        <AppInput
+          type="select"
+          svg-icon="icon-language"
+          :options="{
+            English: 'en',
+            繁體中文: 'zn',
+          }"
+          v-model:modelInput="form.language"
+          :validator="{
+            rule: 'required',
+            field: 'language',
+          }"
+          :has-submitted="hasSubmitted"
+        />
       </div>
 
       <div class="mb-4 flex justify-center">
@@ -96,6 +69,7 @@
           class="bg-primary hover:bg-primary-hover transition text-white font-bold py-2 px-20
            rounded"
           type="button"
+          @click="handleLogin"
         >
           {{ $t("Login") }}
         </button>
@@ -132,7 +106,24 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
 import airaTrackLogo from '@/assets/base64-images/airaTrackLogo';
+import useSubmit from '@/composable/useSubmit';
 
 const airaTrack = `data:image/png;base64, ${airaTrackLogo}`;
+
+const form = ref({
+  username: '',
+  password: '',
+  language: 'en',
+});
+
+const { hasSubmitted, generateSubmit } = useSubmit();
+
+const handleLogin = generateSubmit(login);
+
+function login() {
+  console.log('login');
+}
 </script>
