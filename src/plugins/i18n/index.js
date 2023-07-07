@@ -4,7 +4,8 @@ import en from './en.json';
 import zh from './zh.json';
 import ja from './jp.json';
 
-const locale = 'navigator.language';
+// const locale = navigator.language;
+const locale = 'zh';
 
 const messages = {
   zh,

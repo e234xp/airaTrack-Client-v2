@@ -24,6 +24,10 @@ module.exports = {
       'vite',
       '@vitejs/plugin-vue',
       'vitest/config',
+      'tailwindcss/colors',
+      'tailwindcss/defaultTheme',
+      'vite-plugin-svg-icons',
+      'virtual:svg-icons-register',
     ],
   },
   rules: {

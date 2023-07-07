@@ -3,7 +3,7 @@
     :style="{ backgroundImage }"
     class="h-screen bg-cover"
   >
-    123
+    <RouterView />
   </div>
 </template>
 
