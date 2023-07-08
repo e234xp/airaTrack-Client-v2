@@ -3,7 +3,7 @@
     <div class="mb-2 flex justify-between">
       <div>
         <img
-          :src="airaTrack"
+          :src="airaTrackSrc"
           alt=""
           class="w-48"
         >
@@ -109,27 +109,30 @@
 
 <script setup>
 import { ref, inject } from 'vue';
+import { useRouter } from 'vue-router';
 
-import airaTrackLogo from '@/assets/base64-images/airaTrackLogo';
+import airaTrack from '@/assets/base64-images/airaTrack';
 import useSubmit from '@/composable/useSubmit';
 import useI18n from '@/composable/useI18n';
 import useSystemStore from '@/stores/system';
 
+const spiderman = inject('$spiderman');
+const router = useRouter();
 const { language } = useI18n();
 const { version, apiBaseUrl } = useSystemStore();
+const { hasSubmitted, generateSubmit } = useSubmit();
 
-const airaTrack = `data:image/png;base64, ${airaTrackLogo}`;
+const airaTrackSrc = spiderman.base64Image.getSrc(airaTrack);
 
 const form = ref({
   username: '',
   password: '',
 });
 
-const { hasSubmitted, generateSubmit } = useSubmit();
-const handleLogin = generateSubmit(login);
+const handleLogin = generateSubmit(async () => {
+  // todo 拿掉
+  if (form.value.username === '') { router.push({ path: '/' }); }
 
-const spiderman = inject('$spiderman');
-async function login() {
   const res = await spiderman.apiService({
     method: 'post',
     url: `${apiBaseUrl}/airaTracker/login`,
@@ -137,5 +140,6 @@ async function login() {
   });
 
   console.log(res);
-}
+});
+
 </script>
