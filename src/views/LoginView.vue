@@ -12,7 +12,7 @@
         {{ $t('Version') }}: {{ version }}
       </div>
     </div>
-    <form class="w-112 bg-secondary border-2 border-gray-500 shadow-md rounded mb-4 py-8 px-6">
+    <div class="w-112 bg-secondary border-2 border-gray-500 shadow-md rounded mb-4 py-8 px-6">
       <div class="text-center mb-4 text-white font-bold text-3xl">
         {{ $t("LoginTitle") }}
       </div>
@@ -29,6 +29,7 @@
             rule: 'required',
             field: 'username',
           }"
+          @submit="handleLogin"
           :has-submitted="hasSubmitted"
         />
       </div>
@@ -43,6 +44,7 @@
             rule: 'required',
             field: 'password',
           }"
+          @submit="handleLogin"
           :has-submitted="hasSubmitted"
         />
       </div>
@@ -90,7 +92,7 @@
           {{ $t("ForgotPassword") }}
         </button>
       </div>
-    </form>
+    </div>
 
     <div class="mb-2 flex justify-center text-xl text-white">
       <div class="grid content-center mx-2">
@@ -106,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 
 import airaTrackLogo from '@/assets/base64-images/airaTrackLogo';
 import useSubmit from '@/composable/useSubmit';
@@ -114,7 +116,7 @@ import useI18n from '@/composable/useI18n';
 import useSystemStore from '@/stores/system';
 
 const { language } = useI18n();
-const { version } = useSystemStore();
+const { version, apiBaseUrl } = useSystemStore();
 
 const airaTrack = `data:image/png;base64, ${airaTrackLogo}`;
 
@@ -126,7 +128,14 @@ const form = ref({
 const { hasSubmitted, generateSubmit } = useSubmit();
 const handleLogin = generateSubmit(login);
 
-function login() {
-  console.log('login');
+const spiderman = inject('$spiderman');
+async function login() {
+  const res = await spiderman.apiService({
+    method: 'post',
+    url: `${apiBaseUrl}/airaTracker/login`,
+    data: form.value,
+  });
+
+  console.log(res);
 }
 </script>

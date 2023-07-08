@@ -54,6 +54,7 @@
       :placeholder="placeholder"
       v-model="input"
       @blur="handleBlur"
+      @keydown.enter="$emit('submit')"
     >
   </div>
 
@@ -108,7 +109,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:modelInput']);
+const emit = defineEmits(['update:modelInput', 'submit']);
 const input = computed({
   get: () => props.modelInput,
   set: (value) => emit('update:modelInput', value),
