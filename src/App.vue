@@ -1,6 +1,6 @@
 <template>
   <div
-    :style="{ backgroundImage }"
+    :style="{ backgroundImage: backgroundStyle }"
     class="h-screen bg-cover"
   >
     <RouterView />
@@ -8,9 +8,13 @@
 </template>
 
 <script setup>
+import { inject } from 'vue';
+
 import background from '@/assets/base64-images/background';
 
-const backgroundImage = `url('data:image/png;base64, ${background}')`;
+const spiderman = inject('$spiderman');
+
+const backgroundStyle = spiderman.base64Image.getStyle(background);
 </script>
 
 <style>

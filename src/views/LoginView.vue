@@ -131,7 +131,7 @@ const form = ref({
 
 const handleLogin = generateSubmit(async () => {
   // todo 拿掉
-  if (form.value.username === '') { router.push({ path: '/' }); }
+  if (form.value.username === '') { router.push({ path: '/target' }); }
 
   const res = await spiderman.apiService({
     method: 'post',
