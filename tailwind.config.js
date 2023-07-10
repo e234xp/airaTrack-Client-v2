@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     colors: {
       primary: '#3183b1',
-      'primary-hover': '#6e9eb8',
+      'primary-hover': '#2c77a0',
       secondary: '#151e1e',
       white: '#ffffff',
       note: colors.red,

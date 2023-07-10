@@ -1,7 +1,7 @@
 <template>
-  <div class="h-full grid">
+  <div class="h-full flex flex-col">
     <div
-      class="h-fit border-double border-b-4 bg-secondary/50 py-3
+      class="h-fit border-b-2 border-gray-500 bg-secondary/50 py-3
     grid grid-flow-col justify-between"
     >
       <div class="ml-2 grid content-center">
@@ -89,12 +89,11 @@ const current = ref({
 const timer = setInterval(() => {
   current.value.date = spiderman.dayjs().format('MMM. DD, YYYY');
   current.value.time = spiderman.dayjs().format('HH:mm:ss');
-  console.log('refresh timer');
+  // console.log('refresh timer');
 }, 1000);
 
 onUnmounted(() => {
   console.log('clearInterval');
   clearInterval(timer);
 });
-
 </script>
