@@ -133,9 +133,10 @@ const { hasSubmitted, generateSubmit } = useSubmit();
 
 const airaTrackSrc = spiderman.base64Image.getSrc(airaTrack);
 
+// todo
 const form = ref({
-  username: '',
-  password: '',
+  username: 'Admin',
+  password: '123456',
 });
 
 const handleLogin = generateSubmit(async () => {

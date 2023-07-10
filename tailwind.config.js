@@ -5,9 +5,9 @@ module.exports = {
   darkMode: 'media',
   theme: {
     colors: {
-      primary: '#2a7398',
+      primary: '#3183b1',
       'primary-hover': '#6e9eb8',
-      secondary: '#2b3b3d',
+      secondary: '#151e1e',
       white: '#ffffff',
       note: colors.red,
       gray: colors.gray,
@@ -16,6 +16,9 @@ module.exports = {
       spacing: {
         112: '28rem',
       },
+    },
+    opacity: {
+      50: '.50',
     },
   },
   variants: {

@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import checkAuth from './middlewares/check-auth.js';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,6 +14,10 @@ const router = createRouter({
       component: () => import('../views/LoginView.vue'),
     },
   ],
+});
+
+router.beforeEach((to, from, next) => {
+  checkAuth(to, from, next);
 });
 
 export default router;
