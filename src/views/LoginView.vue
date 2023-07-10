@@ -114,12 +114,21 @@ import { useRouter } from 'vue-router';
 import airaTrack from '@/assets/base64-images/airaTrack';
 import useSubmit from '@/composable/useSubmit';
 import useI18n from '@/composable/useI18n';
+
 import useSystemStore from '@/stores/system';
+import useUserStore from '@/stores/user';
 
 const spiderman = inject('$spiderman');
+
 const router = useRouter();
+
+const systemStore = useSystemStore();
+const { version, apiBaseUrl } = systemStore;
+
+const userStore = useUserStore();
+const { saveLoginData } = userStore;
+
 const { language } = useI18n();
-const { version, apiBaseUrl } = useSystemStore();
 const { hasSubmitted, generateSubmit } = useSubmit();
 
 const airaTrackSrc = spiderman.base64Image.getSrc(airaTrack);
@@ -130,19 +139,18 @@ const form = ref({
 });
 
 const handleLogin = generateSubmit(async () => {
-  // todo 拿掉
-  if (form.value.username === '') {
+  try {
+    const { data } = await spiderman.apiService({
+      method: 'post',
+      url: `${apiBaseUrl}/airaTracker/login`,
+      data: form.value,
+    });
+
+    saveLoginData(data);
     router.push({ path: '/target' });
-    return;
+  } catch (error) {
+    console.log(error);
   }
-
-  const res = await spiderman.apiService({
-    method: 'post',
-    url: `${apiBaseUrl}/airaTracker/login`,
-    data: form.value,
-  });
-
-  console.log(res);
 });
 
 </script>

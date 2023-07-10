@@ -18,7 +18,7 @@ const axiosInstance = (() => {
   });
 
   tmp.interceptors.response.use((response) => {
-    console.log(`rend response to ${response.config.url}`);
+    console.log(`get response to ${response.config.url}`);
 
     return response;
   }, (error) => {
