@@ -21,9 +21,7 @@
       </div>
     </div>
 
-    <div>
-      sadsd
-    </div>
+    <DayChart />
 
     <div class="flex-grow overflow-y-auto">
       <div
@@ -37,5 +35,5 @@
 </template>
 
 <script setup>
-console.log(123);
+import DayChart from '@/components/DayChart.vue';
 </script>
