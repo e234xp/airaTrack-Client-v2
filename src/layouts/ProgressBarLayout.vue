@@ -62,7 +62,9 @@
         </div>
       </div>
     </div>
-    <slot />
+    <div class="flex-grow overflow-hidden w-full flex">
+      <slot />
+    </div>
   </div>
 </template>
 

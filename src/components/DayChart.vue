@@ -23,7 +23,7 @@
     <div class="flex-grow">
       <canvas
         id="chart"
-        height="40"
+        height="38"
       />
     </div>
     <div
