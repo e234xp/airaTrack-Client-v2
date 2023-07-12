@@ -40,31 +40,35 @@
           <div class="font-bold text-white text-2xl mr-5">
             10:00
           </div>
-          <div class="w-full 2xl:w-9/12 aira-row-auto-2 gap-8">
-            <div
-              v-for="i in 24"
-              :key="i"
-              class="relative cursor-pointer"
-            >
-              <img
-                class="border-4"
-                :class="{
-                  'border-primary': i === 1,
-                  'border-white': i !== 1,
-                }"
-                :src="spiderman.base64Image.getSrc(base64)"
-                alt=""
+          <div class="w-full 2xl:w-9/12">
+            <AppPagination class="mb-6" />
+
+            <div class="aira-row-auto-2 gap-8">
+              <div
+                v-for="i in 24"
+                :key="i"
+                class="relative cursor-pointer"
               >
-              <div class="absolute top-0 left-0 w-full h-full flex justify-end items-end">
-                <div
-                  class="w-8 h-8 rounded flex justify-center items-center
-                        text-lg font-bold"
+                <img
+                  class="border-4"
                   :class="{
-                    'bg-primary text-white': i === 1,
-                    'bg-white text-gray-800': i !== 1,
+                    'border-primary': i === 1,
+                    'border-white': i !== 1,
                   }"
+                  :src="spiderman.base64Image.getSrc(base64)"
+                  alt=""
                 >
-                  4
+                <div class="absolute top-0 left-0 w-full h-full flex justify-end items-end">
+                  <div
+                    class="w-8 h-8 rounded flex justify-center items-center
+                        text-lg font-bold"
+                    :class="{
+                      'bg-primary text-white': i === 1,
+                      'bg-white text-gray-800': i !== 1,
+                    }"
+                  >
+                    4
+                  </div>
                 </div>
               </div>
             </div>
