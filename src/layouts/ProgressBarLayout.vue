@@ -13,7 +13,7 @@
       </div>
       <div class="grid grid-flow-col content-center text-gray-300 text-3xl font-bold">
         <div
-          class="mx-10 cursor-pointer hover:text-primary-hover transition"
+          class="aira-button hover:text-primary-hover mx-10"
           :class="{
             'text-primary': $route.path === '/target'
           }"
@@ -21,7 +21,7 @@
           {{ $t('Target') }}
         </div>
         <div
-          class="mx-10 cursor-pointer hover:text-primary-hover transition"
+          class="aira-button hover:text-primary-hover mx-10"
           :class="{
             'text-primary': $route.path === '/investigation'
           }"
@@ -29,7 +29,7 @@
           {{ $t('Investigation') }}
         </div>
         <div
-          class="mx-10 cursor-pointer hover:text-primary-hover transition"
+          class="aira-button hover:text-primary-hover mx-10"
           :class="{
             'text-primary': $route.path === '/case'
           }"
@@ -53,8 +53,8 @@
           </div>
         </div>
         <div class="px-3 grid content-center cursor-pointer">
-          <div class="rounded bg-gray-700 hover:bg-primary-hover transition">
-            <SvgIcon
+          <div class="aira-button aira-button--secondary">
+            <AppSvgIcon
               name="icon-gear"
               class="text-white w-8 h-8"
             />

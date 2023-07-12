@@ -14,13 +14,13 @@
         {{ spiderman.dayjs(selectedDate).subtract(1,'day').format('MM/DD') }}
       </div>
       <div class="my-2 flex justify-center">
-        <SvgIcon
+        <AppSvgIcon
           name="icon-chevron-left"
           class="w-5 h-5"
         />
       </div>
     </div>
-    <div class="flex-grow">
+    <div class="flex-grow cursor-pointer">
       <canvas
         id="chart"
         height="38"
@@ -40,7 +40,7 @@
         {{ spiderman.dayjs(selectedDate).add(1,'day').format('MM/DD') }}
       </div>
       <div class="my-2 flex justify-center">
-        <SvgIcon
+        <AppSvgIcon
           name="icon-chevron-right"
           class="w-5 h-5"
         />

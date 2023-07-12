@@ -19,6 +19,7 @@ module.exports = {
     },
     opacity: {
       50: '.50',
+      40: '.40',
     },
   },
   variants: {

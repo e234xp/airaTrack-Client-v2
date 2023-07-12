@@ -1,7 +1,7 @@
 import AppInput from './AppInput.vue';
-import SvgIcon from './SvgIcon.vue';
+import AppSvgIcon from './AppSvgIcon.vue';
 
 export {
   AppInput,
-  SvgIcon,
+  AppSvgIcon,
 };

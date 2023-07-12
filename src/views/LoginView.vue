@@ -68,8 +68,7 @@
 
       <div class="mb-4 flex justify-center">
         <button
-          class="bg-primary hover:bg-primary-hover transition text-white font-bold py-2 px-20
-           rounded"
+          class="aira-button aira-button--primary font-bold py-2 px-20"
           type="button"
           @click="handleLogin"
         >
@@ -77,11 +76,11 @@
         </button>
       </div>
       <div
-        class="flex justify-center align-baseline font-bold text-sm hover:text-blue-800"
+        class="aira-button align-baseline font-bold text-sm hover:text-blue-800"
         href="#"
       >
         <div class="grid content-center mr-1">
-          <SvgIcon
+          <AppSvgIcon
             name="icon-question"
             class="text-white w-4 h-4"
           />

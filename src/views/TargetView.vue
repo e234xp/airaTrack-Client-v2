@@ -3,23 +3,26 @@
     <div class="w-full flex flex-col">
       <div
         class="border-b-2 border-gray-500
-          grid grid-flow-col justify-center
-          text-2xl text-gray-300 font-bold"
+          grid grid-flow-col justify-center"
       >
         <div
-          class="px-8 py-4
-        cursor-pointer hover:text-primary-hover transition
-        border-b-4 border-primary text-white"
+          class="aira-button px-8 py-4 text-white font-bold text-2xl
+          border-b-4 border-primary"
         >
           !{{ $t('Faces') }}
         </div>
         <div
-          class="px-8 py-4
-        cursor-pointer hover:text-primary-hover transition
-        "
+          class="aira-button px-8 py-4 text-white font-bold text-2xl"
         >
           !{{ $t('Album') }}
         </div>
+      </div>
+
+      <div
+        class="border-b-2 border-gray-500
+          grid grid-flow-col justify-between"
+      >
+        sss
       </div>
 
       <DayChart />

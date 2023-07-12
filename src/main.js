@@ -5,7 +5,7 @@ import 'virtual:svg-icons-register';
 import spiderman from '@/spiderman';
 import './assets/scss/main.scss';
 
-import * as globalComponents from './components/global/index';
+import * as globalComponents from './components/app';
 import * as Layouts from './layouts/index';
 
 import App from './App.vue';

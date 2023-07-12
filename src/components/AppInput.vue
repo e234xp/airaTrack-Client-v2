@@ -4,7 +4,7 @@
       v-if="svgIcon"
       class="border border-gray-500 bg-gray-700 rounded grid content-center"
     >
-      <SvgIcon
+      <AppSvgIcon
         :name="svgIcon"
         class="text-gray-500 w-12 h-8"
       />
@@ -38,7 +38,7 @@
         class="pointer-events-none absolute inset-y-0 right-0
             flex items-center px-2 text-gray-700"
       >
-        <SvgIcon
+        <AppSvgIcon
           name="icon-chevron-botton"
           class="text-white w-4 h-4"
         />
