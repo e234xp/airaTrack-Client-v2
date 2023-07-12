@@ -19,10 +19,12 @@
       </div>
 
       <div
-        class="border-b-2 border-gray-500
+        class="border-b-2 border-gray-500 py-3 px-6
           grid grid-flow-col justify-between"
       >
-        sss
+        <AppDatePicker
+          v-model:modelSelectedDate="selectedDate"
+        />
       </div>
 
       <DayChart />
@@ -44,4 +46,10 @@
 <script setup>
 import DayChart from '@/components/DayChart.vue';
 import TargetSideBar from '@/components/TargetSideBar.vue';
+import AppDatePicker from '@/components/AppDatePicker.vue';
+import { inject, ref } from 'vue';
+
+const spiderman = inject('$spiderman');
+
+const selectedDate = ref(spiderman.dayjs().format('YYYY-MM-DD'));
 </script>

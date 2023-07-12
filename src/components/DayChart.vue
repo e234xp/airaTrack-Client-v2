@@ -4,7 +4,7 @@
       @click="
         selectDate(spiderman.dayjs(selectedDate).subtract(1,'day'))
       "
-      class="w-16 rounded bg-primary
+      class="w-16 rounded border-2 bg-gray-800
         mx-3 grid justify-center content-center text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
@@ -30,7 +30,7 @@
       @click="
         selectDate(spiderman.dayjs(selectedDate).add(1,'day'))
       "
-      class="w-16 rounded bg-primary
+      class="w-16 rounded border-2 bg-gray-800
         mx-3 grid justify-center content-center text-white
               cursor-pointer hover:bg-primary-hover transition"
     >

@@ -7,9 +7,9 @@
 }
 
 .aira-button--secondary {
-    @apply bg-gray-800 text-white hover:bg-primary-hover;
+    @apply border-2 bg-gray-800 text-white hover:bg-primary-hover;
 }
 
 .aira-button--disable {
-    @apply pointer-events-none bg-opacity-40;
+    @apply pointer-events-none border-0 bg-opacity-40;
 }
