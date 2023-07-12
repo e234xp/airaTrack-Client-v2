@@ -3,7 +3,7 @@
     <div class="mb-2 flex justify-between">
       <div>
         <img
-          :src="airaTrackSrc"
+          :src="spiderman.base64Image.getSrc(airaTrack)"
           alt=""
           class="w-48"
         >
@@ -129,8 +129,6 @@ const { saveLoginData } = userStore;
 
 const { language } = useI18n();
 const { hasSubmitted, generateSubmit } = useSubmit();
-
-const airaTrackSrc = spiderman.base64Image.getSrc(airaTrack);
 
 // todo
 const form = ref({

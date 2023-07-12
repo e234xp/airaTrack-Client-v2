@@ -6,7 +6,7 @@
     >
       <div class="ml-2 grid content-center">
         <img
-          :src="airaTrackSrc"
+          :src="spiderman.base64Image.getSrc(airaTrack)"
           alt=""
           class="w-48"
         >
@@ -79,8 +79,6 @@ const userStore = useUserStore();
 const { user } = userStore;
 
 const spiderman = inject('$spiderman');
-
-const airaTrackSrc = spiderman.base64Image.getSrc(airaTrack);
 
 // 定義目前時間
 const current = ref({

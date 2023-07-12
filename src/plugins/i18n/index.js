@@ -20,7 +20,6 @@ const messages = {
 const i18n = createI18n({
   locale,
   legacy: false,
-  // fallbackLocale: 'en',
   messages,
   formatter: {
     format: (message) => i18n.messages[i18n.locale][message],
