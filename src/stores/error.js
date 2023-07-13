@@ -10,7 +10,9 @@ export default defineStore('error', () => {
   function show({ title: theTitle = '', error }) {
     isShow.value = true;
     title.value = theTitle;
-    body.value = error.response.data.message;
+    body.value = error?.response?.data.message
+    ?? error.message
+    ?? 'Something went wrong';
 
     clearTimeout(timeoutID);
     timeoutID = setTimeout(() => {
