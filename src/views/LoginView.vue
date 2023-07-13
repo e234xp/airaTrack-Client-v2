@@ -109,14 +109,14 @@
 <script setup>
 import { ref, inject } from 'vue';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 
 import airaTrack from '@/assets/base64-images/airaTrack';
 import useSubmit from '@/composable/useSubmit';
-import useI18n from '@/composable/useI18n';
 
 import useSystemStore from '@/stores/system';
 import useUserStore from '@/stores/user';
-import { storeToRefs } from 'pinia';
+import useLanguageStore from '@/stores/language';
 
 const spiderman = inject('$spiderman');
 
@@ -126,10 +126,12 @@ const systemStore = useSystemStore();
 const { version, apiBaseUrl } = systemStore;
 
 const userStore = useUserStore();
-const { saveLoginData } = userStore;
 const { sessionId } = storeToRefs(userStore);
+const { saveLoginData } = userStore;
 
-const { language } = useI18n();
+const languageStore = useLanguageStore();
+const { language } = storeToRefs(languageStore);
+
 const { hasSubmitted, generateSubmit } = useSubmit();
 
 // todo
