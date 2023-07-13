@@ -84,7 +84,6 @@
 <script setup>
 import DayChart from '@/components/DayChart.vue';
 import TargetSideBar from '@/components/TargetSideBar.vue';
-import AppDatePicker from '@/components/AppDatePicker.vue';
 import { inject, ref } from 'vue';
 
 const spiderman = inject('$spiderman');

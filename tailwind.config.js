@@ -9,12 +9,13 @@ module.exports = {
       'primary-hover': '#2c77a0',
       secondary: '#151e1e',
       white: '#ffffff',
-      note: colors.red,
+      red: colors.red,
       gray: colors.gray,
     },
     extend: {
       spacing: {
         112: '28rem',
+        128: '32rem',
       },
     },
     opacity: {

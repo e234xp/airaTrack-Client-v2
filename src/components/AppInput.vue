@@ -18,7 +18,7 @@
         v-model="input"
         class="shadow appearance-none border border-gray-500 rounded w-full py-3 px-3 pr-8
           bg-secondary text-white"
-        :class="{ 'border-note-500': isShowError }"
+        :class="{ 'border-red-500': isShowError }"
       >
         <option
           v-if="placeholder"
@@ -49,7 +49,7 @@
       v-else
       class="shadow appearance-none border border-gray-500 rounded w-full py-3 px-3
           bg-secondary text-white"
-      :class="{ 'border-note-500': isShowError }"
+      :class="{ 'border-red-500': isShowError }"
       :type="type"
       :placeholder="placeholder"
       v-model="input"
@@ -60,7 +60,7 @@
 
   <div
     v-if="isShowError"
-    class="text-note-500 text-s"
+    class="text-red-500 text-s"
   >
     {{ errorMessage }}
   </div>
