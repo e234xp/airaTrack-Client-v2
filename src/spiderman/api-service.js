@@ -1,4 +1,5 @@
 import axios from 'axios';
+import errorStore from '@/stores/error';
 
 const axiosInstance = (() => {
   const tmp = axios.create({
@@ -9,10 +10,11 @@ const axiosInstance = (() => {
 
   tmp.interceptors.request.use((config) => {
     console.log(`send request to ${config.url}`);
+    errorStore.close();
 
     return config;
   }, (error) => {
-    console.log();
+    errorStore.show({ error });
 
     return Promise.reject(error);
   });
@@ -22,7 +24,7 @@ const axiosInstance = (() => {
 
     return response;
   }, (error) => {
-    console.log();
+    errorStore.show({ error });
 
     return Promise.reject(error);
   });

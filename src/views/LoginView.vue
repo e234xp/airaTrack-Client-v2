@@ -117,7 +117,6 @@ import useSubmit from '@/composable/useSubmit';
 import useSystemStore from '@/stores/system';
 import useUserStore from '@/stores/user';
 import useLanguageStore from '@/stores/language';
-import useErrorStore from '@/stores/error';
 
 const spiderman = inject('$spiderman');
 
@@ -133,9 +132,6 @@ const { saveLoginData } = userStore;
 const languageStore = useLanguageStore();
 const { language } = storeToRefs(languageStore);
 
-const errorStore = useErrorStore();
-const { show: showError } = errorStore;
-
 const { hasSubmitted, generateSubmit } = useSubmit();
 
 // todo
@@ -145,19 +141,15 @@ const form = ref({
 });
 
 const handleLogin = generateSubmit(async () => {
-  try {
-    const { data } = await spiderman.apiService({
-      url: `${apiBaseUrl}/airaTracker/login`,
-      method: 'post',
-      data: form.value,
-    });
+  const { data } = await spiderman.apiService({
+    url: `${apiBaseUrl}/airaTracker/login`,
+    method: 'post',
+    data: form.value,
+  });
 
-    saveLoginData(data);
-    maintainSessionId();
-    router.push({ path: '/target' });
-  } catch (error) {
-    showError({ error });
-  }
+  saveLoginData(data);
+  maintainSessionId();
+  router.push({ path: '/target' });
 });
 
 function maintainSessionId() {

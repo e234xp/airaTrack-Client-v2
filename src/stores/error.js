@@ -1,35 +1,31 @@
-import { ref } from 'vue';
-import { defineStore } from 'pinia';
+import { reactive } from 'vue';
 
-export default defineStore('error', () => {
-  const isShow = ref(false);
-  const title = ref('');
-  const body = ref('');
+const errorObject = reactive({
+  isShow: false,
+  header: '',
+  body: '',
 
-  let timeoutID;
-  function show({ title: theTitle = '', error }) {
-    isShow.value = true;
-    title.value = theTitle;
-    body.value = error?.response?.data.message
-    ?? error.message
-    ?? 'Something went wrong';
-
-    clearTimeout(timeoutID);
-    timeoutID = setTimeout(() => {
-      close();
-    }, 3 * 1000);
-  }
-
-  function close() {
-    clearTimeout(timeoutID);
-    isShow.value = false;
-  }
-
-  return {
-    isShow,
-    title,
-    body,
-    show,
-    close,
-  };
+  show,
+  close,
 });
+
+let timeoutID;
+function show({ title: theTitle = '', error }) {
+  errorObject.isShow = true;
+  errorObject.title = theTitle;
+  errorObject.body = error?.response?.data.message
+  ?? error?.message
+  ?? 'Something went wrong';
+
+  clearTimeout(timeoutID);
+  timeoutID = setTimeout(() => {
+    close();
+  }, 3 * 1000);
+}
+
+function close() {
+  clearTimeout(timeoutID);
+  errorObject.isShow = false;
+}
+
+export default errorObject;
