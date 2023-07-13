@@ -9,7 +9,7 @@
         >
       </div>
       <div class="grid content-end text-white text-xl">
-        {{ $t('Version') }}: {{ version }}
+        {{ $t('Version') }}: {{ spiderman.system.version }}
       </div>
     </div>
     <div class="w-112 bg-secondary border-2 border-gray-500 shadow-md rounded mb-4 py-8 px-6">
@@ -114,16 +114,12 @@ import { storeToRefs } from 'pinia';
 import airaTrack from '@/assets/base64-images/airaTrack';
 import useSubmit from '@/composable/useSubmit';
 
-import useSystemStore from '@/stores/system';
 import useUserStore from '@/stores/user';
 import useLanguageStore from '@/stores/language';
 
 const spiderman = inject('$spiderman');
 
 const router = useRouter();
-
-const systemStore = useSystemStore();
-const { version, apiBaseUrl } = systemStore;
 
 const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
@@ -142,7 +138,7 @@ const form = ref({
 
 const handleLogin = generateSubmit(async () => {
   const { data } = await spiderman.apiService({
-    url: `${apiBaseUrl}/airaTracker/login`,
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/login`,
     method: 'post',
     data: form.value,
   });
@@ -155,7 +151,7 @@ const handleLogin = generateSubmit(async () => {
 function maintainSessionId() {
   setInterval(async () => {
     await spiderman.apiService({
-      url: `${apiBaseUrl}/airaTracker/expiretime/extend`,
+      url: `${spiderman.system.apiBaseUrl}/airaTracker/expiretime/extend`,
       method: 'get',
       headers: {
         sessionId: sessionId.value,
