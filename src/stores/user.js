@@ -11,6 +11,7 @@ export default defineStore('user', () => {
   }
 
   return {
+    sessionId,
     user,
     saveLoginData,
   };

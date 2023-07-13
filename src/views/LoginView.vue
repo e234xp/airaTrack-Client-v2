@@ -116,6 +116,7 @@ import useI18n from '@/composable/useI18n';
 
 import useSystemStore from '@/stores/system';
 import useUserStore from '@/stores/user';
+import { storeToRefs } from 'pinia';
 
 const spiderman = inject('$spiderman');
 
@@ -126,6 +127,7 @@ const { version, apiBaseUrl } = systemStore;
 
 const userStore = useUserStore();
 const { saveLoginData } = userStore;
+const { sessionId } = storeToRefs(userStore);
 
 const { language } = useI18n();
 const { hasSubmitted, generateSubmit } = useSubmit();
@@ -139,16 +141,33 @@ const form = ref({
 const handleLogin = generateSubmit(async () => {
   try {
     const { data } = await spiderman.apiService({
-      method: 'post',
       url: `${apiBaseUrl}/airaTracker/login`,
+      method: 'post',
       data: form.value,
     });
 
     saveLoginData(data);
+    maintainSessionId();
     router.push({ path: '/target' });
   } catch (error) {
     console.log(error);
   }
 });
+
+function maintainSessionId() {
+  setInterval(async () => {
+    await spiderman.apiService({
+      url: `${apiBaseUrl}/airaTracker/expiretime/extend`,
+      method: 'get',
+      headers: {
+        sessionId: sessionId.value,
+      },
+    });
+
+    console.log('Maintain SessionId');
+
+    // todo 確定時間
+  }, 60 * 1000);
+}
 
 </script>
