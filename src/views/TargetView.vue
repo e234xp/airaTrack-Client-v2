@@ -31,8 +31,6 @@
         v-model:modelSelectedDate="selectedDate"
         v-model:modelSelectedHour="selectedHour"
       />
-      {{ selectedDate }}
-      {{ selectedHour }}
 
       <div
         class="flex-grow overflow-y-auto flex flex-col"
@@ -49,7 +47,12 @@
               {{ spiderman.dayjs(Number(hourFaceKey)).format('HH:mm') }}
             </div>
             <div class="w-full 2xl:w-9/12">
-              <AppPagination class="mb-6" />
+              <AppPagination
+                :current-page="hourFacePaginations[hourFaceKey].currentPage"
+                :total-items="hourFacePaginations[hourFaceKey].totalItems"
+                @on-turn-page="hourFacePaginations[hourFaceKey].onTurnPage"
+                class="mb-6"
+              />
 
               <div class="aira-row-auto-2 gap-8">
                 <div
@@ -109,6 +112,7 @@ const selectedHour = ref(parseInt(spiderman.dayjs().format('HH'), 10));
 
 const hourFaceKeys = ref([]);
 const hourFaces = ref({});
+const hourFacePaginations = ref({});
 
 watch([selectedDate, selectedHour], ([date, hour]) => {
   getLiveFaceHourly({ date, hour });
@@ -117,7 +121,7 @@ watch([selectedDate, selectedHour], ([date, hour]) => {
 async function getLiveFaceHourly({ date, hour }) {
   const TEN_MINUTES_MS = 600000;
 
-  // 先設定好 keys
+  // 設定 keys
   hourFaces.value = (() => {
     const firstKey = spiderman.dayjs(`${date} ${hour}:00:00`).valueOf();
 
@@ -132,18 +136,40 @@ async function getLiveFaceHourly({ date, hour }) {
 
   hourFaceKeys.value = Object.keys(hourFaces.value).reverse();
 
+  // 設定 pagination
+  hourFacePaginations.value = hourFaceKeys.value.reduce((acc, key) => {
+    acc[key] = {
+      currentPage: 1,
+      totalItems: 0,
+      onTurnPage: async (page) => {
+        console.log(page);
+        const startTime = Number(key);
+        const endTime = startTime + TEN_MINUTES_MS;
+        const { totalItems, data } = await getLiveFaces({
+          startTime,
+          endTime,
+          page,
+        });
+        hourFaces.value[key] = data;
+        hourFacePaginations.value[key].currentPage = page;
+        hourFacePaginations.value[key].totalItems = totalItems;
+
+        return data;
+      },
+    };
+    return acc;
+  }, {});
+
   // 去同時要每 10 分鐘的資料
   await Promise.allSettled(hourFaceKeys.value.map(async (key) => {
-    const startTime = Number(key);
-    const endTime = startTime + TEN_MINUTES_MS;
-    const result = await getLiveFaces({ startTime, endTime });
-    hourFaces.value[key] = result;
+    const result = await hourFacePaginations.value[key].onTurnPage(1);
 
     return { result };
   }));
 }
 
-async function getLiveFaces({ startTime, endTime }) {
+async function getLiveFaces({ startTime, endTime, page }) {
+  const PER_PAGE = 24;
   const data = {
     liveupdate: false,
     unifaceupdate: false,
@@ -159,18 +185,25 @@ async function getLiveFaces({ startTime, endTime }) {
       'c078347d-5e8a-f900-6170-f994a86823c3',
     ],
     duration: endTime - startTime,
-    slice_length: 24,
-    slice_shift: 0,
+    slice_length: PER_PAGE,
+    slice_shift: (page - 1) * PER_PAGE,
     withImage: true,
   };
 
-  const { data: { result: { data: { 0: { value } } } } } = await spiderman.apiService({
+  const {
+    data: {
+      result: { total_length: totalLength, data: { 0: { value } } },
+    },
+  } = await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/liveface`,
     method: 'post',
     headers: { sessionId: sessionId.value },
     data,
   });
 
-  return value;
+  return {
+    totalItems: totalLength,
+    data: value,
+  };
 }
 </script>
