@@ -142,7 +142,8 @@ async function getLiveFaceHourly({ date, hour }) {
       currentPage: 1,
       totalItems: 0,
       onTurnPage: async (page) => {
-        console.log(page);
+        hourFacePaginations.value[key].currentPage = page;
+
         const startTime = Number(key);
         const endTime = startTime + TEN_MINUTES_MS;
         const { totalItems, data } = await getLiveFaces({
@@ -150,8 +151,8 @@ async function getLiveFaceHourly({ date, hour }) {
           endTime,
           page,
         });
+
         hourFaces.value[key] = data;
-        hourFacePaginations.value[key].currentPage = page;
         hourFacePaginations.value[key].totalItems = totalItems;
 
         return data;
