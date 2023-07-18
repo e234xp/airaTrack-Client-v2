@@ -9,12 +9,12 @@
           class="aira-button px-8 py-4 text-white font-bold text-2xl
           border-b-4 border-primary"
         >
-          !{{ $t('Faces') }}
+          {{ $t('Faces') }}
         </div>
         <div
           class="aira-button px-8 py-4 text-white font-bold text-2xl"
         >
-          !{{ $t('Album') }}
+          {{ $t('Album') }}
         </div>
       </div>
 

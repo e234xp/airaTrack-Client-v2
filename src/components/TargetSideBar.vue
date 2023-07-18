@@ -12,7 +12,7 @@
       </div>
 
       <div class="mx-6 mb-8 break-words text-xl text-gray-300">
-        !{{ $t('SelectTargetPrompt') }}
+        {{ $t('SelectTargetPrompt') }}
       </div>
     </div>
 
@@ -27,13 +27,13 @@
         class="aira-button aira-button--secondary mx-6 mb-4 py-3 font-bold
       aira-button--disable"
       >
-        !{{ $t('ClearSelection') }}
+        {{ $t('ClearSelection') }}
       </div>
       <div
         class="aira-button aira-button--secondary mx-6 mb-4 py-3 font-bold
       aira-button--disable"
       >
-        !{{ $t('SaveToAlbum') }}
+        {{ $t('SaveToAlbum') }}
       </div>
     </div>
   </div>

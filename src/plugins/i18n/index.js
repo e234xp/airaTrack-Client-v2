@@ -21,9 +21,7 @@ const i18n = createI18n({
   locale,
   legacy: false,
   messages,
-  formatter: {
-    format: (message) => i18n.messages[i18n.locale][message],
-  },
+  missing: (l, key) => `!${key}`,
 });
 
 export default i18n;
