@@ -139,8 +139,8 @@ onMounted(() => {
           annotations: {
             box: {
               type: 'box',
-              xMin: 0 - 0.45,
-              xMax: 0 + 0.45,
+              xMin: selectedHour.value - 0.45,
+              xMax: selectedHour.value + 0.45,
               yMin: -1,
               yMax: 24,
               backgroundColor: 'rgba(255, 99, 132, 0)',
@@ -167,7 +167,6 @@ onMounted(() => {
   });
 
   renderByDate(spiderman.dayjs().format('YYYY-MM-DD'));
-  renderHourAnnotation(selectedHour.value);
 });
 
 function renderByDate(date) {
