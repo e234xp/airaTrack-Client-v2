@@ -94,7 +94,9 @@
 </template>
 
 <script setup>
-import { inject, ref, watch } from 'vue';
+import {
+  inject, onUnmounted, ref, watch,
+} from 'vue';
 import { storeToRefs } from 'pinia';
 
 import DayChart from '@/components/DayChart.vue';
@@ -134,7 +136,9 @@ async function getLiveFaceHourly({ date, hour }) {
     return tmp;
   })();
 
-  hourFaceKeys.value = Object.keys(hourFaces.value).reverse();
+  hourFaceKeys.value = Object.keys(hourFaces.value)
+    .reverse()
+    .map((key) => Number(key));
 
   // 設定 pagination
   hourFacePaginations.value = hourFaceKeys.value.reduce((acc, key) => {
@@ -144,7 +148,7 @@ async function getLiveFaceHourly({ date, hour }) {
       onTurnPage: async (page) => {
         hourFacePaginations.value[key].currentPage = page;
 
-        const startTime = Number(key);
+        const startTime = key;
         const endTime = startTime + TEN_MINUTES_MS;
         const { totalItems, data } = await getLiveFaces({
           startTime,
@@ -168,6 +172,24 @@ async function getLiveFaceHourly({ date, hour }) {
     return { result };
   }));
 }
+
+// 每隔一段時間去要最新的 faces
+const timer = setInterval(() => {
+  const currentKey = (() => {
+    const tenMinutesMs = 10 * 60 * 1000;
+    return Math.floor(spiderman.dayjs().valueOf() / tenMinutesMs) * tenMinutesMs;
+  })();
+
+  if (!hourFaceKeys.value.includes(currentKey)) return;
+
+  hourFacePaginations.value[currentKey].onTurnPage(
+    hourFacePaginations.value[currentKey].currentPage,
+  );
+}, 10 * 1000);
+
+onUnmounted(() => {
+  clearInterval(timer);
+});
 
 async function getLiveFaces({ startTime, endTime, page }) {
   const PER_PAGE = 24;
