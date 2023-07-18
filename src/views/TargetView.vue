@@ -27,7 +27,12 @@
         />
       </div>
 
-      <DayChart />
+      <DayChart
+        v-model:modelSelectedDate="selectedDate"
+        v-model:modelSelectedHour="selectedHour"
+      />
+      {{ selectedDate }}
+      {{ selectedHour }}
 
       <div
         class="flex-grow overflow-y-auto flex flex-col"
@@ -86,7 +91,7 @@
 </template>
 
 <script setup>
-import { inject, ref } from 'vue';
+import { inject, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import DayChart from '@/components/DayChart.vue';
@@ -100,13 +105,16 @@ const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
 
 const selectedDate = ref(spiderman.dayjs().format('YYYY-MM-DD'));
-const selectedHour = ref(spiderman.dayjs().format('HH'));
+const selectedHour = ref(parseInt(spiderman.dayjs().format('HH'), 10));
 
 const hourFaceKeys = ref([]);
 const hourFaces = ref({});
 
-getLiveFaceByHour({ date: selectedDate.value, hour: selectedHour.value });
-async function getLiveFaceByHour({ date, hour }) {
+watch([selectedDate, selectedHour], ([date, hour]) => {
+  getLiveFaceHourly({ date, hour });
+}, { immediate: true });
+
+async function getLiveFaceHourly({ date, hour }) {
   const TEN_MINUTES_MS = 600000;
 
   // 先設定好 keys
@@ -123,6 +131,8 @@ async function getLiveFaceByHour({ date, hour }) {
   })();
 
   hourFaceKeys.value = Object.keys(hourFaces.value).reverse();
+
+  // 去同時要每 10 分鐘的資料
   await Promise.allSettled(hourFaceKeys.value.map(async (key) => {
     const startTime = Number(key);
     const endTime = startTime + TEN_MINUTES_MS;

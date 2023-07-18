@@ -2,7 +2,7 @@
   <div class="flex py-6">
     <div
       @click="
-        selectDate(spiderman.dayjs(selectedDate).subtract(1,'day'))
+        setDate(spiderman.dayjs(selectedDate).subtract(1,'day'))
       "
       class="w-16 rounded border-2 bg-gray-800
         mx-3 grid justify-center content-center text-white
@@ -28,7 +28,7 @@
     </div>
     <div
       @click="
-        selectDate(spiderman.dayjs(selectedDate).add(1,'day'))
+        setDate(spiderman.dayjs(selectedDate).add(1,'day'))
       "
       class="w-16 rounded border-2 bg-gray-800
         mx-3 grid justify-center content-center text-white
@@ -51,7 +51,7 @@
 
 <script setup>
 import {
-  inject, onMounted, ref, watch,
+  inject, onMounted, computed, watch,
 } from 'vue';
 
 import Chart from 'chart.js/auto';
@@ -59,14 +59,43 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 
 const spiderman = inject('$spiderman');
 
-const selectedDate = ref(spiderman.dayjs().format('YYYY-MM-DD'));
-function selectDate(date) {
+// selectedDate 與外部做連接
+const props = defineProps({
+  modelSelectedDate: {
+    type: String,
+    default: '',
+  },
+  modelSelectedHour: {
+    type: Number,
+    default: 0,
+  },
+});
+const emit = defineEmits([
+  'update:modelSelectedDate',
+  'update:modelSelectedHour',
+]);
+
+const selectedDate = computed({
+  get: () => props.modelSelectedDate,
+  set: (value) => emit('update:modelSelectedDate', spiderman.dayjs(value).format('YYYY-MM-DD')),
+});
+const selectedHour = computed({
+  get: () => props.modelSelectedHour,
+  set: (value) => emit('update:modelSelectedHour', value),
+});
+
+function setDate(date) {
   selectedDate.value = spiderman.dayjs(date).format('YYYY-MM-DD');
 }
-watch(selectedDate, async (date) => {
+function setHour(hour) {
+  selectedHour.value = hour;
+}
+
+watch(selectedDate, (date) => {
   renderByDate(date);
 });
 
+// 以下處理 chart
 Chart.register(annotationPlugin);
 
 let chart;
@@ -130,17 +159,15 @@ onMounted(() => {
         }
 
         const { index } = res[0];
-
-        console.log(`You clicked on ${chart.data.labels[index]}`);
-
-        chart.options.plugins.annotation.annotations.box.xMin = index - 0.45;
-        chart.options.plugins.annotation.annotations.box.xMax = index + 0.45;
-
-        chart.update();
+        const hour = chart.data.labels[index];
+        setHour(hour);
+        renderHourAnnotation(hour);
       },
     },
   });
+
   renderByDate(spiderman.dayjs().format('YYYY-MM-DD'));
+  renderHourAnnotation(selectedHour.value);
 });
 
 function renderByDate(date) {
@@ -165,8 +192,13 @@ function renderByDate(date) {
 
   // 設定 box 最大高度, 讓 box 回到 index = 0
   chart.options.plugins.annotation.annotations.box.yMax = chart.options.scales.y.max - 1;
-  chart.options.plugins.annotation.annotations.box.xMin = 0 - 0.45;
-  chart.options.plugins.annotation.annotations.box.xMax = 0 + 0.45;
+
+  chart.update();
+}
+
+function renderHourAnnotation(hour) {
+  chart.options.plugins.annotation.annotations.box.xMin = hour - 0.45;
+  chart.options.plugins.annotation.annotations.box.xMax = hour + 0.45;
 
   chart.update();
 }
