@@ -3,6 +3,7 @@ import AppSvgIcon from './AppSvgIcon.vue';
 import AppPagination from './AppPagination.vue';
 import AppError from './AppError.vue';
 import AppDatePicker from './AppDatePicker.vue';
+import AppDateTimePicker from './AppDateTimePicker.vue';
 
 export {
   AppInput,
@@ -10,4 +11,5 @@ export {
   AppPagination,
   AppError,
   AppDatePicker,
+  AppDateTimePicker,
 };

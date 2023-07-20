@@ -160,7 +160,7 @@ async function getLiveFaceHourly({ date, hour }) {
         const { totalItems, data } = await getLiveFaces({
           startTime,
           endTime,
-          pageNumber,
+          page: pageNumber,
         });
 
         hourFaces.value[key] = data;

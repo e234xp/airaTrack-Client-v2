@@ -9,10 +9,11 @@
       </div>
     </div>
 
-    <div class="mr-3 grid content-center">
+    <div class="grid content-center">
       <VueDatePicker
         v-model="selectedDate"
         :enable-time-picker="false"
+        model-type="yyyy-MM-dd"
         :format="'yyyy-MM-dd'"
         :preview-format="'yyyy-MM-dd'"
       />
@@ -37,7 +38,7 @@ const emit = defineEmits(['update:modelSelectedDate']);
 
 const selectedDate = computed({
   get: () => props.modelSelectedDate,
-  set: (value) => emit('update:modelSelectedDate', spiderman.dayjs(value).format('YYYY-MM-DD')),
+  set: (value) => emit('update:modelSelectedDate', value),
 });
 
 function toToday() {
