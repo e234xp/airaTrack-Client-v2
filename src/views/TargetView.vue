@@ -101,7 +101,7 @@
       </div>
     </div>
 
-    <TargetSideBar />
+    <TargetSideBar :selected-face="selectedFace" />
   </ProgressBarLayout>
 </template>
 

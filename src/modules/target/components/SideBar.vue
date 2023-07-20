@@ -1,5 +1,5 @@
 <template>
-  <div class="w-72 bg-gray-600 grid content-between">
+  <div class="w-80 bg-gray-600 grid content-between">
     <div>
       <div
         class="mb-4 px-8 py-4 text-white text-left text-2xl font-bold"
@@ -11,8 +11,23 @@
         {{ $t('Upload') }}
       </div>
 
-      <div class="mx-6 mb-8 break-words text-xl text-gray-300">
-        {{ $t('SelectTargetPrompt') }}
+      <div class="mx-6 mb-8 aira-row-auto-1 gap-4">
+        <div
+          v-if="selectedFace.face_image"
+          class="cursor-pointer border-4"
+        >
+          <img
+            class="w-full h-full"
+            :src="spiderman.base64Image.getSrc(selectedFace.face_image)"
+            alt=""
+          >
+        </div>
+        <div
+          v-else
+          class="break-words text-xl text-gray-300"
+        >
+          {{ $t('SelectTargetPrompt') }}
+        </div>
       </div>
     </div>
 
@@ -38,3 +53,20 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import {
+  inject,
+} from 'vue';
+
+const spiderman = inject('$spiderman');
+
+defineProps({
+  selectedFace: {
+    type: Object,
+    default() {
+      return {};
+    },
+  },
+});
+</script>

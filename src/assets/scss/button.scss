@@ -1,15 +1,15 @@
 .aira-button {
-    @apply flex justify-center content-center cursor-pointer transition rounded;
+  @apply flex justify-center content-center cursor-pointer transition rounded;
 }
 
 .aira-button--primary {
-    @apply bg-primary text-white hover:bg-primary-hover;
+  @apply bg-primary text-white hover:bg-primary-hover;
 }
 
 .aira-button--secondary {
-    @apply border-2 bg-gray-800 text-white hover:bg-primary-hover;
+  @apply border-2 bg-gray-800 text-white hover:bg-primary-hover;
 }
 
 .aira-button--disable {
-    @apply pointer-events-none border-0 bg-opacity-40;
+  @apply pointer-events-none border-0 bg-opacity-40;
 }
