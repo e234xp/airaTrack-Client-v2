@@ -37,8 +37,9 @@
 
     <div class="mb-4">
       <div
-        class="aira-button aira-button--primary mx-6 mb-4 py-3 font-bold
-      aira-button--disable"
+        @click="setPage('checking')"
+        class="aira-button aira-button--primary mx-6 mb-4 py-3 font-bold"
+        :class="{ 'aira-button--disable': !selectedFace.id }"
       >
         {{ $t('Investigation') }}
       </div>
@@ -59,18 +60,14 @@
 </template>
 
 <script setup>
-import {
-  inject,
-} from 'vue';
+import { inject } from 'vue';
+import { storeToRefs } from 'pinia';
+
+import useStore from '@/modules/target/stores/index';
 
 const spiderman = inject('$spiderman');
 
-defineProps({
-  selectedFace: {
-    type: Object,
-    default() {
-      return {};
-    },
-  },
-});
+const store = useStore();
+const { setPage } = store;
+const { selectedFace } = storeToRefs(store);
 </script>

@@ -101,7 +101,7 @@
       </div>
     </div>
 
-    <TargetSideBar :selected-face="selectedFace" />
+    <TargetSideBar />
   </ProgressBarLayout>
 </template>
 
@@ -117,7 +117,7 @@ import TargetSideBar from '@/modules/target/components/SideBar.vue';
 import useUserStore from '@/stores/user';
 import useLivedevices from '@/stores/livedevices';
 
-import useStore from '../stores/index';
+import useStore from '@/modules/target/stores/index';
 
 const spiderman = inject('$spiderman');
 
