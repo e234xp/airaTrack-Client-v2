@@ -1,29 +1,7 @@
 <template>
   <ProgressBarLayout>
     <div class="w-full flex flex-col">
-      <div
-        class="border-b-2 border-gray-500
-          grid grid-flow-col justify-center"
-      >
-        <div
-          class="aira-button px-8 py-4 text-white hover:text-primary font-bold text-2xl"
-          :class="{
-            'border-b-4 border-primary': page === 'wall'
-          }"
-          @click="setPage('wall')"
-        >
-          {{ $t('Faces') }}
-        </div>
-        <div
-          class="aira-button px-8 py-4 text-white hover:text-primary font-bold text-2xl"
-          :class="{
-            'border-b-4 border-primary': page === 'album'
-          }"
-          @click="setPage('album')"
-        >
-          {{ $t('Album') }}
-        </div>
-      </div>
+      <NavigationBar />
 
       <div
         class="border-b-2 border-gray-500 py-3 px-6
@@ -118,6 +96,7 @@ import {
 } from 'vue';
 import { storeToRefs } from 'pinia';
 
+import NavigationBar from '@/modules/target/components/NavigationBar.vue';
 import DayChart from '@/modules/target/components/DayChart.vue';
 import TargetSideBar from '@/modules/target/components/SideBar.vue';
 
@@ -141,8 +120,8 @@ const hourFaces = ref({});
 const hourFacePaginations = ref({});
 
 const store = useStore();
-const { selectedFace, page } = storeToRefs(store);
-const { setSelectedFace, setPage } = store;
+const { selectedFace } = storeToRefs(store);
+const { setSelectedFace } = store;
 
 watch([selectedDate, selectedHour], ([date, hour]) => {
   getLiveFaceHourly({ date, hour });
@@ -173,15 +152,15 @@ async function getLiveFaceHourly({ date, hour }) {
     acc[key] = {
       currentPage: 1,
       totalItems: 0,
-      onTurnPage: async (page) => {
-        hourFacePaginations.value[key].currentPage = page;
+      onTurnPage: async (pageNumber) => {
+        hourFacePaginations.value[key].currentPage = pageNumber;
 
         const startTime = key;
         const endTime = startTime + TEN_MINUTES_MS;
         const { totalItems, data } = await getLiveFaces({
           startTime,
           endTime,
-          page,
+          pageNumber,
         });
 
         hourFaces.value[key] = data;
