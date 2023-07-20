@@ -116,6 +116,7 @@ import useSubmit from '@/composable/useSubmit';
 
 import useUserStore from '@/stores/user';
 import useLanguageStore from '@/stores/language';
+import useLivedevices from '@/stores/livedevices';
 
 const spiderman = inject('$spiderman');
 
@@ -123,10 +124,13 @@ const router = useRouter();
 
 const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
-const { saveLoginData } = userStore;
+const { loginUser, setUser, startMaintainUser } = userStore;
 
 const languageStore = useLanguageStore();
 const { language } = storeToRefs(languageStore);
+
+const livedevicesStore = useLivedevices();
+const { getLiveDevices, setLiveDevices } = livedevicesStore;
 
 const { hasSubmitted, generateSubmit } = useSubmit();
 
@@ -137,31 +141,14 @@ const form = ref({
 });
 
 const handleLogin = generateSubmit(async () => {
-  const { data } = await spiderman.apiService({
-    url: `${spiderman.system.apiBaseUrl}/airaTracker/login`,
-    method: 'post',
-    data: form.value,
-  });
+  setUser(await loginUser(form.value));
+  startMaintainUser();
 
-  saveLoginData(data);
-  maintainSessionId();
+  await setupResourses();
   router.push({ path: '/target' });
 });
 
-function maintainSessionId() {
-  setInterval(async () => {
-    await spiderman.apiService({
-      url: `${spiderman.system.apiBaseUrl}/airaTracker/expiretime/extend`,
-      method: 'get',
-      headers: {
-        sessionId: sessionId.value,
-      },
-    });
-
-    console.log('Maintain SessionId');
-
-    // todo 確定時間
-  }, 60 * 1000);
+async function setupResourses() {
+  setLiveDevices(await getLiveDevices(sessionId.value));
 }
-
 </script>

@@ -58,14 +58,11 @@
                 <div
                   v-for="face in hourFaces[hourFaceKey]"
                   :key="face.data.id"
-                  class="relative cursor-pointer"
+                  @click="handleToggleFace(face.data)"
+                  class="relative cursor-pointer border-4"
                 >
                   <img
-                    class="w-full h-full border-4"
-                    :class="{
-                      'border-primary': face.data.id === 1,
-                      'border-white': face.data.id !== 1,
-                    }"
+                    class="w-full h-full"
                     :src="spiderman.base64Image.getSrc(face.data.face_image)"
                     alt=""
                   >
@@ -74,13 +71,28 @@
                       class="w-8 h-8 rounded flex justify-center items-center
                         text-lg font-bold"
                       :class="{
-                        'bg-primary text-white': face.data.id === 1,
                         'bg-white text-gray-800': face.data.id !== 1,
                       }"
                     >
                       1
                     </div>
                   </div>
+                  <template
+                    v-if="face.data.id === selectedFace.id"
+                  >
+                    <div
+                      class="absolute inset-0 bg-gray-900 opacity-40"
+                    />
+                    <div
+                      class="absolute top-0 left-0 w-full h-full
+                       flex items-center justify-center"
+                    >
+                      <AppSvgIcon
+                        name="icon-check"
+                        class="text-white w-16 h-16"
+                      />
+                    </div>
+                  </template>
                 </div>
               </div>
             </div>
@@ -103,11 +115,14 @@ import DayChart from '@/components/DayChart.vue';
 import TargetSideBar from '@/components/TargetSideBar.vue';
 
 import useUserStore from '@/stores/user';
+import useLivedevices from '@/stores/livedevices';
 
 const spiderman = inject('$spiderman');
 
 const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
+const livedevicesStore = useLivedevices();
+const { livedevices } = storeToRefs(livedevicesStore);
 
 const selectedDate = ref(spiderman.dayjs().format('YYYY-MM-DD'));
 const selectedHour = ref(parseInt(spiderman.dayjs().format('HH'), 10));
@@ -193,20 +208,13 @@ onUnmounted(() => {
 
 async function getLiveFaces({ startTime, endTime, page }) {
   const PER_PAGE = 24;
+  const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
   const data = {
     liveupdate: false,
     unifaceupdate: false,
     start_time: startTime,
     end_time: endTime,
-    camera_list: [
-      'cb6204be-b7da-a989-d802-42b73a4099ad',
-      '571f6c69-4bda-1e6d-a48e-84c47ece1319',
-      '6f64e48d-3c17-f805-037c-fb7cc0024284',
-      '210e1ef9-3e1b-a74b-8df9-2d8c546da844',
-      'dacf7044-940a-2b21-6edb-d6154f31659a',
-      '4ae0f8f7-48f4-5836-58ae-846058fd48d1',
-      'c078347d-5e8a-f900-6170-f994a86823c3',
-    ],
+    camera_list: cameraList,
     duration: endTime - startTime,
     slice_length: PER_PAGE,
     slice_shift: (page - 1) * PER_PAGE,
@@ -228,5 +236,14 @@ async function getLiveFaces({ startTime, endTime, page }) {
     totalItems: totalLength,
     data: value,
   };
+}
+
+const selectedFace = ref({});
+function handleToggleFace(face) {
+  if (selectedFace.value.id === face.id) {
+    selectedFace.value = {};
+  } else {
+    selectedFace.value = face;
+  }
 }
 </script>
