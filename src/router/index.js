@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import checkAuth from './middlewares/check-auth.js';
+import checkAuth from './middlewares/check-auth';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

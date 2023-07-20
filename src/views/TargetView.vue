@@ -111,8 +111,8 @@ import {
 } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import DayChart from '@/components/DayChart.vue';
-import TargetSideBar from '@/components/TargetSideBar.vue';
+import DayChart from '@/modules/target/components/DayChart.vue';
+import TargetSideBar from '@/modules/target/components/SideBar.vue';
 
 import useUserStore from '@/stores/user';
 import useLivedevices from '@/stores/livedevices';
