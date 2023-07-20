@@ -6,13 +6,20 @@
           grid grid-flow-col justify-center"
       >
         <div
-          class="aira-button px-8 py-4 text-white font-bold text-2xl
-          border-b-4 border-primary"
+          class="aira-button px-8 py-4 text-white hover:text-primary font-bold text-2xl"
+          :class="{
+            'border-b-4 border-primary': page === 'wall'
+          }"
+          @click="setPage('wall')"
         >
           {{ $t('Faces') }}
         </div>
         <div
-          class="aira-button px-8 py-4 text-white font-bold text-2xl"
+          class="aira-button px-8 py-4 text-white hover:text-primary font-bold text-2xl"
+          :class="{
+            'border-b-4 border-primary': page === 'album'
+          }"
+          @click="setPage('album')"
         >
           {{ $t('Album') }}
         </div>
@@ -134,8 +141,8 @@ const hourFaces = ref({});
 const hourFacePaginations = ref({});
 
 const store = useStore();
-const { selectedFace } = storeToRefs(store);
-const { setSelectedFace } = store;
+const { selectedFace, page } = storeToRefs(store);
+const { setSelectedFace, setPage } = store;
 
 watch([selectedDate, selectedHour], ([date, hour]) => {
   getLiveFaceHourly({ date, hour });

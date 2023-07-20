@@ -37,21 +37,22 @@
 
     <div class="mb-4">
       <div
-        @click="setPage('checking')"
+        @click="setPage('adding-investgation')"
         class="aira-button aira-button--primary mx-6 mb-4 py-3 font-bold"
         :class="{ 'aira-button--disable': !selectedFace.id }"
       >
         {{ $t('Investigation') }}
       </div>
       <div
-        class="aira-button aira-button--secondary mx-6 mb-4 py-3 font-bold
-      aira-button--disable"
+        @click="setSelectedFace({})"
+        class="aira-button aira-button--secondary mx-6 mb-4 py-3 font-bold"
+        :class="{ 'aira-button--disable': !selectedFace.id }"
       >
         {{ $t('ClearSelection') }}
       </div>
       <div
-        class="aira-button aira-button--secondary mx-6 mb-4 py-3 font-bold
-      aira-button--disable"
+        class="aira-button aira-button--secondary mx-6 mb-4 py-3 font-bold"
+        :class="{ 'aira-button--disable': !selectedFace.id }"
       >
         {{ $t('SaveToAlbum') }}
       </div>
@@ -70,4 +71,5 @@ const spiderman = inject('$spiderman');
 const store = useStore();
 const { setPage } = store;
 const { selectedFace } = storeToRefs(store);
+const { setSelectedFace } = store;
 </script>
