@@ -22,15 +22,17 @@
                 <AppLabel
                   :label="$t('StartTime')"
                 >
-                  <AppDateTimePicker
-                    v-model:modelSelectedTime="selectedTime"
+                  <AppDatePicker
+                    v-model:modelSelected="selectedTime"
+                    mode="date-time"
                   />
                 </AppLabel>
                 <AppLabel
                   :label="$t('EndTime')"
                 >
-                  <AppDateTimePicker
-                    v-model:modelSelectedTime="selectedTime"
+                  <AppDatePicker
+                    v-model:modelSelected="selectedTime"
+                    mode="date-time"
                   />
                 </AppLabel>
               </div>

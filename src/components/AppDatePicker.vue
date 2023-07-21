@@ -3,11 +3,12 @@
     <div class="grid content-center">
       <VueDatePicker
         :clearable="false"
-        :enable-time-picker="false"
-        v-model="selectedDate"
-        model-type="yyyy-MM-dd"
-        :format="'yyyy-MM-dd'"
-        :preview-format="'yyyy-MM-dd'"
+        v-model="selected"
+
+        :enable-time-picker="enableTimePicker"
+        :format="format"
+        :model-type="format"
+        :preview-format="format"
       />
     </div>
   </div>
@@ -19,15 +20,42 @@ import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
 const props = defineProps({
-  modelSelectedDate: {
+  modelSelected: {
     type: String,
     default: '',
   },
+  mode: {
+    type: String,
+    default: 'date',
+  },
 });
-const emit = defineEmits(['update:modelSelectedDate']);
+const emit = defineEmits(['update:modelSelected']);
 
-const selectedDate = computed({
-  get: () => props.modelSelectedDate,
-  set: (value) => emit('update:modelSelectedDate', value),
+const selected = computed({
+  get: () => props.modelSelected,
+  set: (value) => emit('update:modelSelected', value),
 });
+
+const { enableTimePicker, format } = (() => {
+  switch (props.mode) {
+    case 'date': {
+      return {
+        enableTimePicker: false,
+        format: 'yyyy-MM-dd',
+      };
+    }
+
+    case 'date-time': {
+      return {
+        enableTimePicker: true,
+        format: 'yyyy-MM-dd HH:mm',
+      };
+    }
+
+    default: {
+      return 123;
+    }
+  }
+})();
+console.log(enableTimePicker, format);
 </script>

@@ -8,7 +8,7 @@
           grid grid-flow-col justify-between"
       >
         <AppDatePicker
-          v-model:modelSelectedDate="selectedDate"
+          v-model:modelSelected="selectedDate"
         />
       </div>
 
