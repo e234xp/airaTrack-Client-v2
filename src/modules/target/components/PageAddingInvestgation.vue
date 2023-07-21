@@ -40,6 +40,7 @@
                 >
                   <AppInput
                     v-model:modelInput="input"
+                    :placeholder="$t('TaskName')"
                   />
                 </AppLabel>
               </div>

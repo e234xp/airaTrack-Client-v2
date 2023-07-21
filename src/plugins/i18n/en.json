@@ -483,5 +483,7 @@
   "IdleTime": "Idle Time",
   "ForgotPassword": "Forgot Password",
   "Target": "Target",
-  "Case": "Case"
+  "Case": "Case",
+  "requiredMessage": "The '{placeholder}' is required",
+  "field": "field"
 }

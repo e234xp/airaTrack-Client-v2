@@ -70,6 +70,7 @@
 import {
   computed, defineProps, defineEmits, ref,
 } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
   modelInput: {
@@ -116,10 +117,16 @@ const handleBlur = () => {
   hasTouched.value = true;
 };
 
+const i18n = useI18n();
 const validators = {
   required: {
     isPassed: () => !input.value,
-    generateMessage: () => `The ${props.placeholder ? props.placeholder : 'field'} is required`,
+    generateMessage: () => {
+      const placeholder = props.placeholder
+        ? props.placeholder
+        : i18n.t('field');
+      return i18n.t('requiredMessage', { placeholder });
+    },
   },
 };
 

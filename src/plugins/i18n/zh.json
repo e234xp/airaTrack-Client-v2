@@ -483,5 +483,7 @@
   "IdleTime": "空閒時間",
   "ForgotPassword": "忘記密碼",
   "Target": "目標",
-  "Case": "案件"
+  "Case": "案件",
+  "requiredMessage": "必填欄位 '{placeholder}' 不得為空",
+  "field": "欄位"
 }
