@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-between mb-1">
+  <div class="flex justify-between">
     <div
       v-if="svgIcon"
       class="border border-gray-500 bg-gray-700 rounded grid content-center"
@@ -16,8 +16,8 @@
     >
       <select
         v-model="input"
-        class="shadow appearance-none border border-gray-500 rounded w-full py-3 px-3 pr-8
-          bg-secondary text-white"
+        class="shadow appearance-none border border-gray-500 rounded w-full h-12 px-3 pr-8
+          text-gray-700"
         :class="{ 'border-red-500': isShowError }"
       >
         <option
@@ -40,16 +40,18 @@
       >
         <AppSvgIcon
           name="icon-chevron-botton"
-          class="text-white w-4 h-4"
+          class="text-gray-700 w-4 h-4"
         />
       </div>
     </div>
 
     <input
       v-else
-      class="shadow appearance-none border border-gray-500 rounded w-full py-3 px-3
-          bg-secondary text-white"
-      :class="{ 'border-red-500': isShowError }"
+      class="shadow appearance-none border border-gray-500 rounded w-full h-12 px-3
+      text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      :class="{
+        'border-red-500': isShowError
+      }"
       :type="type"
       :placeholder="placeholder"
       v-model="input"
@@ -60,7 +62,7 @@
 
   <div
     v-if="isShowError"
-    class="text-red-500 text-s"
+    class="mt-1 text-red-500 text-s"
   >
     {{ errorMessage }}
   </div>

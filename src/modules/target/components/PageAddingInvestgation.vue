@@ -38,7 +38,7 @@
                 <AppLabel
                   :label="$t('TaskName')"
                 >
-                  <AppInput
+                  <AppIconInput
                     v-model:modelInput="input"
                     :placeholder="$t('TaskName')"
                   />
