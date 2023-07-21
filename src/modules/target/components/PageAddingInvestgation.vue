@@ -6,23 +6,33 @@
         class="flex-grow overflow-y-auto flex flex-col"
       >
         <div class="mt-12 flex justify-center">
-          <div class="w-full 2xl:w-384">
+          <div class="w-full 2xl:w-352">
             <div
               class="aira-row-auto-10 gap-4"
             >
-              <div>
-                <img
-                  class="w-full h-full"
-                  :src="spiderman.base64Image.getSrc(selectedFace.face_image)"
-                  alt=""
-                >
-              </div>
-              <div
-                class="col-span-2 border-4"
+              <img
+                class="w-full h-full"
+                :src="spiderman.base64Image.getSrc(selectedFace.face_image)"
+                alt=""
               >
-                <AppDateTimePicker
-                  v-model:modelSelectedTime="selectedTime"
-                />
+
+              <div
+                class="col-span-2 border-4 p-4 aira-row-auto-8 content-start gap-4"
+              >
+                <AppLabel
+                  :label="$t('StartTime')"
+                >
+                  <AppDateTimePicker
+                    v-model:modelSelectedTime="selectedTime"
+                  />
+                </AppLabel>
+                <AppLabel
+                  :label="$t('EndTime')"
+                >
+                  <AppDateTimePicker
+                    v-model:modelSelectedTime="selectedTime"
+                  />
+                </AppLabel>
               </div>
             </div>
           </div>

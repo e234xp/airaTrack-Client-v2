@@ -2,6 +2,7 @@
   <div class="grid grid-flow-col">
     <div class="grid content-center">
       <VueDatePicker
+        :clearable="false"
         v-model="selectedTime"
         model-type="yyyy-MM-dd HH:mm"
         :format="'yyyy-MM-dd HH:mm'"
