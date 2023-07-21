@@ -21,7 +21,7 @@
       </div>
 
       <div class="mb-4">
-        <AppIconInput
+        <AppInput
           svg-icon="icon-person"
           :placeholder="$t('LoginUsername')"
           v-model:modelInput="form.username"
@@ -32,7 +32,7 @@
       </div>
 
       <div class="mb-4">
-        <AppIconInput
+        <AppInput
           type="password"
           svg-icon="icon-lock"
           :placeholder="$t('LoginPassword')"
@@ -44,7 +44,7 @@
       </div>
 
       <div class="mb-4">
-        <AppIconInput
+        <AppInput
           type="select"
           svg-icon="icon-language"
           :options="{
