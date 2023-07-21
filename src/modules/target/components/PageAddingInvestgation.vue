@@ -35,6 +35,13 @@
                     mode="date-time"
                   />
                 </AppLabel>
+                <AppLabel
+                  :label="$t('TaskName')"
+                >
+                  <AppInput
+                    v-model:modelInput="input"
+                  />
+                </AppLabel>
               </div>
             </div>
           </div>
@@ -58,4 +65,5 @@ const store = useStore();
 const { selectedFace } = storeToRefs(store);
 
 const selectedTime = ref(spiderman.dayjs().format('YYYY-MM-DD HH:mm'));
+const input = ref('');
 </script>

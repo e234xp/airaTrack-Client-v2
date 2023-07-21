@@ -72,40 +72,35 @@ import {
 } from 'vue';
 
 const props = defineProps({
+  modelInput: {
+    type: String,
+    default: '',
+  },
   type: {
     type: String,
     default: 'text',
-  },
-  svgIcon: {
-    type: String,
-    default: '',
   },
   placeholder: {
     type: String,
     default: '',
   },
-  validator: {
-    type: Object,
-    default() {
-      return {
-        rule: '',
-        field: '',
-      };
-    },
+  rule: {
+    type: String,
+    default: 'required',
   },
   hasSubmitted: {
     type: Boolean,
     default: false,
+  },
+  svgIcon: {
+    type: String,
+    default: '',
   },
   options: {
     type: Object,
     default() {
       return {};
     },
-  },
-  modelInput: {
-    type: String,
-    default: '',
   },
 });
 
@@ -116,6 +111,7 @@ const input = computed({
 });
 
 const hasTouched = ref(false);
+
 const handleBlur = () => {
   hasTouched.value = true;
 };
@@ -123,16 +119,16 @@ const handleBlur = () => {
 const validators = {
   required: {
     isPassed: () => !input.value,
-    generateMessage: (field) => `The ${field} is required`,
+    generateMessage: () => `The ${props.placeholder ? props.placeholder : 'field'} is required`,
   },
 };
 
-const { isPassed, generateMessage } = validators[props.validator.rule];
+const { isPassed, generateMessage } = validators[props.rule];
 const isShowError = computed(() => {
-  if (!props.validator.rule) return false;
+  if (!props.rule) return false;
 
   return isPassed() && (hasTouched.value || props.hasSubmitted);
 });
-const errorMessage = generateMessage(props.validator.field);
+const errorMessage = computed(() => generateMessage());
 
 </script>

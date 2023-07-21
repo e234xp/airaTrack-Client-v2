@@ -1,17 +1,13 @@
 <template>
-  <div class="grid grid-flow-col">
-    <div class="grid content-center">
-      <VueDatePicker
-        :clearable="false"
-        v-model="selected"
+  <VueDatePicker
+    :clearable="false"
+    v-model="selected"
 
-        :enable-time-picker="enableTimePicker"
-        :format="format"
-        :model-type="format"
-        :preview-format="format"
-      />
-    </div>
-  </div>
+    :enable-time-picker="enableTimePicker"
+    :format="format"
+    :model-type="format"
+    :preview-format="format"
+  />
 </template>
 
 <script setup>
@@ -57,5 +53,4 @@ const { enableTimePicker, format } = (() => {
     }
   }
 })();
-console.log(enableTimePicker, format);
 </script>

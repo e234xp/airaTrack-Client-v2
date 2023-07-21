@@ -25,10 +25,7 @@
           svg-icon="icon-person"
           :placeholder="$t('LoginUsername')"
           v-model:modelInput="form.username"
-          :validator="{
-            rule: 'required',
-            field: 'username',
-          }"
+          rule="required"
           @submit="handleLogin"
           :has-submitted="hasSubmitted"
         />
@@ -40,10 +37,7 @@
           svg-icon="icon-lock"
           :placeholder="$t('LoginPassword')"
           v-model:modelInput="form.password"
-          :validator="{
-            rule: 'required',
-            field: 'password',
-          }"
+          rule="required"
           @submit="handleLogin"
           :has-submitted="hasSubmitted"
         />
@@ -58,10 +52,7 @@
             繁體中文: 'zh',
           }"
           v-model:modelInput="language"
-          :validator="{
-            rule: 'required',
-            field: 'language',
-          }"
+          rule="required"
           :has-submitted="hasSubmitted"
         />
       </div>
