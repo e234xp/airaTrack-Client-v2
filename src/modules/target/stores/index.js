@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 
 export default defineStore('module-target', () => {
   const initialState = {
-    selectedFace: {},
+    selectedFace: null,
     page: 'wall',
   };
   const selectedFace = ref(initialState.selectedFace);

@@ -43,8 +43,8 @@
                 <div
                   v-for="face in hourFaces[hourFaceKey]"
                   :key="face.data.id"
-                  @click="handleToggleFace(face.data)"
-                  class="relative cursor-pointer border-4"
+                  @click="handleToggleFace(face)"
+                  class="select-none relative cursor-pointer border-4"
                 >
                   <img
                     class="w-full h-full"
@@ -63,7 +63,7 @@
                     </div>
                   </div>
                   <template
-                    v-if="face.data.id === selectedFace.id"
+                    v-if="face.data.id === selectedFace?.data.id"
                   >
                     <div
                       class="absolute inset-0 bg-gray-900 opacity-40"
@@ -101,7 +101,7 @@ import DayChart from '@/modules/target/components/DayChart.vue';
 import TargetSideBar from '@/modules/target/components/SideBar.vue';
 
 import useUserStore from '@/stores/user';
-import useLivedevices from '@/stores/livedevices';
+import useDevices from '@/stores/devices';
 
 import useStore from '@/modules/target/stores/index';
 
@@ -109,8 +109,8 @@ const spiderman = inject('$spiderman');
 
 const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
-const livedevicesStore = useLivedevices();
-const { livedevices } = storeToRefs(livedevicesStore);
+const devicesStore = useDevices();
+const { livedevices } = storeToRefs(devicesStore);
 
 const selectedDate = ref(spiderman.dayjs().format('YYYY-MM-DD'));
 const selectedHour = ref(parseInt(spiderman.dayjs().format('HH'), 10));
@@ -231,8 +231,8 @@ async function getLiveFaces({ startTime, endTime, page }) {
 }
 
 function handleToggleFace(face) {
-  if (selectedFace.value.id === face.id) {
-    setSelectedFace({});
+  if (selectedFace.value?.data?.id === face.data.id) {
+    setSelectedFace(null);
   } else {
     setSelectedFace(face);
   }

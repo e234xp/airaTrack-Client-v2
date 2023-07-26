@@ -107,7 +107,7 @@ import useSubmit from '@/composable/useSubmit';
 
 import useUserStore from '@/stores/user';
 import useLanguageStore from '@/stores/language';
-import useLivedevices from '@/stores/livedevices';
+import useDevices from '@/stores/devices';
 
 const spiderman = inject('$spiderman');
 
@@ -120,8 +120,10 @@ const { loginUser, setUser, startMaintainUser } = userStore;
 const languageStore = useLanguageStore();
 const { language } = storeToRefs(languageStore);
 
-const livedevicesStore = useLivedevices();
-const { getLiveDevices, setLiveDevices } = livedevicesStore;
+const devicesStore = useDevices();
+const {
+  getDevices, setDevices, getLiveDevices, setLiveDevices,
+} = devicesStore;
 
 const { hasSubmitted, generateSubmit } = useSubmit();
 
@@ -140,6 +142,7 @@ const handleLogin = generateSubmit(async () => {
 });
 
 async function setupResourses() {
+  setDevices(await getDevices(sessionId.value));
   setLiveDevices(await getLiveDevices(sessionId.value));
 }
 </script>

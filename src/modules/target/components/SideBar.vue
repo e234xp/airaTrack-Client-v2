@@ -13,7 +13,7 @@
 
       <div class="mx-6 mb-8">
         <div
-          v-if="selectedFace.face_image"
+          v-if="selectedFace"
           class="aira-row-auto-1 gap-4"
         >
           <div
@@ -21,7 +21,7 @@
           >
             <img
               class="w-full h-full"
-              :src="spiderman.base64Image.getSrc(selectedFace.face_image)"
+              :src="spiderman.base64Image.getSrc(selectedFace?.data.face_image)"
               alt=""
             >
           </div>
@@ -39,20 +39,20 @@
       <div
         @click="setPage('adding-investgation')"
         class="aira-button aira-button--primary mx-6 mb-4 py-3 font-bold"
-        :class="{ 'aira-button--disable': !selectedFace.id }"
+        :class="{ 'aira-button--disable': !selectedFace?.data.id }"
       >
         {{ $t('Investigation') }}
       </div>
       <div
-        @click="setSelectedFace({})"
+        @click="setSelectedFace(null)"
         class="aira-button aira-button--secondary mx-6 mb-4 py-3 font-bold"
-        :class="{ 'aira-button--disable': !selectedFace.id }"
+        :class="{ 'aira-button--disable': !selectedFace?.data.id }"
       >
         {{ $t('ClearSelection') }}
       </div>
       <div
         class="aira-button aira-button--secondary mx-6 mb-4 py-3 font-bold"
-        :class="{ 'aira-button--disable': !selectedFace.id }"
+        :class="{ 'aira-button--disable': !selectedFace?.data.id }"
       >
         {{ $t('SaveToAlbum') }}
       </div>

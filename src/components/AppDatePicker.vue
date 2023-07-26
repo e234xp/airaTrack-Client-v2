@@ -1,6 +1,6 @@
 <template>
   <VueDatePicker
-    class="dp"
+    input-class-name="h-12"
     :clearable="false"
     v-model="selected"
     :enable-time-picker="enableTimePicker"
@@ -57,9 +57,3 @@ const { enableTimePicker, format } = (() => {
   }
 })();
 </script>
-
-<style>
-.dp .dp__input {
-  @apply h-12;
-}
-</style>
