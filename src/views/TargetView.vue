@@ -2,6 +2,9 @@
   <PageWall
     v-if="page === 'wall'"
   />
+  <PageWall
+    v-else-if="page === 'detail'"
+  />
   <PageAddingInvestgation
     v-else-if="page === 'adding-investgation'"
   />

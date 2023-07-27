@@ -1,8 +1,11 @@
 <template>
   <ProgressBarLayout>
-    <div class="w-full flex flex-col">
-      <NavigationBar />
-      <div class="flex-grow overflow-y-auto flex flex-col">
+    <FullLayout>
+      <template #header>
+        <NavigationBar />
+      </template>
+
+      <template #grow>
         <div class="mt-12 flex justify-center">
           <div class="w-full 2xl:w-352">
             <div class="aira-row-auto-10 gap-4">
@@ -46,8 +49,8 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </FullLayout>
   </ProgressBarLayout>
 </template>
 

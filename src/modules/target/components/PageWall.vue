@@ -1,25 +1,25 @@
 <template>
   <ProgressBarLayout>
-    <div class="w-full flex flex-col">
-      <NavigationBar />
+    <FullLayout>
+      <template #header>
+        <NavigationBar />
 
-      <div
-        class="border-b-2 border-gray-500 py-3 px-6
+        <div
+          class="border-b-2 border-gray-500 py-3 px-6
           grid grid-flow-col justify-between"
-      >
-        <AppDatePicker
-          v-model:modelSelected="selectedDate"
+        >
+          <AppDatePicker
+            v-model:modelSelected="selectedDate"
+          />
+        </div>
+
+        <DayChart
+          v-model:modelSelectedDate="selectedDate"
+          v-model:modelSelectedHour="selectedHour"
         />
-      </div>
+      </template>
 
-      <DayChart
-        v-model:modelSelectedDate="selectedDate"
-        v-model:modelSelectedHour="selectedHour"
-      />
-
-      <div
-        class="flex-grow overflow-y-auto flex flex-col"
-      >
+      <template #grow>
         <template
           v-for="hourFaceKey in hourFaceKeys"
           :key="hourFaceKey"
@@ -83,8 +83,8 @@
             </div>
           </div>
         </template>
-      </div>
-    </div>
+      </template>
+    </FullLayout>
 
     <TargetSideBar />
   </ProgressBarLayout>
