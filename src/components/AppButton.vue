@@ -3,7 +3,7 @@
     class="flex justify-center content-center cursor-pointer transition rounded"
     :class="{
       'bg-primary hover:bg-primary-hover': type === 'primary',
-      'border-2 bg-gray-800 hover:bg-primary-hover': type === 'secondary',
+      'bg-gray-800 hover:bg-primary-hover': type === 'secondary',
       'hover:text-primary-hover': type === 'transparent',
 
       'border-b-4 border-primary': isActive && activeType === 'baseline',
@@ -11,6 +11,8 @@
       'text-white': !isActive || activeType === 'baseline',
 
       'pointer-events-none border-0 bg-opacity-40': !isEnable,
+      'border-0': !isEnable && type === 'secondary',
+      'border-2': isEnable && type === 'secondary',
     }"
   >
     <slot />
