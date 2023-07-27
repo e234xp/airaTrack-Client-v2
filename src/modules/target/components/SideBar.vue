@@ -7,9 +7,12 @@
         {{ $t('Target') }}
       </div>
 
-      <div class="aira-button aira-button--secondary mx-6 mb-8 py-3 font-bold">
-        {{ $t('Upload') }}
-      </div>
+      <AppButton
+        type="secondary"
+        class="mx-6 mb-8 py-3"
+      >
+        {{ $t("Upload") }}
+      </AppButton>
 
       <div class="mx-6 mb-8">
         <div
@@ -36,26 +39,29 @@
     </div>
 
     <div class="mb-4">
-      <div
+      <AppButton
+        type="primary"
+        :is-enable="!!selectedFace?.data.id"
+        class="mx-6 mb-4 py-3"
         @click="setPage('adding-investgation')"
-        class="aira-button aira-button--primary mx-6 mb-4 py-3 font-bold"
-        :class="{ 'aira-button--disable': !selectedFace?.data.id }"
       >
-        {{ $t('Investigation') }}
-      </div>
-      <div
+        {{ $t("Investigation") }}
+      </AppButton>
+      <AppButton
+        type="secondary"
+        :is-enable="!!selectedFace?.data.id"
+        class="mx-6 mb-4 py-3"
         @click="setSelectedFace(null)"
-        class="aira-button aira-button--secondary mx-6 mb-4 py-3 font-bold"
-        :class="{ 'aira-button--disable': !selectedFace?.data.id }"
       >
-        {{ $t('ClearSelection') }}
-      </div>
-      <div
-        class="aira-button aira-button--secondary mx-6 mb-4 py-3 font-bold"
-        :class="{ 'aira-button--disable': !selectedFace?.data.id }"
+        {{ $t("ClearSelection") }}
+      </AppButton>
+      <AppButton
+        type="secondary"
+        :is-enable="!!selectedFace?.data.id"
+        class="mx-6 mb-4 py-3"
       >
-        {{ $t('SaveToAlbum') }}
-      </div>
+        {{ $t("SaveToAlbum") }}
+      </AppButton>
     </div>
   </div>
 </template>

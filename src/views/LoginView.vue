@@ -43,7 +43,7 @@
         />
       </div>
 
-      <div class="mb-4">
+      <div class="mb-6">
         <AppInput
           type="select"
           svg-icon="icon-language"
@@ -57,30 +57,26 @@
         />
       </div>
 
-      <div class="mb-4 flex justify-center">
-        <button
-          class="aira-button aira-button--primary font-bold py-2 px-20"
-          type="button"
-          @click="handleLogin"
-        >
-          {{ $t("Login") }}
-        </button>
-      </div>
-      <div
-        class="aira-button align-baseline font-bold text-sm hover:text-blue-800"
-        href="#"
+      <AppButton
+        class="mx-10 mb-4 py-2 px-20"
+        @click="handleLogin"
       >
+        {{ $t("Login") }}
+      </AppButton>
+
+      <div class="flex justify-center">
         <div class="grid content-center mr-1">
           <AppSvgIcon
             name="icon-question"
             class="text-white w-4 h-4"
           />
         </div>
-        <button
-          class="underline text-white"
+        <AppButton
+          type="transparent"
+          class="underline"
         >
           {{ $t("ForgotPassword") }}
-        </button>
+        </AppButton>
       </div>
     </div>
 

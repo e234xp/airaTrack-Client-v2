@@ -3,24 +3,25 @@
     class="border-b-2 border-gray-500
           grid grid-flow-col justify-center"
   >
-    <div
-      class="aira-button px-8 py-4 text-white hover:text-primary font-bold text-2xl"
-      :class="{
-        'border-b-4 border-primary': page === 'wall'
-      }"
+    <AppButton
+      type="transparent"
+      active-type="baseline"
+      :is-active="page === 'wall'"
+      class="px-8 py-4 font-bold text-2xl"
       @click="setPage('wall')"
     >
       {{ $t('Faces') }}
-    </div>
-    <div
-      class="aira-button px-8 py-4 text-white hover:text-primary font-bold text-2xl"
-      :class="{
-        'border-b-4 border-primary': page === 'album'
-      }"
+    </AppButton>
+
+    <AppButton
+      type="transparent"
+      active-type="baseline"
+      :is-active="page === 'album'"
+      class="px-8 py-4 font-bold text-2xl"
       @click="setPage('album')"
     >
       {{ $t('Album') }}
-    </div>
+    </AppButton>
   </div>
 </template>
 

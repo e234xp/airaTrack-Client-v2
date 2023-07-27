@@ -12,30 +12,27 @@
         >
       </div>
       <div class="grid grid-flow-col content-center text-gray-300 text-3xl font-bold">
-        <div
-          class="aira-button hover:text-primary-hover mx-10"
-          :class="{
-            'text-primary': $route.path === '/target'
-          }"
+        <AppButton
+          type="transparent"
+          :is-active="$route.path === '/target'"
+          class="mx-10"
         >
-          {{ $t('Target') }}
-        </div>
-        <div
-          class="aira-button hover:text-primary-hover mx-10"
-          :class="{
-            'text-primary': $route.path === '/investigation'
-          }"
+          {{ $t("Target") }}
+        </AppButton>
+        <AppButton
+          type="transparent"
+          :is-active="$route.path === '/investigation'"
+          class="mx-10"
         >
-          {{ $t('Investigation') }}
-        </div>
-        <div
-          class="aira-button hover:text-primary-hover mx-10"
-          :class="{
-            'text-primary': $route.path === '/case'
-          }"
+          {{ $t("Investigation") }}
+        </AppButton>
+        <AppButton
+          type="transparent"
+          :is-active="$route.path === '/case'"
+          class="mx-10"
         >
-          {{ $t('Case') }}
-        </div>
+          {{ $t("Case") }}
+        </AppButton>
       </div>
       <div
         class="grid grid-flow-col content-center divide-x-2 divide-gray-500
@@ -52,13 +49,16 @@
             {{ current.time }}
           </div>
         </div>
-        <div class="px-3 grid content-center cursor-pointer">
-          <div class="aira-button aira-button--secondary">
+        <div class="px-3 grid content-center">
+          <AppButton
+            type="secondary"
+            :is-active="$route.path === '/case'"
+          >
             <AppSvgIcon
               name="icon-gear"
               class="text-white w-8 h-8"
             />
-          </div>
+          </AppButton>
         </div>
       </div>
     </div>
