@@ -26,7 +26,7 @@
       </template>
 
       <template #footer>
-        <div class="flex justify-center mt-4 mb-10">
+        <div class="flex justify-center my-6">
           <AppPagination
             :per-page="80"
             :current-page="currentPage"
@@ -42,8 +42,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import spiderman from '@/spiderman';
+
 import useUserStore from '@/stores/user';
 import useDevices from '@/stores/devices';
 
@@ -89,6 +91,22 @@ async function handleTurnPage(pageNumber) {
     startTime, endTime, page: pageNumber, perPage: 80, cameraList, sessionId: sessionId.value,
   }));
 }
+
+// 每隔一段時間去要最新的 faces
+const timer = setInterval(() => {
+  const currentKey = (() => {
+    const tenMinutesMs = 10 * 60 * 1000;
+    return Math.floor(spiderman.dayjs().valueOf() / tenMinutesMs) * tenMinutesMs;
+  })();
+
+  if (selectedFaceKey.value !== currentKey) return;
+
+  handleTurnPage(currentPage.value);
+}, 10 * 1000);
+
+onUnmounted(() => {
+  clearInterval(timer);
+});
 
 function handleToggleFace(face) {
   if (selectedFace.value?.data?.id === face.data.id) {

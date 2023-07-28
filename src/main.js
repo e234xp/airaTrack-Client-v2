@@ -2,7 +2,6 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import 'virtual:svg-icons-register';
 
-import spiderman from '@/spiderman';
 import './assets/scss/main.scss';
 
 import * as globalComponents from './components/app';
