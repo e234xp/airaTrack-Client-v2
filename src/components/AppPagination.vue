@@ -15,21 +15,10 @@
         }"
         :disabled="currentPage === 1"
       >
-        <svg
+        <AppSvgIcon
+          name="icon-chevron-left"
           class="w-3 h-3"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 6 10"
-        >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M5 1 1 5l4 4"
-          />
-        </svg>
+        />
       </a>
 
       <a
@@ -59,21 +48,10 @@
         px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300
         hover:bg-primary-hover hover:text-white focus:z-20 focus:outline-offset-0"
       >
-        <svg
+        <AppSvgIcon
+          name="icon-chevron-right"
           class="w-3 h-3"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 6 10"
-        >
-          <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="m1 9 4-4-4-4"
-          />
-        </svg>
+        />
       </a>
     </nav>
   </div>
