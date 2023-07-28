@@ -1,9 +1,8 @@
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import spiderman from '@/spiderman';
 
 export default defineStore('user', () => {
-  const spiderman = inject('$spiderman');
-
   const user = ref(null);
   const sessionId = ref('');
 

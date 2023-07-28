@@ -24,8 +24,6 @@ Object.entries(Layouts).forEach(([key, value]) => {
   app.component(key, value);
 });
 
-app.provide('$spiderman', spiderman);
-
 app
   .use(createPinia())
   .use(router)

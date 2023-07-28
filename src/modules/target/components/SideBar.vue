@@ -67,12 +67,10 @@
 </template>
 
 <script setup>
-import { inject } from 'vue';
 import { storeToRefs } from 'pinia';
+import spiderman from '@/spiderman';
 
 import useStore from '@/modules/target/stores/index';
-
-const spiderman = inject('$spiderman');
 
 const store = useStore();
 const { setPage } = store;

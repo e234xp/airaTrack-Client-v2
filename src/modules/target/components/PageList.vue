@@ -69,9 +69,10 @@
 
 <script setup>
 import {
-  inject, onUnmounted, ref, watch,
+  onUnmounted, ref, watch,
 } from 'vue';
 import { storeToRefs } from 'pinia';
+import spiderman from '@/spiderman';
 
 import NavigationBar from '@/modules/target/components/NavigationBar.vue';
 import DayChart from '@/modules/target/components/DayChart.vue';
@@ -83,8 +84,6 @@ import useDevices from '@/stores/devices';
 
 import useStore from '@/modules/target/stores/index';
 import helpers from '@/modules/target/helpers';
-
-const spiderman = inject('$spiderman');
 
 const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);

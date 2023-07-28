@@ -1,9 +1,8 @@
-import { ref, inject } from 'vue';
+import spiderman from '@/spiderman';
+import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
 export default defineStore('device', () => {
-  const spiderman = inject('$spiderman');
-
   const devices = ref([]);
 
   async function getDevices(sessionId) {

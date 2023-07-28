@@ -55,16 +55,15 @@
 </template>
 
 <script setup>
-import { inject, ref } from 'vue';
+import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import spiderman from '@/spiderman';
 
 import NavigationBar from '@/modules/target/components/NavigationBar.vue';
 
 import useStore from '@/modules/target/stores/index';
 
 import useDevices from '@/stores/devices';
-
-const spiderman = inject('$spiderman');
 
 const store = useStore();
 const { selectedFace } = storeToRefs(store);

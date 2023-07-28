@@ -1,12 +1,12 @@
-import { inject, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
+import spiderman from '@/spiderman';
+
 import { useI18n } from 'vue-i18n';
 
 const LOCAL_STORAGE_KEY = 'language';
 
 export default defineStore('language', () => {
-  const spiderman = inject('$spiderman');
-
   const language = ref(getLanguage());
   function getLanguage() {
     const defaultLanguage = 'en';

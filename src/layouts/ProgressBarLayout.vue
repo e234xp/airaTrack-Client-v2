@@ -69,7 +69,8 @@
 </template>
 
 <script setup>
-import { inject, ref, onUnmounted } from 'vue';
+import { ref, onUnmounted } from 'vue';
+import spiderman from '@/spiderman';
 
 import airaTrack from '@/assets/base64-images/airaTrack';
 
@@ -77,8 +78,6 @@ import useUserStore from '@/stores/user';
 
 const userStore = useUserStore();
 const { user } = userStore;
-
-const spiderman = inject('$spiderman');
 
 // 定義目前時間
 const current = ref({

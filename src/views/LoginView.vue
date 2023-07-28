@@ -94,7 +94,9 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
+import spiderman from '@/spiderman';
+
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
@@ -104,8 +106,6 @@ import useSubmit from '@/composable/useSubmit';
 import useUserStore from '@/stores/user';
 import useLanguageStore from '@/stores/language';
 import useDevices from '@/stores/devices';
-
-const spiderman = inject('$spiderman');
 
 const router = useRouter();
 

@@ -51,13 +51,12 @@
 
 <script setup>
 import {
-  inject, onMounted, computed, watch,
+  onMounted, computed, watch,
 } from 'vue';
+import spiderman from '@/spiderman';
 
 import Chart from 'chart.js/auto';
 import annotationPlugin from 'chartjs-plugin-annotation';
-
-const spiderman = inject('$spiderman');
 
 // selectedDate 與外部做連接
 const props = defineProps({

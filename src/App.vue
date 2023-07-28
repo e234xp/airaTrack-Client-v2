@@ -14,12 +14,10 @@
 </template>
 
 <script setup>
-import { inject } from 'vue';
+import spiderman from '@/spiderman';
 
 import background from '@/assets/base64-images/background';
 
 import errorStore from '@/stores/error';
-
-const spiderman = inject('$spiderman');
 
 </script>
