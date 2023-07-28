@@ -1,13 +1,13 @@
 <template>
-  <PageList
-    v-if="page === 'list'"
-  />
-  <PageDetail
-    v-else-if="page === 'detail'"
-  />
-  <PageAddingInvestgation
-    v-else-if="page === 'adding-investgation'"
-  />
+  <KeepAlive include="PageList">
+    <component
+      :is="{
+        list: PageList,
+        detail: PageDetail,
+        'adding-investgation': PageAddingInvestgation,
+      }[page]"
+    />
+  </KeepAlive>
 </template>
 
 <script setup>
