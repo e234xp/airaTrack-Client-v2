@@ -6,9 +6,9 @@
     <AppButton
       type="transparent"
       active-type="baseline"
-      :is-active="page === 'wall'"
+      :is-active="page === 'list'"
       class="px-8 py-4 font-bold text-2xl"
-      @click="setPage('wall')"
+      @click="setPage('list')"
     >
       {{ $t('Faces') }}
     </AppButton>

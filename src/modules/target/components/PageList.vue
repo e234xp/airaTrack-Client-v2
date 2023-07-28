@@ -21,72 +21,49 @@
 
       <template #grow>
         <template
-          v-for="hourFaceKey in hourFaceKeys"
-          :key="hourFaceKey"
+          v-for="faceKey in hourFaceKeys"
+          :key="faceKey"
         >
           <div
-            v-show="hourFaces[hourFaceKey].length > 0"
+            v-show="hourFaces[faceKey].length > 0"
             class="flex justify-center mb-20 px-5"
           >
-            <div class="font-bold text-white text-2xl mr-5">
-              {{ spiderman.dayjs(Number(hourFaceKey)).format('HH:mm') }}
-            </div>
             <div class="w-full 2xl:w-9/12">
-              <AppPagination
-                :current-page="hourFacePaginations[hourFaceKey].currentPage"
-                :total-items="hourFacePaginations[hourFaceKey].totalItems"
-                @on-turn-page="hourFacePaginations[hourFaceKey].onTurnPage"
-                class="mb-6"
-              />
-
-              <div class="aira-row-auto-2 gap-8">
-                <div
-                  v-for="face in hourFaces[hourFaceKey]"
-                  :key="face.data.id"
-                  @click="handleToggleFace(face)"
-                  class="select-none relative cursor-pointer border-4"
-                >
-                  <img
-                    class="w-full h-full"
-                    :src="spiderman.base64Image.getSrc(face.data.face_image)"
-                    alt=""
-                  >
-                  <div class="absolute top-0 left-0 w-full h-full flex justify-end items-end">
-                    <div
-                      class="w-8 h-8 rounded flex justify-center items-center
-                        text-lg font-bold"
-                      :class="{
-                        'bg-white text-gray-800': face.data.id !== 1,
-                      }"
-                    >
-                      1
-                    </div>
+              <div class="flex mb-5 justify-between">
+                <div class="flex">
+                  <div class="grid content-center font-bold text-white text-2xl mr-5">
+                    {{ spiderman.dayjs(Number(faceKey)).format('HH:mm') }}
                   </div>
-                  <template
-                    v-if="face.data.id === selectedFace?.data.id"
+                  <AppPagination
+                    :current-page="hourFacePaginations[faceKey].currentPage"
+                    :total-items="hourFacePaginations[faceKey].totalItems"
+                    @on-turn-page="hourFacePaginations[faceKey].onTurnPage"
+                    class="mr-5"
+                  />
+                </div>
+                <div class="grid content-center">
+                  <AppButton
+                    type="secondary"
+                    class="px-5 py-1"
+                    @click="handleToDetail(faceKey)"
                   >
-                    <div
-                      class="absolute inset-0 bg-gray-900 opacity-40"
-                    />
-                    <div
-                      class="absolute top-0 left-0 w-full h-full
-                       flex items-center justify-center"
-                    >
-                      <AppSvgIcon
-                        name="icon-check"
-                        class="text-white w-16 h-16"
-                      />
-                    </div>
-                  </template>
+                    {{ $t('Detail') }}
+                  </AppButton>
                 </div>
               </div>
+
+              <FaceList
+                :faces="hourFaces[faceKey]"
+                :selected-face="selectedFace"
+                :on-toggle-face="handleToggleFace"
+              />
             </div>
           </div>
         </template>
       </template>
     </FullLayout>
 
-    <TargetSideBar />
+    <SideBar />
   </ProgressBarLayout>
 </template>
 
@@ -98,12 +75,14 @@ import { storeToRefs } from 'pinia';
 
 import NavigationBar from '@/modules/target/components/NavigationBar.vue';
 import DayChart from '@/modules/target/components/DayChart.vue';
-import TargetSideBar from '@/modules/target/components/SideBar.vue';
+import SideBar from '@/modules/target/components/SideBar.vue';
+import FaceList from '@/modules/target/components/FaceList.vue';
 
 import useUserStore from '@/stores/user';
 import useDevices from '@/stores/devices';
 
 import useStore from '@/modules/target/stores/index';
+import helpers from '@/modules/target/helpers';
 
 const spiderman = inject('$spiderman');
 
@@ -111,6 +90,7 @@ const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
 const devicesStore = useDevices();
 const { livedevices } = storeToRefs(devicesStore);
+const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
 
 const selectedDate = ref(spiderman.dayjs().format('YYYY-MM-DD'));
 const selectedHour = ref(parseInt(spiderman.dayjs().format('HH'), 10));
@@ -121,7 +101,7 @@ const hourFacePaginations = ref({});
 
 const store = useStore();
 const { selectedFace } = storeToRefs(store);
-const { setSelectedFace } = store;
+const { setSelectedFace, setPage, setSelectedFaceKey } = store;
 
 watch([selectedDate, selectedHour], ([date, hour]) => {
   getLiveFaceHourly({ date, hour });
@@ -130,7 +110,6 @@ watch([selectedDate, selectedHour], ([date, hour]) => {
 async function getLiveFaceHourly({ date, hour }) {
   const TEN_MINUTES_MS = 600000;
 
-  // 設定 keys
   hourFaces.value = (() => {
     const firstKey = spiderman.dayjs(`${date} ${hour}:00:00`).valueOf();
 
@@ -143,6 +122,7 @@ async function getLiveFaceHourly({ date, hour }) {
     return tmp;
   })();
 
+  // 設定 keys
   hourFaceKeys.value = Object.keys(hourFaces.value)
     .reverse()
     .map((key) => Number(key));
@@ -157,10 +137,9 @@ async function getLiveFaceHourly({ date, hour }) {
 
         const startTime = key;
         const endTime = startTime + TEN_MINUTES_MS;
-        const { totalItems, data } = await getLiveFaces({
-          startTime,
-          endTime,
-          page: pageNumber,
+
+        const { totalItems, data } = await helpers.getLiveFaces({
+          startTime, endTime, page: pageNumber, perPage: 24, cameraList, sessionId: sessionId.value,
         });
 
         hourFaces.value[key] = data;
@@ -198,43 +177,16 @@ onUnmounted(() => {
   clearInterval(timer);
 });
 
-async function getLiveFaces({ startTime, endTime, page }) {
-  const PER_PAGE = 24;
-  const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
-  const data = {
-    liveupdate: false,
-    unifaceupdate: false,
-    start_time: startTime,
-    end_time: endTime,
-    camera_list: cameraList,
-    duration: endTime - startTime,
-    slice_length: PER_PAGE,
-    slice_shift: (page - 1) * PER_PAGE,
-    withImage: true,
-  };
-
-  const {
-    data: {
-      result: { total_length: totalLength, data: { 0: { value } } },
-    },
-  } = await spiderman.apiService({
-    url: `${spiderman.system.apiBaseUrl}/airaTracker/liveface`,
-    method: 'post',
-    headers: { sessionId: sessionId.value },
-    data,
-  });
-
-  return {
-    totalItems: totalLength,
-    data: value,
-  };
-}
-
 function handleToggleFace(face) {
   if (selectedFace.value?.data?.id === face.data.id) {
     setSelectedFace(null);
   } else {
     setSelectedFace(face);
   }
+}
+
+function handleToDetail(faceKey) {
+  setSelectedFaceKey(faceKey);
+  setPage('detail');
 }
 </script>

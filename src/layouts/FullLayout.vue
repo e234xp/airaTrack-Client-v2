@@ -6,5 +6,6 @@
     >
       <slot name="grow" />
     </div>
+    <slot name="footer" />
   </div>
 </template>

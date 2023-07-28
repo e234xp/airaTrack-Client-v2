@@ -6,7 +6,7 @@ import apiService from './api-service';
 
 const system = {
   version: '2.0.0',
-  apiBaseUrl: 'http://192.168.10.162:8083',
+  apiBaseUrl: 'http://211.75.111.228:8083',
 };
 
 export default {
