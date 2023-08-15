@@ -44,19 +44,11 @@
           />
         </div>
       </div>
-      <div
-        v-else-if="type === 'checkbox'"
-        class="text-white text-3xl"
-      >
-        <input
-          type="checkbox"
-          class="w-4 h-4 mr-2 focus:ring-2 focus:ring-primary-500"
-        >
-        {{ placeholder }}
-      </div>
+
       <input
         v-else
-        class="shadow appearance-none border rounded w-full h-12 px-3 text-gray-700 leading-tight focus:border-primary focus:shadow-outline"
+        class="shadow appearance-none border rounded
+        w-full h-12 px-3 text-gray-700 leading-tight focus:border-primary focus:shadow-outline"
         :class="{
           'border-red-500': isShowError
         }"
@@ -83,13 +75,13 @@ import {
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
-  modelInput: {
-    type: String,
-    default: '',
-  },
   type: {
     type: String,
     default: 'text',
+  },
+  modelInput: {
+    type: String,
+    default: '',
   },
   placeholder: {
     type: String,
