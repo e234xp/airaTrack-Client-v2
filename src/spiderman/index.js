@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import lodash from 'lodash';
 
 import localStorage from './local-storage';
 import base64Image from './base64-image';
@@ -11,6 +12,7 @@ const system = {
 
 export default {
   dayjs,
+  lodash,
   localStorage,
   base64Image,
   apiService,

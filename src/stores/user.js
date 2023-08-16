@@ -8,9 +8,7 @@ export default defineStore('user', () => {
 
   async function loginUser(form) {
     const {
-      data: {
-        sessionId: tmpSessionId, user: tmpUser,
-      },
+      sessionId: tmpSessionId, user: tmpUser,
     } = await spiderman.apiService({
       url: `${spiderman.system.apiBaseUrl}/airaTracker/login`,
       method: 'post',

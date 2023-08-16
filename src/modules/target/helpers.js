@@ -16,9 +16,7 @@ async function getLiveFaces({
   };
 
   const {
-    data: {
-      result: { total_length: totalLength, data: { 0: { value } } },
-    },
+    result: { total_length: totalLength, data: { 0: { value } } },
   } = await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/liveface`,
     method: 'post',

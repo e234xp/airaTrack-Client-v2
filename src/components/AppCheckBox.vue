@@ -1,15 +1,14 @@
 <template>
   <div class="flex justify-between">
-    <div
-      class="text-white text-3xl"
-    >
+    <div>
       <input
         type="checkbox"
         class="w-4 h-4 mr-2 focus:ring-2 focus:ring-primary-500"
         v-model="input"
         :value="value"
-        @input="onInput"
+        @change="$emit('onChange')"
         :disabled="disabled"
+        :checked="checked"
       >
       {{ placeholder }}
     </div>
@@ -58,15 +57,13 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  onInput: {
-    type: Function,
-    default() {
-      return null;
-    },
+  checked: {
+    type: Boolean,
+    default: false,
   },
 });
 
-const emit = defineEmits(['update:modelInput', 'submit']);
+const emit = defineEmits(['update:modelInput', 'submit', 'onChange']);
 const input = computed({
   get: () => props.modelInput,
   set: (value) => emit('update:modelInput', value),

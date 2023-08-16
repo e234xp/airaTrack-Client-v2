@@ -6,7 +6,7 @@ export default defineStore('device', () => {
   const devices = ref([]);
 
   async function getDevices(sessionId) {
-    const { data: { data } } = await spiderman.apiService({
+    const { data } = await spiderman.apiService({
       url: `${spiderman.system.apiBaseUrl}/airaTracker/devices`,
       method: 'get',
       headers: { sessionId },
@@ -22,7 +22,7 @@ export default defineStore('device', () => {
   const livedevices = ref([]);
 
   async function getLiveDevices(sessionId) {
-    const { data: { data } } = await spiderman.apiService({
+    const { data } = await spiderman.apiService({
       url: `${spiderman.system.apiBaseUrl}/airaTracker/livedevices`,
       method: 'get',
       headers: { sessionId },

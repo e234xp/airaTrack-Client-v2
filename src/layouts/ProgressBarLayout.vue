@@ -14,6 +14,7 @@
       <div class="grid grid-flow-col content-center text-gray-300 text-3xl font-bold">
         <AppButton
           type="transparent"
+          @click="$router.push({ path: '/target' })"
           :is-active="$route.path === '/target'"
           class="mx-10"
         >
@@ -21,6 +22,7 @@
         </AppButton>
         <AppButton
           type="transparent"
+          @click="$router.push({ path: '/investigation' })"
           :is-active="$route.path === '/investigation'"
           class="mx-10"
         >

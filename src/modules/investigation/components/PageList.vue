@@ -1,0 +1,240 @@
+<template>
+  <ProgressBarLayout>
+    <FullLayout>
+      <template #header>
+        <NavigationBar />
+      </template>
+
+      <template #grow>
+        <div
+          v-for="item in list"
+          v-show="dataType === 'all' || item.data_type === dataType"
+          :key="item.task_id"
+          class="border-b-2 border-gray-400 mx-8 py-8 flex"
+        >
+          <img
+            class="w-72 h-72 mr-8"
+            :src="spiderman.base64Image.getSrc(item.target_face_image)"
+            alt=""
+          >
+
+          <div class="flex-grow text-white text-2xl">
+            <div class="flex justify-around py-2">
+              <div class="w-32 mr-8 flex items-center content-center">
+                {{ item.data_type }}
+              </div>
+              <div class="w-full flex items-center">
+                <div class="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700">
+                  <div
+                    class="h-3.5 rounded-full"
+                    :class="{
+                      'bg-green-600': item.progress === 100,
+                      'bg-red-300': item.progress !== 100,
+                    }"
+                    :style="{
+                      width: `${item.progress}%`,
+                      transition: 'width 0.5s'
+                    }"
+                  />
+                </div>
+              </div>
+              <div class="mx-8 flex items-center content-center">
+                <div>
+                  {{ item.progress }}
+                </div>
+                <div>%</div>
+              </div>
+              <div class="flex w-112">
+                <AppButton
+                  type="secondary"
+                  class="mr-6 py-2 px-8"
+                  @click="handleRemoveTask(item.task_id)"
+                >
+                  {{ $t("Delete") }}
+                </AppButton>
+                <AppButton
+                  v-if="item.data_type==='stop' || item.data_type==='progress'"
+                  type="primary"
+                  class="py-2 px-8"
+                  :is-enable="canStartTask"
+                  @click="handleStartTask(item.task_id)"
+                >
+                  {{ $t("StartTask") }}
+                </AppButton>
+                <AppButton
+                  v-else-if="item.data_type==='finish'"
+                  type="primary"
+                  class="py-2 px-8"
+                >
+                  {{ $t("Detail") }}
+                </AppButton>
+              </div>
+            </div>
+            <div class="flex py-2">
+              <div class="w-60">
+                Task Name:
+              </div>
+              <div>
+                {{ item.task_name }}
+              </div>
+            </div>
+            <div class="flex py-2">
+              <div class="w-60">
+                Running Time:
+              </div>
+              <div class="flex">
+                <template v-if="!item.running_start_time && !item.running_end_time">
+                  -
+                </template>
+                <template v-else>
+                  <div>
+                    {{ spiderman.dayjs(item.running_start_time).format('YYYY-MM-DD HH:mm:ss') }}
+                  </div>
+                  <div class="mx-5">
+                    |
+                  </div>
+                  <div>
+                    {{ spiderman.dayjs(item.running_end_time).format('YYYY-MM-DD HH:mm:ss') }}
+                  </div>
+                </template>
+              </div>
+            </div>
+            <div class="flex py-2">
+              <div class="w-60">
+                Start | End Time:
+              </div>
+              <div class="flex">
+                <template v-if="!item.search_start_time && !item.search_end_time">
+                  -
+                </template>
+                <template v-else>
+                  <div>
+                    {{ spiderman.dayjs(item.search_start_time).format('YYYY-MM-DD HH:mm:ss') }}
+                  </div>
+                  <div class="mx-5">
+                    |
+                  </div>
+                  <div>
+                    {{ spiderman.dayjs(item.search_end_time).format('YYYY-MM-DD HH:mm:ss') }}
+                  </div>
+                </template>
+              </div>
+            </div>
+            <div class="flex py-2">
+              <div class="w-60">
+                Live Channel:
+              </div>
+              <div class="flex-grow aira-row-auto-8 gap-y-2">
+                <template v-if="item.livechannels.length === 0">
+                  -
+                </template>
+                <template v-else>
+                  <div
+                    v-for="livechannel in item.livechannels"
+                    :key="livechannel.camera_id"
+                  >
+                    {{ livechannel.name }}
+                  </div>
+                </template>
+              </div>
+            </div>
+            <div class="flex py-2">
+              <div class="w-60">
+                Nx Video Archive:
+              </div>
+              <div class="flex-grow aira-row-auto-8 gap-y-2">
+                <template v-if="item.archchannels.length === 0">
+                  -
+                </template>
+                <template v-else>
+                  <div
+                    v-for="archchannel in item.archchannels"
+                    :key="archchannel.camera_id"
+                  >
+                    {{ archchannel.name }}
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </FullLayout>
+  </ProgressBarLayout>
+</template>
+
+<script setup>
+import {
+  ref, onMounted,
+} from 'vue';
+import { storeToRefs } from 'pinia';
+import spiderman from '@/spiderman';
+import NavigationBar from '@/modules/investigation/components/NavigationBar.vue';
+
+import useStore from '@/modules/investigation/stores/index';
+import useUserStore from '@/stores/user';
+
+const store = useStore();
+const { dataType } = storeToRefs(store);
+
+const userStore = useUserStore();
+const { sessionId } = storeToRefs(userStore);
+
+const list = ref([]);
+
+onMounted(() => {
+  refreshList();
+});
+
+async function refreshList() {
+  const { task_list: taskList } = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/v2/gettasklistwithoutResult`,
+    method: 'post',
+    headers: { sessionId: sessionId.value },
+  });
+  list.value = taskList.reverse();
+}
+
+const canStartTask = ref(true);
+async function handleStartTask(taskId) {
+  try {
+    // 其他 task 不能開始
+    canStartTask.value = false;
+
+    await spiderman.apiService({
+      url: `${spiderman.system.apiBaseUrl}/airaTracker/v2/starttask`,
+      method: 'post',
+      headers: { sessionId: sessionId.value },
+      data: { task_id: taskId },
+    });
+
+    const refreshIntervalID = setInterval(
+      async () => {
+        await refreshList();
+        const isFinish = (list.value
+          .find((item) => (item.task_id === taskId)))
+          .progress === 100;
+
+        if (isFinish) {
+          canStartTask.value = true;
+          clearInterval(refreshIntervalID);
+        }
+      },
+      1 * 1000,
+    );
+  } catch {
+    canStartTask.value = true;
+  }
+}
+
+async function handleRemoveTask(taskId) {
+  await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/v2/removetask`,
+    method: 'post',
+    headers: { sessionId: sessionId.value },
+    data: { task_id: taskId },
+  });
+
+  list.value = list.value.filter((item) => (item.task_id !== taskId));
+}
+</script>

@@ -44,13 +44,26 @@
                       Live Channel
                       ({{ form.livechannels.length }}/{{ liveChannelAmount }})
                     </div>
+
                     <div
                       class="border-t-4 border-primary rounded bg-gray-800 bg-opacity-50 py-2 px-4"
                     >
                       <AppCheckBox
+                        class="mb-7 text-3xl text-white"
+                        :placeholder="$t('All')"
+                        :checked="form.livechannels.length===livedevices.length"
+                        @on-change="()=>{
+                          if(form.livechannels.length===livedevices.length){
+                            form.livechannels = [];
+                          } else {
+                            form.livechannels = spiderman.lodash.cloneDeep(livedevices);
+                          }
+                        }"
+                      />
+                      <AppCheckBox
                         v-for="livedevice in livedevices"
                         :key="livedevice.camera_id"
-                        class="mb-3"
+                        class="mb-4 text-3xl text-white"
                         :placeholder="livedevice.name"
                         v-model:modelInput="form.livechannels"
                         :value="livedevice"
@@ -70,9 +83,21 @@
                       class="border-t-4 border-primary rounded bg-gray-800 bg-opacity-50 py-2 px-4"
                     >
                       <AppCheckBox
+                        class="mb-7 text-3xl text-white"
+                        :placeholder="$t('All')"
+                        :checked="form.archchannels.length===devices.length"
+                        @on-change="()=>{
+                          if(form.archchannels.length===devices.length){
+                            form.archchannels = [];
+                          } else {
+                            form.archchannels = spiderman.lodash.cloneDeep(devices);
+                          }
+                        }"
+                      />
+                      <AppCheckBox
                         v-for="device in devices"
                         :key="device.camera_id"
-                        class="mb-3"
+                        class="mb-4 text-3xl text-white"
                         :placeholder="device.name"
                         v-model:modelInput="form.archchannels"
                         :value="device"
@@ -111,6 +136,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
+
 import spiderman from '@/spiderman';
 
 import NavigationBar from '@/modules/target/components/NavigationBar.vue';
@@ -119,6 +146,8 @@ import useStore from '@/modules/target/stores/index';
 
 import useDevices from '@/stores/devices';
 import useUserStore from '@/stores/user';
+
+const router = useRouter();
 
 const store = useStore();
 const { selectedFace } = storeToRefs(store);
@@ -133,7 +162,7 @@ const { sessionId } = storeToRefs(userStore);
 const liveChannelAmount = ref(0);
 const archiveAmount = ref(0);
 onMounted(async () => {
-  const { data: { license } } = await spiderman.apiService({
+  const { license } = await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/license`,
     method: 'get',
     headers: { sessionId: sessionId.value },
@@ -176,7 +205,7 @@ const form = ref({
 });
 
 async function handleAddTask(theForm) {
-  const taskForm = theForm;
+  const taskForm = spiderman.lodash.cloneDeep(theForm);
   taskForm.search_start_time = spiderman.dayjs(theForm.search_start_time).valueOf();
   taskForm.search_end_time = spiderman.dayjs(theForm.search_end_time).valueOf();
 
@@ -186,5 +215,7 @@ async function handleAddTask(theForm) {
     headers: { sessionId: sessionId.value },
     data: taskForm,
   });
+
+  router.push({ path: '/investigation' });
 }
 </script>
