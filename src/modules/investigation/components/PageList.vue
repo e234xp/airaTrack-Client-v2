@@ -65,6 +65,7 @@
                   v-else-if="item.data_type==='finish'"
                   type="primary"
                   class="py-2 px-8"
+                  @click="handleToPageDetail(item)"
                 >
                   {{ $t("Detail") }}
                 </AppButton>
@@ -176,6 +177,7 @@ import useUserStore from '@/stores/user';
 
 const store = useStore();
 const { dataType } = storeToRefs(store);
+const { setPage, setSelectedTask } = store;
 
 const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
@@ -236,5 +238,10 @@ async function handleRemoveTask(taskId) {
   });
 
   list.value = list.value.filter((item) => (item.task_id !== taskId));
+}
+
+async function handleToPageDetail(item) {
+  setPage('detail');
+  setSelectedTask(item);
 }
 </script>

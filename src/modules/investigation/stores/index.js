@@ -5,6 +5,7 @@ export default defineStore('module-investigation', () => {
   const initialState = {
     page: 'list',
     dataType: 'all',
+    selectedTask: null,
   };
 
   const page = ref(initialState.page);
@@ -15,6 +16,11 @@ export default defineStore('module-investigation', () => {
   const dataType = ref(initialState.dataType);
   function setDataType(data) {
     dataType.value = data;
+  }
+
+  const selectedTask = ref(initialState.selectedTask);
+  function setSelectedTask(data) {
+    selectedTask.value = data;
   }
 
   function initStore() {
@@ -30,5 +36,8 @@ export default defineStore('module-investigation', () => {
 
     dataType,
     setDataType,
+
+    selectedTask,
+    setSelectedTask,
   };
 });

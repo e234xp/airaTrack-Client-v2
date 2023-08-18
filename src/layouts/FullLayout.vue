@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full flex flex-col">
+  <div class="h-full w-full flex flex-col">
     <slot name="header" />
     <div
       class="flex-grow overflow-y-auto flex flex-col"
