@@ -90,14 +90,15 @@ function pause() {
 // 處理時間條的客製化
 const currentTime = ref(0);
 function handleTimeUpdate() {
+  if (!videoRef.value) return;
   // todo 刪除
-  console.log(videoRef.value.currentTime);
+  // console.log(videoRef.value.currentTime);
   currentTime.value = videoRef.value.currentTime;
 }
 
 function handleSliderInput() {
   // todo 刪除
-  console.log('set', typeof currentTime.value, currentTime.value);
+  // console.log('set', typeof currentTime.value, currentTime.value);
   videoRef.value.currentTime = currentTime.value;
 }
 

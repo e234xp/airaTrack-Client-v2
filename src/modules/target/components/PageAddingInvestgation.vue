@@ -11,7 +11,7 @@
             <div class="aira-row-auto-10 gap-4">
               <img
                 class="w-full"
-                :src="spiderman.base64Image.getSrc(selectedFace?.data.face_image)"
+                :src="spiderman.base64Image.getSrc(confirmedFace?.data.face_image)"
                 alt=""
               >
 
@@ -150,7 +150,7 @@ import useUserStore from '@/stores/user';
 const router = useRouter();
 
 const store = useStore();
-const { selectedFace } = storeToRefs(store);
+const { confirmedFace } = storeToRefs(store);
 const { setPage } = store;
 
 const devicesStore = useDevices();
@@ -182,11 +182,11 @@ onMounted(async () => {
 
 const form = ref({
   target: {
-    camera_id: selectedFace.value.camera_id,
-    timestamp: selectedFace.value.timestamp,
+    camera_id: confirmedFace.value.camera_id,
+    timestamp: confirmedFace.value.timestamp,
   },
-  target_face_image: selectedFace.value.data.face_image,
-  feature: selectedFace.value.data.feature,
+  target_face_image: confirmedFace.value.data.face_image,
+  feature: confirmedFace.value.data.feature,
   target_score: 0.5,
   search_motion: true,
   subtasks: [],
@@ -195,10 +195,10 @@ const form = ref({
 
   // 以下是 UI 會控制
   search_start_time: spiderman
-    .dayjs(selectedFace.value.timestamp)
+    .dayjs(confirmedFace.value.timestamp)
     .subtract(10, 'minute')
     .format('YYYY-MM-DD HH:mm'),
-  search_end_time: spiderman.dayjs(selectedFace.value.timestamp).format('YYYY-MM-DD HH:mm'),
+  search_end_time: spiderman.dayjs(confirmedFace.value.timestamp).format('YYYY-MM-DD HH:mm'),
   task_name: `task-${spiderman.dayjs().format('YYYYMMDD')}`,
   livechannels: [],
   archchannels: [],

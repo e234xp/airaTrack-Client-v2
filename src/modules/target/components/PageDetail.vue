@@ -18,8 +18,6 @@
           <div class="w-full 2xl:w-9/12">
             <FaceList
               :faces="faces"
-              :selected-face="selectedFace"
-              :on-toggle-face="handleToggleFace"
             />
           </div>
         </div>
@@ -56,8 +54,8 @@ import useStore from '@/modules/target/stores/index';
 import helpers from '@/modules/target/helpers';
 
 const store = useStore();
-const { selectedFace, selectedFaceKey } = storeToRefs(store);
-const { setSelectedFace, setPage } = store;
+const { selectedFaceKey } = storeToRefs(store);
+const { setPage } = store;
 
 const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
@@ -108,11 +106,4 @@ onUnmounted(() => {
   clearInterval(timer);
 });
 
-function handleToggleFace(face) {
-  if (selectedFace.value?.data?.id === face.data.id) {
-    setSelectedFace(null);
-  } else {
-    setSelectedFace(face);
-  }
-}
 </script>

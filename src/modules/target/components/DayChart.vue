@@ -2,7 +2,7 @@
   <div class="flex py-6">
     <div
       @click="
-        setDate(spiderman.dayjs(selectedDate).subtract(1,'day'))
+        handlePrevDate()
       "
       class="w-16 rounded border-2 bg-gray-800
         mx-3 grid justify-center content-center text-white
@@ -28,7 +28,7 @@
     </div>
     <div
       @click="
-        setDate(spiderman.dayjs(selectedDate).add(1,'day'))
+        handleNextDate()
       "
       class="w-16 rounded border-2 bg-gray-800
         mx-3 grid justify-center content-center text-white
@@ -51,12 +51,23 @@
 
 <script setup>
 import {
-  onMounted, computed, watch,
+  onMounted, computed, watch, onUnmounted,
 } from 'vue';
+import { storeToRefs } from 'pinia';
 import spiderman from '@/spiderman';
+import errorStore from '@/stores/error';
 
 import Chart from 'chart.js/auto';
 import annotationPlugin from 'chartjs-plugin-annotation';
+
+import useUserStore from '@/stores/user';
+import useDevices from '@/stores/devices';
+
+const userStore = useUserStore();
+const { sessionId } = storeToRefs(userStore);
+
+const devicesStore = useDevices();
+const { livedevices } = storeToRefs(devicesStore);
 
 // selectedDate 與外部做連接
 const props = defineProps({
@@ -90,14 +101,25 @@ function setHour(hour) {
   selectedHour.value = hour;
 }
 
-watch(selectedDate, (date) => {
-  renderByDate(date);
-});
+function handlePrevDate() {
+  setDate(spiderman.dayjs(selectedDate.value).subtract(1, 'day'));
+}
+function handleNextDate() {
+  const now = spiderman.dayjs();
+
+  if (now.isSame(selectedDate.value, 'date')) {
+    errorStore.show({ error: new Error('PleaseSelectBeforePresent') });
+    return;
+  }
+
+  setDate(spiderman.dayjs(selectedDate.value).add(1, 'day'));
+}
 
 // 以下處理 chart
 Chart.register(annotationPlugin);
 
 let chart;
+let renderInterval;
 onMounted(() => {
   const ctx = document.getElementById('chart');
 
@@ -159,34 +181,68 @@ onMounted(() => {
 
         const { index } = res[0];
         const hour = chart.data.labels[index];
+
+        // 判斷是否是按下未來的時間
+        const isFuture = (() => {
+          const now = spiderman.dayjs();
+          const tmpIsFuture = now.isSame(selectedDate.value, 'date') && now.hour() < hour;
+
+          return tmpIsFuture;
+        })();
+        if (isFuture) {
+          errorStore.show({ error: new Error('PleaseSelectBeforePresent') });
+          return;
+        }
+
         setHour(hour);
         renderHourAnnotation(hour);
       },
     },
   });
 
-  renderByDate(spiderman.dayjs().format('YYYY-MM-DD'));
+  renderByDate(selectedDate.value);
+  renderInterval = setInterval(
+    () => {
+      renderByDate(selectedDate.value);
+    },
+    10 * 1000,
+  );
 });
 
-function renderByDate(date) {
-  // todo 改為真實串接
-  const data = {
-    [spiderman.dayjs().add(1, 'day').format('YYYY-MM-DD')]: [12, 19, 3, 5, 2, 3, 8, 6, 15, 12, 7,
-      10, 9, 11, 14, 13, 4, 8, 16, 18, 20, 17, 6, 9],
-    [spiderman.dayjs().format('YYYY-MM-DD')]: [12, 19, 3, 5, 2, 3, 8, 6, 15, 12, 7,
-      10, 9, 11, 14, 13, 4, 8, 16, 18, 30, 17, 6, 9],
-    [spiderman.dayjs().subtract(1, 'day').format('YYYY-MM-DD')]: [12, 19, 3, 5, 2, 3, 8, 6, 15, 12, 7,
-      10, 9, 11, 14, 13, 4, 8, 16, 18, 40, 17, 6, 9],
-  };
+watch(selectedDate, (date) => {
+  renderByDate(date);
+  const now = spiderman.dayjs();
 
-  const dataOfDate = data[date];
+  if (now.isAfter(selectedDate.value, 'date')) return;
+  if (now.hour() >= selectedHour.value) return;
+  setHour(now.hour());
+  renderHourAnnotation(now.hour());
+});
+
+onUnmounted(() => {
+  clearInterval(renderInterval);
+});
+
+async function renderByDate(date) {
+  const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
+  // todo 改為真實串接
+  const { data: dataOfDate } = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/livefacehourlycount`,
+    method: 'post',
+    headers: { sessionId: sessionId.value },
+    data: {
+      report_date: date,
+      camera_list: cameraList,
+    },
+  });
+
   const maxOfData = Math.max(...dataOfDate);
 
   // 設定 data
   chart.data.datasets[0].data = dataOfDate;
 
   // 設定 最大高度
-  chart.options.scales.y.max = maxOfData + 5;
+  chart.options.scales.y.max = Math.floor(maxOfData * 1.1);
 
   // 設定 box 最大高度, 讓 box 回到 index = 0
   chart.options.plugins.annotation.annotations.box.yMax = chart.options.scales.y.max - 1;

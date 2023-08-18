@@ -54,8 +54,6 @@
 
               <FaceList
                 :faces="hourFaces[faceKey]"
-                :selected-face="selectedFace"
-                :on-toggle-face="handleToggleFace"
               />
             </div>
           </div>
@@ -99,8 +97,9 @@ const hourFaces = ref({});
 const hourFacePaginations = ref({});
 
 const store = useStore();
-const { selectedFace } = storeToRefs(store);
-const { setSelectedFace, setPage, setSelectedFaceKey } = store;
+const {
+  setPage, setSelectedFaceKey,
+} = store;
 
 watch([selectedDate, selectedHour], ([date, hour]) => {
   getLiveFaceHourly({ date, hour });
@@ -175,14 +174,6 @@ const timer = setInterval(() => {
 onUnmounted(() => {
   clearInterval(timer);
 });
-
-function handleToggleFace(face) {
-  if (selectedFace.value?.data?.id === face.data.id) {
-    setSelectedFace(null);
-  } else {
-    setSelectedFace(face);
-  }
-}
 
 function handleToDetail(faceKey) {
   setSelectedFaceKey(faceKey);
