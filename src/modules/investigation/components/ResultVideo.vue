@@ -66,7 +66,6 @@ defineProps({
     type: Number,
     default: 0,
   },
-
 });
 const emit = defineEmits([
   'onEnded', 'onPrev', 'onNext',

@@ -35,6 +35,11 @@ export default defineStore('device', () => {
     livedevices.value = data;
   }
 
+  function findDevice(cameraId) {
+    return livedevices.value.find((device) => device.camera_id === cameraId)
+    ?? devices.value.find((device) => device.camera_id === cameraId);
+  }
+
   return {
     devices,
     getDevices,
@@ -42,5 +47,7 @@ export default defineStore('device', () => {
     livedevices,
     getLiveDevices,
     setLiveDevices,
+
+    findDevice,
   };
 });

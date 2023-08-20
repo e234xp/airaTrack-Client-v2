@@ -78,9 +78,12 @@
                     class="flex-grow border-4 border-double rounded
                     flex text-white text-xl cursor-pointer"
                     :class="{
-                      'bg-gradient-to-br from-green-600 to-green-900':index===videoResultIndex
+                      'bg-gradient-to-br from-green-600 to-green-900':index === videoResultIndex
                     }"
-                    @click="setVideoResultIndex(index)"
+                    @click="setVideoResultIndex({
+                      index,
+                      results: taskResults,
+                    })"
                   >
                     <img
                       class="w-28 h-28 mr-8"
@@ -132,7 +135,7 @@
           </div>
 
           <div class="flex-grow">
-            <div class="m-4 flex text-white text-4xl">
+            <div class="mx-4 my-8 flex text-white text-4xl">
               <div class="mr-8">
                 {{
                   videoResult
@@ -149,6 +152,80 @@
                 }}
               </div>
             </div>
+
+            <div
+              class="mb-6 flex flex-col"
+              v-if="videoProgressBarTimeSlot?.startTime
+                && videoProgressBarTimeSlot?.endTime"
+            >
+              <div class="mb-4 flex justify-start text-white text-2xl">
+                <div class="px-4 whitespace-nowrap flex items-center">
+                  {{ spiderman.dayjs(videoProgressBarTimeSlot.startTime)
+                    .format('YYYY/MM/DD HH:mm:ss') }}
+                </div>
+                <div>
+                  ~
+                </div>
+                <div class="px-4 whitespace-nowrap flex items-center">
+                  {{ spiderman.dayjs(videoProgressBarTimeSlot.endTime)
+                    .format('YYYY/MM/DD HH:mm:ss') }}
+                </div>
+              </div>
+
+              <div class="mx-4 flex justify-center text-white">
+                <div
+                  class="flex items-center cursor-pointer"
+                  :class="{
+                    'invisible': videoProgressBarTimeSlot
+                      .startTime === videoProgressBarInfo?.minStartTime
+                  }"
+                  @click="setProgressBar({
+                    startTime: videoProgressBarTimeSlot.startTime - 1 * 60 * 60 * 1000,
+                    results: taskResults,
+                  })"
+                >
+                  <AppSvgIcon
+                    name="icon-chevron-left"
+                    class="w-8 h-8"
+                  />
+                </div>
+                <div class="relative w-full h-10 bg-gray-800 rounded-full">
+                  <div
+                    v-for="item in videoTimeSlotsPersentage"
+                    :key="item"
+                    class="absolute left-0 top-0 h-full bg-white rounded-full cursor-pointer"
+                    :class="{
+                      'bg-green-500': item.index === videoResultIndex
+                    }"
+                    :style="{
+                      left: `${item.start}%`,
+                      width: `${item.width}%`,
+                    }"
+                    @click="setVideoResultIndex({
+                      index: item.index,
+                      results: taskResults,
+                    })"
+                  />
+                </div>
+                <div
+                  class="flex items-center cursor-pointer"
+                  :class="{
+                    'invisible': videoProgressBarTimeSlot
+                      .startTime === videoProgressBarInfo?.maxStartTime
+                  }"
+                  @click="setProgressBar({
+                    startTime: videoProgressBarTimeSlot.startTime + 1 * 60 * 60 * 1000,
+                    results: taskResults,
+                  })"
+                >
+                  <AppSvgIcon
+                    name="icon-chevron-right"
+                    class="w-8 h-8"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div class="flex justify-center">
               <ResultVideo
                 :video-url="videoUrl"
@@ -177,9 +254,10 @@ import useUserStore from '@/stores/user';
 import NavigationBar from '@/modules/investigation/components/NavigationBar.vue';
 import ResultVideo from '@/modules/investigation/components/ResultVideo.vue';
 import useStore from '@/modules/investigation/stores/index';
+import useVideo from '@/modules/investigation/composable/video';
 
 const devicesStore = useDevices();
-const { livedevices, devices } = storeToRefs(devicesStore);
+const { findDevice } = devicesStore;
 
 const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
@@ -187,13 +265,27 @@ const { sessionId } = storeToRefs(userStore);
 const store = useStore();
 const { selectedTask } = storeToRefs(store);
 
-const targetDevice = computed(() => findDevice(selectedTask.value.target.camera_id));
+const {
+  videoResultIndex,
+  videoResult,
+  videoDuration,
+  videoUrl,
+  setVideoResultIndex,
+  prevVideo,
+  nextVideo,
 
+  videoProgressBarInfo,
+  videoProgressBarTimeSlot,
+  videoTimeSlotsPersentage,
+  setProgressBar,
+} = useVideo();
+
+const targetDevice = computed(() => findDevice(selectedTask.value.target.camera_id));
 const taskResults = ref([]);
 const targetScore = ref(0.8);
 watch(targetScore, async (newScore) => {
   await setTaskResults(newScore);
-  setVideoResultIndex(0);
+  setVideoResultIndex({ index: 0, results: taskResults.value });
 }, { immediate: true });
 
 async function setTaskResults(score) {
@@ -209,47 +301,4 @@ async function setTaskResults(score) {
   }));
 }
 
-const videoResultIndex = ref(null);
-const videoResult = ref(null);
-const videoDuration = ref(null);
-const videoUrl = ref(null);
-function setVideoResultIndex(i) {
-  videoResultIndex.value = i;
-  videoResult.value = taskResults.value[i];
-  videoDuration.value = (videoResult.value.endtime - videoResult.value.starttime) / 1000;
-  videoUrl.value = getVideoUrl(videoResult.value);
-}
-
-function getVideoUrl(result) {
-  if (!result) return '';
-
-  const {
-    starttime: startTime, endtime: endTime,
-    highest: { cid: cameraId },
-  } = result;
-  return `${spiderman.system.apiBaseUrl}/airaTracker/viewmedia?sessionId=${sessionId.value}&camera_id=${cameraId}&start_time=${startTime}&end_time=${endTime}`;
-}
-
-function prevVideo() {
-  if (videoResultIndex.value === 0) {
-    setVideoResultIndex(taskResults.value.length - 1);
-    return;
-  }
-  setVideoResultIndex(videoResultIndex.value - 1);
-}
-
-function nextVideo() {
-  if (videoResultIndex.value === taskResults.value.length - 1) {
-    setVideoResultIndex(0);
-    return;
-  }
-  setVideoResultIndex(videoResultIndex.value + 1);
-}
-
-function findDevice(id) {
-  return livedevices.value
-    .find((device) => device.camera_id === id)
-  ?? devices.value
-    .find((device) => device.camera_id === id);
-}
 </script>
