@@ -61,7 +61,7 @@ const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
 
 const store = useStore();
-const { selectedFace } = storeToRefs(store);
+const { selectedFace, confirmingFaces } = storeToRefs(store);
 const {
   setSelectedFace, setConfirmingFaces, setConfirmedFace,
 } = store;
@@ -74,14 +74,18 @@ async function handleToggleFace(face) {
   } else {
     setSelectedFace(face);
     setConfirmingFaces([]);
-    const confirmingFaces = await getConfirmingFaces(face);
-    setConfirmingFaces(confirmingFaces);
+    setConfirmingFacesAll(face);
     setConfirmedFace(face);
   }
 }
 
-async function getConfirmingFaces(face) {
-  const images = {};
+// return 出一個陣列
+let currentId;
+async function setConfirmingFacesAll(face) {
+  currentId = face.data.id;
+  setConfirmingFaces([face]);
+
+  let tmp = [];
   await Promise.allSettled(face.data.face_be_merged.map(async (f) => {
     const image = {};
     ({ b64: image.b64, feature: image.feature } = await spiderman.apiService({
@@ -93,25 +97,19 @@ async function getConfirmingFaces(face) {
       },
     }));
 
-    images[f.id] = image;
-    return { id: f.id };
-  }));
-
-  const mergedFaces = face.data.face_be_merged
-    .map((f) => ({
+    tmp = [...tmp, {
       camera_id: face.camera_id,
       timestamp: face.timestamp,
       data: {
         id: f.id,
         face_file: f.face_file,
-        face_image: images[f.id].b64,
-        feature: images[f.id].feature,
+        face_image: image.b64,
+        feature: image.feature,
       },
-    }));
+    }];
+    return { id: f.id };
+  }));
 
-  return [
-    face,
-    ...mergedFaces,
-  ];
+  setConfirmingFaces([...confirmingFaces.value, ...tmp]);
 }
 </script>
