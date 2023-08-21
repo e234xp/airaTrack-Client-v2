@@ -130,12 +130,19 @@ const validators = {
   },
 };
 
-const { isPassed, generateMessage } = validators[props.rule];
 const isShowError = computed(() => {
   if (!props.rule) return false;
+  const { isPassed } = validators[props.rule];
 
   return isPassed() && (hasTouched.value || props.hasSubmitted);
 });
-const errorMessage = computed(() => generateMessage());
+
+const errorMessage = computed(() => {
+  if (!props.rule) return '';
+
+  const { generateMessage } = validators[props.rule];
+
+  return generateMessage();
+});
 
 </script>

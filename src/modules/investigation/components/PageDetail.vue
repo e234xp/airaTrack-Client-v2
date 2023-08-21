@@ -57,13 +57,16 @@
                     </div>
                   </div>
                 </div>
-                <div class="mb-6 px-6 text-white text-3xl">
+                <div class="flex mb-6 px-6 text-white text-3xl">
                   <AppCheckBox
                     class="mx-4"
                     :placeholder="$t('SelectAll')"
                     :checked="selectedResultIndexes.length === taskResults.length"
                     @on-change="handleSelectAll"
                   />
+                  <div>
+                    ({{ selectedResultIndexes.length }})
+                  </div>
                 </div>
               </template>
 
@@ -112,10 +115,7 @@
                 <div class="py-4 px-4">
                   <div class="aira-row-auto-4 gap-4">
                     <AppButton
-                      v-print="{
-                        id: 'printPdf',
-                        popTitle: 'PDF',
-                      }"
+                      @click="handlePdfExport"
                       type="primary"
                       :is-enable="true"
                       class="px-16 py-3"
@@ -253,6 +253,7 @@
   </ProgressBarLayout>
 
   <PrintPdf
+    :form="pdfForm"
     :task="selectedTask"
     :results="selectedResults"
   />
@@ -281,7 +282,8 @@ const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
 
 const store = useStore();
-const { selectedTask } = storeToRefs(store);
+const { selectedTask, pdfForm } = storeToRefs(store);
+const { setModal } = store;
 
 const {
   videoResultIndex,
@@ -333,4 +335,9 @@ function handleSelectAll() {
 const selectedResults = computed(() => taskResults.value.filter(
   (_, index) => (selectedResultIndexes.value.includes(index)),
 ));
+
+function handlePdfExport() {
+  setModal('pdf');
+}
+
 </script>

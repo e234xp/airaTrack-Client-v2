@@ -7,7 +7,7 @@
         <div
           class="bg-primary rounded mb-6 px-8 py-4 text-white text-3xl"
         >
-          Investigation Report
+          {{ form.title }}
         </div>
 
         <div class="flex px-4">
@@ -17,6 +17,9 @@
             alt=""
           >
           <div class="flex-grow text-2xl">
+            <div class="mb-3">
+              {{ form.subject }}
+            </div>
             <div class="mb-3">
               {{ targetDevice.name }}
             </div>
@@ -69,7 +72,7 @@
           Remark
         </div>
         <div class="px-4">
-          Remark todo
+          {{ form.remark }}
         </div>
       </div>
     </div>
@@ -79,7 +82,7 @@
         <div
           class="bg-primary rounded mb-6 px-8 py-4 text-white text-3xl"
         >
-          Investigation Report
+          {{ form.title }}
         </div>
       </div>
 
@@ -139,6 +142,12 @@ const props = defineProps({
   },
   results: {
     type: Array,
+    default() {
+      return {};
+    },
+  },
+  form: {
+    type: Object,
     default() {
       return {};
     },

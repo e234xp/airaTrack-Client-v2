@@ -4,6 +4,12 @@ import { defineStore } from 'pinia';
 export default defineStore('module-investigation', () => {
   const initialState = {
     page: 'list',
+    modal: '',
+    pdfForm: {
+      title: 'Investigation Report',
+      subject: 'Subject',
+      remark: '',
+    },
     dataType: 'all',
     selectedTask: null,
   };
@@ -23,9 +29,22 @@ export default defineStore('module-investigation', () => {
     selectedTask.value = data;
   }
 
+  const modal = ref('');
+  function setModal(data) {
+    modal.value = data;
+  }
+
+  const pdfForm = ref(null);
+  function setPdfForm(data) {
+    pdfForm.value = data;
+  }
+
   function initStore() {
     setPage(initialState.page);
     setDataType(initialState.dataType);
+
+    setModal(initialState.modal);
+    setPdfForm(initialState.pdfForm);
   }
 
   return {
@@ -33,6 +52,12 @@ export default defineStore('module-investigation', () => {
 
     page,
     setPage,
+
+    modal,
+    setModal,
+
+    pdfForm,
+    setPdfForm,
 
     dataType,
     setDataType,

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col">
+  <div class="h-full pb-16 flex flex-col">
     <div
       class="flex-grow flex justify-center"
     >

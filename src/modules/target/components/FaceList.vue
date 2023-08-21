@@ -80,9 +80,7 @@ async function handleToggleFace(face) {
 }
 
 // return 出一個陣列
-let currentId;
 async function setConfirmingFacesAll(face) {
-  currentId = face.data.id;
   setConfirmingFaces([face]);
 
   let tmp = [];
