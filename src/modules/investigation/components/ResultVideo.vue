@@ -1,21 +1,24 @@
 <template>
-  <div>
-    <video
-      ref="videoRef"
-      :key="videoUrl"
-      class="w-384"
-      controls
-      autoplay
-      loop
-      @timeupdate="handleTimeUpdate"
-      @ended="handleVideoEnded"
-      @playing="handleVideoStarted"
+  <div class="h-full flex flex-col">
+    <div
+      class="flex-grow flex justify-center"
     >
-      <source
-        :src="videoUrl"
+      <video
+        ref="videoRef"
+        :key="videoUrl"
+        autoplay
+        loop
+        @timeupdate="handleTimeUpdate"
+        @ended="handleVideoEnded"
+        @playing="handleVideoStarted"
       >
-    </video>
-    <div>
+        <source
+          :src="videoUrl"
+        >
+      </video>
+    </div>
+
+    <div class="px-8">
       <input
         type="range"
         class="w-full h-2 bg-gray-200
@@ -27,6 +30,7 @@
         @input="handleSliderInput"
       >
     </div>
+
     <div class="flex justify-center">
       <img
         src="@/assets/images/btn-prev.png"

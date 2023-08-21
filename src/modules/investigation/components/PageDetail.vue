@@ -142,109 +142,111 @@
             </FullLayout>
           </div>
 
-          <div class="flex-grow">
-            <div class="mx-4 my-8 flex text-white text-4xl">
-              <div class="mr-8">
-                {{
-                  videoResult
-                    ? findDevice(videoResult.highest.cid).name
-                    : '-'
-                }}
-              </div>
-              <div class="mr-8">
-                {{
-                  videoResult
-                    ? spiderman.dayjs(videoResult.highest.timestamp)
-                      .format('YYYY/MM/DD HH:mm:ss')
-                    : '-'
-                }}
-              </div>
-            </div>
-
-            <div
-              class="mb-6 flex flex-col"
-              v-if="videoProgressBarTimeSlot?.startTime
-                && videoProgressBarTimeSlot?.endTime"
-            >
-              <div class="mb-4 flex justify-start text-white text-2xl">
-                <div class="px-4 whitespace-nowrap flex items-center">
-                  {{ spiderman.dayjs(videoProgressBarTimeSlot.startTime)
-                    .format('YYYY/MM/DD HH:mm:ss') }}
+          <FullLayout>
+            <template #header>
+              <div class="mx-4 my-8 flex text-white text-4xl">
+                <div class="mr-8">
+                  {{
+                    videoResult
+                      ? findDevice(videoResult.highest.cid).name
+                      : '-'
+                  }}
                 </div>
-                <div>
-                  ~
-                </div>
-                <div class="px-4 whitespace-nowrap flex items-center">
-                  {{ spiderman.dayjs(videoProgressBarTimeSlot.endTime)
-                    .format('YYYY/MM/DD HH:mm:ss') }}
+                <div class="mr-8">
+                  {{
+                    videoResult
+                      ? spiderman.dayjs(videoResult.highest.timestamp)
+                        .format('YYYY/MM/DD HH:mm:ss')
+                      : '-'
+                  }}
                 </div>
               </div>
 
-              <div class="mx-4 flex justify-center text-white">
-                <div
-                  class="flex items-center cursor-pointer"
-                  :class="{
-                    'invisible': videoProgressBarTimeSlot
-                      .startTime === videoProgressBarInfo?.minStartTime
-                  }"
-                  @click="setProgressBar({
-                    startTime: videoProgressBarTimeSlot.startTime - 1 * 60 * 60 * 1000,
-                    results: taskResults,
-                  })"
-                >
-                  <AppSvgIcon
-                    name="icon-chevron-left"
-                    class="w-8 h-8"
-                  />
+              <div
+                class="mb-6 flex flex-col"
+                v-if="videoProgressBarTimeSlot?.startTime
+                  && videoProgressBarTimeSlot?.endTime"
+              >
+                <div class="mb-4 flex justify-start text-white text-2xl">
+                  <div class="px-4 whitespace-nowrap flex items-center">
+                    {{ spiderman.dayjs(videoProgressBarTimeSlot.startTime)
+                      .format('YYYY/MM/DD HH:mm:ss') }}
+                  </div>
+                  <div>
+                    ~
+                  </div>
+                  <div class="px-4 whitespace-nowrap flex items-center">
+                    {{ spiderman.dayjs(videoProgressBarTimeSlot.endTime)
+                      .format('YYYY/MM/DD HH:mm:ss') }}
+                  </div>
                 </div>
-                <div class="relative w-full h-10 bg-gray-800 rounded-full">
+
+                <div class="mx-4 flex justify-center text-white">
                   <div
-                    v-for="item in videoTimeSlotsPersentage"
-                    :key="item"
-                    class="absolute left-0 top-0 h-full rounded-full cursor-pointer"
+                    class="flex items-center cursor-pointer"
                     :class="{
-                      'bg-green-500': item.index === videoResultIndex,
-                      'bg-white': item.index !== videoResultIndex,
-
+                      'invisible': videoProgressBarTimeSlot
+                        .startTime === videoProgressBarInfo?.minStartTime
                     }"
-                    :style="{
-                      left: `${item.start}%`,
-                      width: `${item.width}%`,
-                    }"
-                    @click="setVideoResultIndex({
-                      index: item.index,
+                    @click="setProgressBar({
+                      startTime: videoProgressBarTimeSlot.startTime - 1 * 60 * 60 * 1000,
                       results: taskResults,
                     })"
-                  />
-                </div>
-                <div
-                  class="flex items-center cursor-pointer"
-                  :class="{
-                    'invisible': videoProgressBarTimeSlot
-                      .startTime === videoProgressBarInfo?.maxStartTime
-                  }"
-                  @click="setProgressBar({
-                    startTime: videoProgressBarTimeSlot.startTime + 1 * 60 * 60 * 1000,
-                    results: taskResults,
-                  })"
-                >
-                  <AppSvgIcon
-                    name="icon-chevron-right"
-                    class="w-8 h-8"
-                  />
+                  >
+                    <AppSvgIcon
+                      name="icon-chevron-left"
+                      class="w-8 h-8"
+                    />
+                  </div>
+                  <div class="relative w-full h-10 bg-gray-800 rounded-full">
+                    <div
+                      v-for="item in videoTimeSlotsPersentage"
+                      :key="item"
+                      class="absolute left-0 top-0 h-full rounded-full cursor-pointer"
+                      :class="{
+                        'bg-green-500': item.index === videoResultIndex,
+                        'bg-white': item.index !== videoResultIndex,
+
+                      }"
+                      :style="{
+                        left: `${item.start}%`,
+                        width: `${item.width}%`,
+                      }"
+                      @click="setVideoResultIndex({
+                        index: item.index,
+                        results: taskResults,
+                      })"
+                    />
+                  </div>
+                  <div
+                    class="flex items-center cursor-pointer"
+                    :class="{
+                      'invisible': videoProgressBarTimeSlot
+                        .startTime === videoProgressBarInfo?.maxStartTime
+                    }"
+                    @click="setProgressBar({
+                      startTime: videoProgressBarTimeSlot.startTime + 1 * 60 * 60 * 1000,
+                      results: taskResults,
+                    })"
+                  >
+                    <AppSvgIcon
+                      name="icon-chevron-right"
+                      class="w-8 h-8"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </template>
 
-            <div class="flex justify-center">
+            <template #grow>
               <ResultVideo
                 :video-url="videoUrl"
                 :duration="videoDuration"
                 @on-prev="prevVideo"
                 @on-next="nextVideo"
               />
-            </div>
-          </div>
+            </template>
+          </FullLayout>
         </div>
       </template>
     </FullLayout>
