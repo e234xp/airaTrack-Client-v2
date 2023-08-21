@@ -36,7 +36,7 @@ const props = defineProps({
     },
   },
   value: {
-    type: [Object, String],
+    type: [Object, String, Number],
     default() {
       return null;
     },

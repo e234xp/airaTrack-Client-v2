@@ -61,6 +61,8 @@
                   <AppCheckBox
                     class="mx-4"
                     :placeholder="$t('SelectAll')"
+                    :checked="selectedResultIndexes.length === taskResults.length"
+                    @on-change="handleSelectAll"
                   />
                 </div>
               </template>
@@ -73,6 +75,8 @@
                 >
                   <AppCheckBox
                     class="mx-4"
+                    v-model:modelInput="selectedResultIndexes"
+                    :value="index"
                   />
                   <div
                     class="flex-grow border-4 border-double rounded
@@ -108,6 +112,10 @@
                 <div class="py-4 px-4">
                   <div class="aira-row-auto-4 gap-4">
                     <AppButton
+                      v-print="{
+                        id: 'printPdf',
+                        popTitle: 'PDF',
+                      }"
                       type="primary"
                       :is-enable="true"
                       class="px-16 py-3"
@@ -193,9 +201,11 @@
                   <div
                     v-for="item in videoTimeSlotsPersentage"
                     :key="item"
-                    class="absolute left-0 top-0 h-full bg-white rounded-full cursor-pointer"
+                    class="absolute left-0 top-0 h-full rounded-full cursor-pointer"
                     :class="{
-                      'bg-green-500': item.index === videoResultIndex
+                      'bg-green-500': item.index === videoResultIndex,
+                      'bg-white': item.index !== videoResultIndex,
+
                     }"
                     :style="{
                       left: `${item.start}%`,
@@ -239,6 +249,11 @@
       </template>
     </FullLayout>
   </ProgressBarLayout>
+
+  <PrintPdf
+    :task="selectedTask"
+    :results="selectedResults"
+  />
 </template>
 
 <script setup>
@@ -253,6 +268,7 @@ import useUserStore from '@/stores/user';
 
 import NavigationBar from '@/modules/investigation/components/NavigationBar.vue';
 import ResultVideo from '@/modules/investigation/components/ResultVideo.vue';
+import PrintPdf from '@/modules/investigation/components/PrintPdf.vue';
 import useStore from '@/modules/investigation/stores/index';
 import useVideo from '@/modules/investigation/composable/video';
 
@@ -301,4 +317,18 @@ async function setTaskResults(score) {
   }));
 }
 
+const selectedResultIndexes = ref([]);
+function handleSelectAll() {
+  if (selectedResultIndexes.value.length === taskResults.value.length) {
+    selectedResultIndexes.value = [];
+  } else {
+    selectedResultIndexes.value = Array.from(
+      { length: taskResults.value.length },
+      (_, index) => index,
+    );
+  }
+}
+const selectedResults = computed(() => taskResults.value.filter(
+  (_, index) => (selectedResultIndexes.value.includes(index)),
+));
 </script>

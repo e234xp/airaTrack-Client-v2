@@ -3,3 +3,8 @@
 @tailwind utilities;
 
 @import 'row';
+
+body {
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}

@@ -4,6 +4,7 @@ import 'virtual:svg-icons-register';
 
 import './assets/scss/main.scss';
 
+import print from 'vue3-print-nb';
 import * as globalComponents from './components/app';
 import * as Layouts from './layouts/index';
 
@@ -27,4 +28,6 @@ app
   .use(createPinia())
   .use(router)
   .use(i18n)
+  .use(print)
+
   .mount('#app');
