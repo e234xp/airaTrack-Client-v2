@@ -82,32 +82,54 @@ async function handleToggleFace(face) {
 // return 出一個陣列
 async function setConfirmingFacesAll(face) {
   setConfirmingFaces([face]);
+  const myId = face.data.id;
+  const batchSize = 5; // 设置批处理大小
+  const faceBatches = chunkArray(face.data.face_be_merged, batchSize);
 
-  let tmp = [];
-  await Promise.allSettled(face.data.face_be_merged.map(async (f) => {
-    const image = {};
-    ({ b64: image.b64, feature: image.feature } = await spiderman.apiService({
-      url: `${spiderman.system.apiBaseUrl}/airaTracker/livefaceimage`,
-      method: 'post',
-      headers: { sessionId: sessionId.value },
-      data: {
-        face_file: f.face_file,
-      },
+  let currentBatchIndex = 0;
+  while (currentBatchIndex < faceBatches.length && selectedFace.value.data.id === myId) {
+    let tmp = [];
+    const faceBatch = faceBatches[currentBatchIndex];
+
+    // eslint-disable-next-line no-await-in-loop
+    await Promise.allSettled(faceBatch.map(async (f) => {
+      const image = {};
+      ({ b64: image.b64, feature: image.feature } = await spiderman.apiService({
+        url: `${spiderman.system.apiBaseUrl}/airaTracker/livefaceimage`,
+        method: 'post',
+        headers: { sessionId: sessionId.value },
+        data: {
+          face_file: f.face_file,
+        },
+      }));
+
+      tmp = [...tmp, {
+        camera_id: face.camera_id,
+        timestamp: face.timestamp,
+        data: {
+          id: f.id,
+          face_file: f.face_file,
+          face_image: image.b64,
+          feature: image.feature,
+        },
+      }];
+      return { id: f.id };
     }));
 
-    tmp = [...tmp, {
-      camera_id: face.camera_id,
-      timestamp: face.timestamp,
-      data: {
-        id: f.id,
-        face_file: f.face_file,
-        face_image: image.b64,
-        feature: image.feature,
-      },
-    }];
-    return { id: f.id };
-  }));
+    if (selectedFace.value.data.id === myId) {
+      setConfirmingFaces([...confirmingFaces.value, ...tmp]);
+    }
 
-  setConfirmingFaces([...confirmingFaces.value, ...tmp]);
+    currentBatchIndex += 1;
+  }
+}
+
+// 辅助函数，将数组分成大小相等的块
+function chunkArray(array, chunkSize) {
+  const result = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+    result.push(array.slice(i, i + chunkSize));
+  }
+  return result;
 }
 </script>
