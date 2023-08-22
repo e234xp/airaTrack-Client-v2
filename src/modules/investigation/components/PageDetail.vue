@@ -12,7 +12,7 @@
               <template #header>
                 <div class="border-b-2 border-gray-500 p-6 text-white">
                   <div class="mb-4 text-3xl">
-                    Target
+                    {{ $t("Target") }}
                   </div>
                   <div class="flex">
                     <img
@@ -34,7 +34,7 @@
 
                 <div class="border-gray-500 p-6 text-white">
                   <div class="mb-4 text-3xl">
-                    List Target Score :
+                    {{ $t("TargetScore") }}:
                     {{ targetScore }}
                   </div>
                   <div class="flex">

@@ -13,7 +13,7 @@
     :is-open="modal==='pdf'"
   >
     <template #header>
-      {{ $t('GeneratePDFReport') }}
+      {{ $t('GeneratePdfReport') }}
     </template>
 
     <template #default>

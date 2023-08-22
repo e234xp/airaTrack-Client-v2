@@ -59,7 +59,7 @@
                   :is-enable="canStartTask"
                   @click="handleStartTask(item.task_id)"
                 >
-                  {{ $t("StartTask") }}
+                  {{ $t("Start") }}
                 </AppButton>
                 <AppButton
                   v-else-if="item.data_type==='finish'"
@@ -73,7 +73,7 @@
             </div>
             <div class="flex py-2">
               <div class="w-60">
-                Task Name:
+                {{ $t("TaskName") }}:
               </div>
               <div>
                 {{ item.task_name }}
@@ -81,7 +81,7 @@
             </div>
             <div class="flex py-2">
               <div class="w-60">
-                Running Time:
+                {{ $t("RunningTime") }}:
               </div>
               <div class="flex">
                 <template v-if="!item.running_start_time && !item.running_end_time">
@@ -102,7 +102,7 @@
             </div>
             <div class="flex py-2">
               <div class="w-60">
-                Start | End Time:
+                {{ $t("Start") }} | {{ $t("EndTime") }}:
               </div>
               <div class="flex">
                 <template v-if="!item.search_start_time && !item.search_end_time">
@@ -123,7 +123,7 @@
             </div>
             <div class="flex py-2">
               <div class="w-60">
-                Live Channel:
+                {{ $t("LiveChannel") }}:
               </div>
               <div class="flex-grow aira-row-auto-8 gap-y-2">
                 <template v-if="item.livechannels.length === 0">
@@ -141,7 +141,7 @@
             </div>
             <div class="flex py-2">
               <div class="w-60">
-                Nx Video Archive:
+                {{ $t("NxVideoArchive") }}:
               </div>
               <div class="flex-grow aira-row-auto-8 gap-y-2">
                 <template v-if="item.archchannels.length === 0">
