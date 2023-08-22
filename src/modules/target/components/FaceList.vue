@@ -1,19 +1,22 @@
 <template>
-  <div class="aira-row-auto-2 gap-8">
+  <div class="aira-row-auto-2 content-start gap-8">
     <div
       v-for="face in faces"
       :key="face.data.id"
-      class="select-none relative cursor-pointer border-4"
+      class="select-none relative cursor-pointer"
       @click="handleToggleFace(face)"
     >
       <img
-        class="w-full h-full"
+        class="w-40"
         :src="spiderman.base64Image.getSrc(face.data.face_image)"
         alt=""
       >
-      <div class="absolute top-0 left-0 w-full h-full flex justify-end items-end">
+      <div
+        v-show="face.data.face_be_merged.length > 0"
+        class="absolute top-0 left-0 w-full h-full flex justify-end items-end"
+      >
         <div
-          class="w-8 h-8 rounded flex justify-center items-center
+          class="w-8 h-8 flex justify-center items-center
                         text-lg font-bold
                         bg-white text-gray-800"
         >

@@ -1,23 +1,22 @@
 <template>
   <div class="flex py-6">
     <div
-      @click="
-        handlePrevDate()
-      "
-      class="w-16 rounded border-2 bg-gray-800
-        mx-3 grid justify-center content-center text-white
+      @click="handlePrevDate()"
+      class="w-28 rounded border-2 border-gray-500 bg-gray-800
+        mx-3 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
-      <div
-        class="my-2"
-      >
-        {{ spiderman.dayjs(selectedDate).subtract(1,'day').format('MM/DD') }}
-      </div>
+      <div />
       <div class="my-2 flex justify-center">
         <AppSvgIcon
           name="icon-chevron-left"
-          class="w-5 h-5"
+          class="w-8 h-8"
         />
+      </div>
+      <div
+        class="my-2 text-2xl"
+      >
+        {{ spiderman.dayjs(selectedDate).subtract(1,'day').format('DD, MMM') }}
       </div>
     </div>
     <div class="flex-grow cursor-pointer">
@@ -30,20 +29,21 @@
       @click="
         handleNextDate()
       "
-      class="w-16 rounded border-2 bg-gray-800
-        mx-3 grid justify-center content-center text-white
+      class="w-28 rounded border-2 border-gray-500 bg-gray-800
+        mx-3 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
-      <div
-        class="my-2"
-      >
-        {{ spiderman.dayjs(selectedDate).add(1,'day').format('MM/DD') }}
-      </div>
+      <div />
       <div class="my-2 flex justify-center">
         <AppSvgIcon
           name="icon-chevron-right"
-          class="w-5 h-5"
+          class="w-8 h-8"
         />
+      </div>
+      <div
+        class="my-2 text-2xl"
+      >
+        {{ spiderman.dayjs(selectedDate).add(1,'day').format('DD, MMM') }}
       </div>
     </div>
   </div>

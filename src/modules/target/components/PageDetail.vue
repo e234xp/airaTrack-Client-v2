@@ -2,14 +2,18 @@
   <ProgressBarLayout>
     <FullLayout>
       <template #header>
-        <div class="flex justify-start m-4">
+        <div class="flex justify-between m-8">
           <AppButton
             type="secondary"
-            class="px-5 py-1 text-2xl"
+            class="px-5 py-2 text-3xl"
             @click="setPage('list')"
           >
             {{ $t('Return') }}
           </AppButton>
+          <div class="flex items-center text-white text-3xl">
+            {{ spiderman.dayjs(selectedFaceKey).format('DD MMM, YYYY HH:mm') }}
+          </div>
+          <div />
         </div>
       </template>
 
@@ -24,14 +28,60 @@
       </template>
 
       <template #footer>
-        <div class="flex justify-center my-6">
-          <AppPagination
-            :per-page="80"
-            :current-page="currentPage"
-            :total-items="totalItems"
-            @on-turn-page="handleTurnPage"
-            class="mr-5"
-          />
+        <div class="flex justify-center my-12 text-white text-2xl">
+          <div
+            class="flex items-center cursor-pointer mx-2"
+            :class="{
+              'pointer-events-none text-gray-400': currentPage === 1,
+            }"
+            @click="handleTurnPage(1)"
+          >
+            <AppSvgIcon
+              name="icon-chevron-to-end"
+              class="w-8 h-8 rotate-180"
+            />
+          </div>
+          <div
+            class="flex items-center cursor-pointer mx-2"
+            :class="{
+              'pointer-events-none text-gray-400': currentPage === 1,
+            }"
+            @click="handleTurnPage(currentPage - 1)"
+          >
+            <AppSvgIcon
+              name="icon-chevron-left"
+              class="w-8 h-8"
+            />
+          </div>
+          <div
+            class="mx-8 text-3xl"
+          >
+            {{ currentPage }} / {{ totalPages }}
+          </div>
+          <div
+            class="flex items-center cursor-pointer mx-2"
+            :class="{
+              'pointer-events-none text-gray-400': currentPage === totalPages,
+            }"
+            @click="handleTurnPage(currentPage + 1)"
+          >
+            <AppSvgIcon
+              name="icon-chevron-right"
+              class="w-8 h-8"
+            />
+          </div>
+          <div
+            class="flex items-center cursor-pointer mx-2"
+            :class="{
+              'pointer-events-none text-gray-400': currentPage === totalPages,
+            }"
+            @click="handleTurnPage(totalPages)"
+          >
+            <AppSvgIcon
+              name="icon-chevron-to-end"
+              class="w-8 h-8"
+            />
+          </div>
         </div>
       </template>
     </FullLayout>
@@ -40,7 +90,9 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import {
+  computed, onMounted, onUnmounted, ref,
+} from 'vue';
 import { storeToRefs } from 'pinia';
 import spiderman from '@/spiderman';
 
@@ -73,20 +125,38 @@ const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
 
 const currentPage = ref(1);
 const totalItems = ref(null);
+const hourFacePerPage = ref(80);
+
+const totalPages = computed(() => helpers.getTotalPages({
+  totalItems: totalItems.value,
+  numberPerPage: hourFacePerPage.value,
+}));
 
 const faces = ref([]);
 
 onMounted(async () => {
   ({ data: faces.value, totalItems: totalItems.value } = await helpers.getLiveFaces({
-    startTime, endTime, page: 1, perPage: 80, cameraList, sessionId: sessionId.value,
+    startTime,
+    endTime,
+    page: 1,
+    perPage: hourFacePerPage.value,
+    cameraList,
+    sessionId: sessionId.value,
   }));
 });
 
 async function handleTurnPage(pageNumber) {
-  currentPage.value = pageNumber;
+  if (pageNumber >= 1 && pageNumber <= totalPages.value) {
+    currentPage.value = pageNumber;
+  }
 
   ({ data: faces.value, totalItems: totalItems.value } = await helpers.getLiveFaces({
-    startTime, endTime, page: pageNumber, perPage: 80, cameraList, sessionId: sessionId.value,
+    startTime,
+    endTime,
+    page: currentPage.value,
+    perPage: hourFacePerPage.value,
+    cameraList,
+    sessionId: sessionId.value,
   }));
 }
 
@@ -105,5 +175,4 @@ const timer = setInterval(() => {
 onUnmounted(() => {
   clearInterval(timer);
 });
-
 </script>

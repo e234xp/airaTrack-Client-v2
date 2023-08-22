@@ -12,7 +12,7 @@
 
       'pointer-events-none border-0 bg-opacity-40': !isEnable,
       'border-0': !isEnable && type === 'secondary',
-      'border-2': isEnable && type === 'secondary',
+      'border-2 border-gray-400': isEnable && type === 'secondary',
     }"
   >
     <slot />

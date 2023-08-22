@@ -27,4 +27,8 @@ async function getLiveFaces({
   };
 }
 
-export default { getLiveFaces };
+function getTotalPages({ totalItems, numberPerPage }) {
+  return Math.ceil(totalItems / numberPerPage);
+}
+
+export default { getLiveFaces, getTotalPages };

@@ -28,33 +28,76 @@
             v-show="hourFaces[faceKey].length > 0"
             class="flex justify-center mb-20 px-5"
           >
-            <div class="w-full 2xl:w-9/12">
-              <div class="flex mb-5 justify-between">
+            <div class="w-full 2xl:w-9/12 ">
+              <div class="mb-5 flex justify-start">
                 <div class="flex">
-                  <div class="grid content-center font-bold text-white text-2xl mr-5">
+                  <div class="grid content-center text-white text-3xl">
                     {{ spiderman.dayjs(Number(faceKey)).format('HH:mm') }}
                   </div>
-                  <AppPagination
-                    :current-page="hourFacePaginations[faceKey].currentPage"
-                    :total-items="hourFacePaginations[faceKey].totalItems"
-                    @on-turn-page="hourFacePaginations[faceKey].onTurnPage"
-                    class="mr-5"
-                  />
                 </div>
-                <div class="grid content-center">
+                <div class="flex items-center">
                   <AppButton
-                    type="secondary"
-                    class="px-5 py-1"
+                    type="transparent"
+                    class="px-5 py-1 text-2xl text-gray-100"
                     @click="handleToDetail(faceKey)"
                   >
-                    {{ $t('Detail') }}
+                    <div class="mr-1 flex items-center">
+                      {{ $t('Extend') }}
+                    </div>
+                    <div class="flex items-center">
+                      <AppSvgIcon
+                        name="icon-chevron-right"
+                        class="w-5 h-5"
+                      />
+                    </div>
                   </AppButton>
+                </div>
+                <div class="flex-grow flex items-center">
+                  <hr class="w-full border-gray-400">
                 </div>
               </div>
 
-              <FaceList
-                :faces="hourFaces[faceKey]"
-              />
+              <div class="flex justify-between">
+                <div
+                  class="min-h-76 w-16 rounded bg-gray-800
+                  mx-3 flex justify-center items-center text-white
+                  cursor-pointer hover:bg-primary-hover transition"
+                  :class="{
+                    'pointer-events-none bg-opacity-40': hourFacePaginations[faceKey]
+                      .currentPage === 1
+                  }"
+                  @click="hourFacePaginations[faceKey]
+                    .onTurnPage(hourFacePaginations[faceKey].currentPage - 1)"
+                >
+                  <AppSvgIcon
+                    name="icon-chevron-left"
+                    class="w-8 h-8"
+                  />
+                </div>
+                <FaceList
+                  :faces="hourFaces[faceKey]"
+                  class="flex-grow"
+                />
+                <div
+                  class="min-h-76 w-16 rounded bg-gray-800
+                        mx-3 flex justify-center items-center text-white
+                        cursor-pointer hover:bg-primary-hover transition"
+                  :class="{
+                    'pointer-events-none bg-opacity-40': hourFacePaginations[faceKey]
+                      .currentPage === helpers.getTotalPages({
+                        totalItems: hourFacePaginations[faceKey].totalItems,
+                        numberPerPage: hourFacePerPage,
+                      })
+                  }"
+                  @click="hourFacePaginations[faceKey]
+                    .onTurnPage(hourFacePaginations[faceKey].currentPage + 1)"
+                >
+                  <AppSvgIcon
+                    name="icon-chevron-right"
+                    class="w-8 h-8"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </template>
@@ -95,6 +138,7 @@ const selectedHour = ref(parseInt(spiderman.dayjs().format('HH'), 10));
 const hourFaceKeys = ref([]);
 const hourFaces = ref({});
 const hourFacePaginations = ref({});
+const hourFacePerPage = ref(24);
 
 const store = useStore();
 const {
@@ -137,7 +181,12 @@ async function getLiveFaceHourly({ date, hour }) {
         const endTime = startTime + TEN_MINUTES_MS;
 
         const { totalItems, data } = await helpers.getLiveFaces({
-          startTime, endTime, page: pageNumber, perPage: 24, cameraList, sessionId: sessionId.value,
+          startTime,
+          endTime,
+          page: pageNumber,
+          perPage: hourFacePerPage.value,
+          cameraList,
+          sessionId: sessionId.value,
         });
 
         hourFaces.value[key] = data;

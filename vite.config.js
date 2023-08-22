@@ -17,6 +17,7 @@ export default defineConfig({
       symbolId: 'icon-[dir]-[name]',
     }),
   ],
+  base: './',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

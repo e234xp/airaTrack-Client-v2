@@ -21,7 +21,7 @@
             class="aira-row-auto-1 gap-4"
           >
             <div
-              class="cursor-pointer border-4"
+              class="cursor-pointer"
             >
               <img
                 class="w-full h-full"
@@ -48,7 +48,7 @@
             <div
               v-for="face in confirmingFaces"
               :key="face.data.id"
-              class="select-none relative cursor-pointer border-4"
+              class="select-none relative cursor-pointer"
               @click="handleToggleFace(face)"
             >
               <img
