@@ -10,6 +10,11 @@ export default defineStore('module-investigation', () => {
       subject: 'Subject',
       remark: '',
     },
+    bookmarkForm: {
+      firstResult: null,
+      resultLength: null,
+      description: '',
+    },
     dataType: 'all',
     selectedTask: null,
   };
@@ -39,12 +44,18 @@ export default defineStore('module-investigation', () => {
     pdfForm.value = data;
   }
 
+  const bookmarkForm = ref(null);
+  function setBookmarkForm(data) {
+    bookmarkForm.value = data;
+  }
+
   function initStore() {
     setPage(initialState.page);
     setDataType(initialState.dataType);
 
     setModal(initialState.modal);
     setPdfForm(initialState.pdfForm);
+    setBookmarkForm(initialState.bookmarkForm);
   }
 
   return {
@@ -58,6 +69,9 @@ export default defineStore('module-investigation', () => {
 
     pdfForm,
     setPdfForm,
+
+    bookmarkForm,
+    setBookmarkForm,
 
     dataType,
     setDataType,

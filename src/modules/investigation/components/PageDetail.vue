@@ -258,6 +258,12 @@
     :task="selectedTask"
     :results="selectedResults"
   />
+
+  <ModalPdfForm />
+
+  <ModalBookmarkForm
+    @confirm="addVmsBookmark"
+  />
 </template>
 
 <script setup>
@@ -274,6 +280,9 @@ import successStore from '@/stores/success';
 import NavigationBar from '@/modules/investigation/components/NavigationBar.vue';
 import ResultVideo from '@/modules/investigation/components/ResultVideo.vue';
 import PrintPdf from '@/modules/investigation/components/PrintPdf.vue';
+import ModalPdfForm from '@/modules/investigation/components/ModalPdfForm.vue';
+import ModalBookmarkForm from '@/modules/investigation/components/ModalBookmarkForm.vue';
+
 import useStore from '@/modules/investigation/stores/index';
 import useVideo from '@/modules/investigation/composable/video';
 
@@ -284,8 +293,8 @@ const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
 
 const store = useStore();
-const { selectedTask, pdfForm } = storeToRefs(store);
-const { setModal } = store;
+const { selectedTask, pdfForm, bookmarkForm } = storeToRefs(store);
+const { setModal, setBookmarkForm } = store;
 
 const {
   videoResultIndex,
@@ -343,6 +352,21 @@ function handlePdfExport() {
 }
 
 async function handleVmsBookmark() {
+  setBookmarkForm({
+    firstResult: {
+      deviceName: findDevice(selectedResults.value[0].highest.cid).name,
+      faceImage: selectedResults.value[0].highest.face_image,
+      timestamp: selectedResults.value[0].highest.timestamp,
+    },
+    resultLength: selectedResults.value.length,
+    description: '',
+  });
+  setModal('bookmark');
+}
+
+async function addVmsBookmark() {
+  setModal('');
+
   const results = await Promise.allSettled(selectedResults.value.map(async (result) => {
     const { message } = await spiderman.apiService({
       url: `${spiderman.system.apiBaseUrl}/airaTracker/addBookmark`,
@@ -352,7 +376,7 @@ async function handleVmsBookmark() {
         datatime: result.highest.timestamp,
         camera_id: result.highest.cid,
         caption: 'airaTracker Event',
-        description: `Src=${findDevice(result.highest.cid).name}`,
+        description: bookmarkForm.value.description,
       },
     });
 
