@@ -13,11 +13,13 @@ export default () => {
   const videoDuration = ref(null);
   const videoUrl = ref(null);
 
+  let taskResults = null;
   function setVideoResultIndex({ index, results }) {
     videoResultIndex.value = index;
     videoResult.value = results[index];
     videoDuration.value = (videoResult.value.endtime - videoResult.value.starttime) / 1000;
     videoUrl.value = getVideoUrl(videoResult.value);
+    taskResults = results;
 
     const startTime = spiderman.dayjs(spiderman.dayjs(videoResult.value.starttime)
       .format('YYYY/MM/DD HH:00:00'))
@@ -35,20 +37,20 @@ export default () => {
     return `${spiderman.system.apiBaseUrl}/airaTracker/viewmedia?sessionId=${sessionId.value}&camera_id=${cameraId}&start_time=${startTime}&end_time=${endTime}`;
   }
 
-  function prevVideo(results) {
+  function prevVideo() {
     if (videoResultIndex.value === 0) {
-      setVideoResultIndex({ index: results.length - 1, results });
+      setVideoResultIndex({ index: taskResults.length - 1, results: taskResults });
       return;
     }
-    setVideoResultIndex({ index: videoResultIndex.value - 1, results });
+    setVideoResultIndex({ index: videoResultIndex.value - 1, results: taskResults });
   }
 
-  function nextVideo(results) {
-    if (videoResultIndex.value === results.length - 1) {
-      setVideoResultIndex({ index: 0, results });
+  function nextVideo() {
+    if (videoResultIndex.value === taskResults.length - 1) {
+      setVideoResultIndex({ index: 0, results: taskResults });
       return;
     }
-    setVideoResultIndex({ index: videoResultIndex.value + 1, results });
+    setVideoResultIndex({ index: videoResultIndex.value + 1, results: taskResults });
   }
 
   const videoProgressBarInfo = ref(null);
