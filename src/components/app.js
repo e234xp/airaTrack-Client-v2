@@ -6,6 +6,8 @@ import AppCheckBox from './AppCheckBox.vue';
 import AppSvgIcon from './AppSvgIcon.vue';
 import AppPagination from './AppPagination.vue';
 import AppError from './AppError.vue';
+import AppSuccess from './AppSuccess.vue';
+import AppModal from './AppModal.vue';
 
 export {
   AppButton,
@@ -16,4 +18,6 @@ export {
   AppSvgIcon,
   AppPagination,
   AppError,
+  AppSuccess,
+  AppModal,
 };

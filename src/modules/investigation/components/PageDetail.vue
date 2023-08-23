@@ -117,21 +117,22 @@
                     <AppButton
                       @click="handlePdfExport"
                       type="primary"
-                      :is-enable="true"
+                      :is-enable="selectedResultIndexes.length > 0"
                       class="px-16 py-3"
                     >
                       {{ $t("PdfExport") }}
                     </AppButton>
                     <AppButton
                       type="primary"
-                      :is-enable="true"
+                      :is-enable="selectedResultIndexes.length > 0"
                       class="px-16 py-3"
                     >
                       {{ $t("AddToCase") }}
                     </AppButton>
                     <AppButton
+                      @click="handleVmsBookmark"
                       type="primary"
-                      :is-enable="true"
+                      :is-enable="selectedResultIndexes.length > 0"
                       class="px-16 py-3"
                     >
                       {{ $t("VmsBookmark") }}
@@ -268,6 +269,7 @@ import spiderman from '@/spiderman';
 
 import useDevices from '@/stores/devices';
 import useUserStore from '@/stores/user';
+import successStore from '@/stores/success';
 
 import NavigationBar from '@/modules/investigation/components/NavigationBar.vue';
 import ResultVideo from '@/modules/investigation/components/ResultVideo.vue';
@@ -340,4 +342,24 @@ function handlePdfExport() {
   setModal('pdf');
 }
 
+async function handleVmsBookmark() {
+  const results = await Promise.allSettled(selectedResults.value.map(async (result) => {
+    const { message } = await spiderman.apiService({
+      url: `${spiderman.system.apiBaseUrl}/airaTracker/addBookmark`,
+      method: 'post',
+      headers: { sessionId: sessionId.value },
+      data: {
+        datatime: result.highest.timestamp,
+        camera_id: result.highest.cid,
+        caption: 'airaTracker Event',
+        description: `Src=${findDevice(result.highest.cid).name}`,
+      },
+    });
+
+    return { message };
+  }));
+
+  if (results.some(({ status }) => status !== 'fulfilled')) return;
+  successStore.show();
+}
 </script>

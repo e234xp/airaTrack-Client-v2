@@ -9,7 +9,22 @@
       :body="errorStore.body"
       @close="errorStore.close"
     />
+
+    <AppSuccess
+      :is-show="successStore.isShow"
+      :body="successStore.body"
+      @close="successStore.close"
+    />
+
     <RouterView />
+
+    <AppModal
+      :is-open="modalStore.isOpen"
+      :header="modalStore.header"
+      :body="modalStore.body"
+      :buttons="modalStore.buttons"
+      @close="modalStore.close"
+    />
   </div>
 </template>
 
@@ -19,5 +34,7 @@ import spiderman from '@/spiderman';
 import background from '@/assets/base64-images/background';
 
 import errorStore from '@/stores/error';
+import successStore from '@/stores/success';
+import modalStore from '@/stores/modal';
 
 </script>
