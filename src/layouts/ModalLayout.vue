@@ -11,7 +11,9 @@
   >
     <div
       class="bg-white py-6 px-8 rounded-lg shadow-lg"
-      :class="`w-${size}`"
+      :class="{
+        'w-176': size === 'xl'
+      }"
     >
       <h2 class="text-4xl font-semibold mb-6">
         <slot name="header" />

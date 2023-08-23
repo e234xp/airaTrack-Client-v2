@@ -6,7 +6,9 @@
         mx-3 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
-      <div />
+      <div class="invisible">
+        dummy
+      </div>
       <div class="my-2 flex justify-center">
         <AppSvgIcon
           name="icon-chevron-left"
@@ -14,7 +16,7 @@
         />
       </div>
       <div
-        class="my-2 text-2xl"
+        class="my-2 text-xl"
       >
         {{ spiderman.dayjs(selectedDate).subtract(1,'day').format('DD, MMM') }}
       </div>
@@ -22,7 +24,7 @@
     <div class="flex-grow cursor-pointer">
       <canvas
         id="chart"
-        height="38"
+        height="37"
       />
     </div>
     <div
@@ -33,7 +35,9 @@
         mx-3 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
-      <div />
+      <div class="invisible">
+        dummy
+      </div>
       <div class="my-2 flex justify-center">
         <AppSvgIcon
           name="icon-chevron-right"
@@ -41,7 +45,7 @@
         />
       </div>
       <div
-        class="my-2 text-2xl"
+        class="my-2 text-xl"
       >
         {{ spiderman.dayjs(selectedDate).add(1,'day').format('DD, MMM') }}
       </div>
@@ -129,9 +133,9 @@ onMounted(() => {
       labels: Array.from(Array(24).keys()),
       datasets: [
         {
-          label: 'Number of Faces',
+          label: '# of Faces',
           data: [],
-          backgroundColor: 'rgba(215, 233, 244, 1)',
+          backgroundColor: 'rgba(134,150,158,255)',
         },
       ],
     },
@@ -166,7 +170,7 @@ onMounted(() => {
               yMax: 24,
               backgroundColor: 'rgba(255, 99, 132, 0)',
               borderWidth: 8,
-              borderColor: 'rgba(49, 131, 177, 1)',
+              borderColor: 'rgba(60,178,254,255)',
             },
 
           },

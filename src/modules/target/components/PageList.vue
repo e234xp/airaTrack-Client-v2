@@ -28,8 +28,8 @@
             v-show="hourFaces[faceKey].length > 0"
             class="flex justify-center mb-20 px-5"
           >
-            <div class="w-full 2xl:w-9/12 ">
-              <div class="mb-5 flex justify-start">
+            <div class="w-full">
+              <div class="mb-5 px-2 flex justify-start">
                 <div class="flex">
                   <div class="grid content-center text-white text-3xl">
                     {{ spiderman.dayjs(Number(faceKey)).format('HH:mm') }}
@@ -59,7 +59,7 @@
 
               <div class="flex justify-between">
                 <div
-                  class="min-h-76 w-16 rounded bg-gray-800
+                  class="min-h-2row w-16 rounded bg-gray-800
                   mx-3 flex justify-center items-center text-white
                   cursor-pointer hover:bg-primary-hover transition"
                   :class="{
@@ -79,7 +79,7 @@
                   class="flex-grow"
                 />
                 <div
-                  class="min-h-76 w-16 rounded bg-gray-800
+                  class="min-h-2row w-16 rounded bg-gray-800
                         mx-3 flex justify-center items-center text-white
                         cursor-pointer hover:bg-primary-hover transition"
                   :class="{

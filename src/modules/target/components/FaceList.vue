@@ -1,5 +1,5 @@
 <template>
-  <div class="aira-row-auto-2 content-start gap-8">
+  <div class="aira-row-auto-1 content-start gap-4">
     <div
       v-for="face in faces"
       :key="face.data.id"
@@ -16,11 +16,16 @@
         class="absolute top-0 left-0 w-full h-full flex justify-end items-end"
       >
         <div
-          class="w-8 h-8 flex justify-center items-center
-                        text-lg font-bold
-                        bg-white text-gray-800"
+          class="w-9 h-7 flex justify-center items-center
+                        text font-bold
+                        bg-white text-gray-600"
         >
-          {{ face.data.face_be_merged.length + 1 }}
+          <template v-if="face.data.face_be_merged.length + 1<=99">
+            {{ face.data.face_be_merged.length + 1 }}
+          </template>
+          <template v-else>
+            99+
+          </template>
         </div>
       </div>
       <template

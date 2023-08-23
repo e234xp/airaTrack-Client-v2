@@ -1,6 +1,6 @@
 <template>
   <ModalLayout
-    size="2/6"
+    size="xl"
     :is-open="isOpen"
   >
     <template #header>

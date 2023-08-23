@@ -21,7 +21,15 @@
           <div class="flex-grow text-white text-2xl">
             <div class="flex justify-around py-2">
               <div class="w-32 mr-8 flex items-center content-center">
-                {{ item.data_type }}
+                <template v-if="item.data_type === 'stop'">
+                  {{ $t('Init') }}
+                </template>
+                <template v-else-if="item.data_type === 'progress'">
+                  {{ $t('Processing') }}
+                </template>
+                <template v-else-if="item.data_type === 'finish'">
+                  {{ $t('Completed') }}
+                </template>
               </div>
               <div class="w-full flex items-center">
                 <div class="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700">
@@ -92,7 +100,7 @@
                     {{ spiderman.dayjs(item.running_start_time).format('YYYY-MM-DD HH:mm:ss') }}
                   </div>
                   <div class="mx-5">
-                    |
+                    ~
                   </div>
                   <div>
                     {{ spiderman.dayjs(item.running_end_time).format('YYYY-MM-DD HH:mm:ss') }}
@@ -102,7 +110,7 @@
             </div>
             <div class="flex py-2">
               <div class="w-60">
-                {{ $t("Start") }} | {{ $t("EndTime") }}:
+                {{ $t("TimeRange") }}:
               </div>
               <div class="flex">
                 <template v-if="!item.search_start_time && !item.search_end_time">
@@ -113,7 +121,7 @@
                     {{ spiderman.dayjs(item.search_start_time).format('YYYY-MM-DD HH:mm:ss') }}
                   </div>
                   <div class="mx-5">
-                    |
+                    ~
                   </div>
                   <div>
                     {{ spiderman.dayjs(item.search_end_time).format('YYYY-MM-DD HH:mm:ss') }}

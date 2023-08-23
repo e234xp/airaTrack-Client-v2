@@ -36,7 +36,7 @@ module.exports = {
       },
     },
     minHeight: {
-      76: '18rem',
+      '2row': '14rem',
     },
     opacity: {
       50: '.50',

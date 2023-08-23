@@ -1,6 +1,6 @@
 <template>
   <ModalLayout
-    size="176"
+    size="xl"
     :is-open="modal==='pdf'"
   >
     <template #header>

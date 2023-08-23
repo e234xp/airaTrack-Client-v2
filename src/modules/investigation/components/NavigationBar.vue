@@ -26,7 +26,7 @@
       "
       class="px-8 py-4 font-bold text-2xl"
     >
-      {{ $t('Finish') }}
+      {{ $t('Completed') }}
     </AppButton>
 
     <AppButton
@@ -39,7 +39,7 @@
       "
       class="px-8 py-4 font-bold text-2xl"
     >
-      {{ $t('Running') }}
+      {{ $t('Processing') }}
     </AppButton>
   </div>
 </template>
