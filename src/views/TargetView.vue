@@ -6,6 +6,7 @@
         detail: PageDetail,
         'adding-investgation': PageAddingInvestgation,
         'album-list': PageAlbumList,
+        'album-detail': PageAlbumDetail,
       }[page]"
     />
   </KeepAlive>
@@ -18,6 +19,7 @@ import PageList from '@/modules/target/components/PageList.vue';
 import PageDetail from '@/modules/target/components/PageDetail.vue';
 import PageAddingInvestgation from '@/modules/target/components/PageAddingInvestgation.vue';
 import PageAlbumList from '@/modules/target/components/PageAlbumList.vue';
+import PageAlbumDetail from '@/modules/target/components/PageAlbumDetail.vue';
 
 import useStore from '@/modules/target/stores/index';
 

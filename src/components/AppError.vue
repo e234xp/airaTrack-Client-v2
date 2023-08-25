@@ -6,7 +6,7 @@
     >
       <div
         class="w-full lg:w-6/12 2xl:w-4/12
-       bg-red-100 border border-red-400 text-red-700 mt-3 px-4 py-3 rounded fixed"
+       bg-red-100 border border-red-400 text-red-700 mt-3 px-4 py-3 rounded fixed z-50"
       >
         <div class="flex justify-start">
           <div class="whitespace-nowrap font-bold mr-4">

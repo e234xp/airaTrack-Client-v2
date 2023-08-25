@@ -77,7 +77,7 @@ const validators = {
     isPassed: () => !input.value,
     generateMessage: () => {
       const placeholder = props.placeholder ? props.placeholder : i18n.t('field');
-      return i18n.t('requiredMessage', { placeholder });
+      return i18n.t('RequiredMessage', { placeholder });
     },
   },
 };

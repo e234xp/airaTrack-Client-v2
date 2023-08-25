@@ -7,7 +7,9 @@ export default defineStore('module-target', () => {
     selectedFaceKey: null,
     confirmingFaces: [],
     confirmedFace: null,
+    selectedAlbum: null,
     page: 'list',
+    modal: '',
   };
 
   const selectedFace = ref(initialState.selectedFace);
@@ -30,32 +32,55 @@ export default defineStore('module-target', () => {
     confirmedFace.value = data;
   }
 
+  const selectedAlbum = ref(initialState.selectedAlbum);
+  function setSelectedAlbum(data) {
+    selectedAlbum.value = data;
+  }
+
   const page = ref(initialState.page);
   function setPage(data) {
     page.value = data;
   }
 
+  const modal = ref('');
+  function setModal(data) {
+    modal.value = data;
+  }
+
   function initStore() {
-    setSelectedFace(initialState.selectedFace);
     setPage(initialState.page);
+    setModal(initialState.modal);
+
+    setSelectedFace(initialState.selectedFace);
     setSelectedFaceKey(initialState.selectedFaceKey);
     setConfirmingFaces(initialState.confirmingFaces);
     setConfirmedFace(initialState.confirmedFace);
+    setSelectedAlbum(initialState.selectedAlbum);
   }
 
   return {
-    selectedFace,
-    selectedFaceKey,
-    confirmingFaces,
-    confirmedFace,
-    page,
+    initStore,
 
-    setSelectedFace,
-    setSelectedFaceKey,
-    setConfirmingFaces,
-    setConfirmedFace,
+    page,
     setPage,
 
-    initStore,
+    modal,
+    setModal,
+
+    selectedFace,
+    setSelectedFace,
+
+    selectedFaceKey,
+    setSelectedFaceKey,
+
+    confirmingFaces,
+    setConfirmingFaces,
+
+    confirmedFace,
+    setConfirmedFace,
+
+    selectedAlbum,
+    setSelectedAlbum,
+
   };
 });

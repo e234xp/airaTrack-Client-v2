@@ -36,8 +36,10 @@ export default defineStore('device', () => {
   }
 
   function findDevice(cameraId) {
-    return livedevices.value.find((device) => device.camera_id === cameraId)
-    ?? devices.value.find((device) => device.camera_id === cameraId);
+    return cameraId
+      ? livedevices.value.find((device) => device.camera_id === cameraId)
+          ?? devices.value.find((device) => device.camera_id === cameraId)
+      : 'Album photo';
   }
 
   return {

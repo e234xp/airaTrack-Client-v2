@@ -10,13 +10,13 @@
           <div class="w-144 border-r-2 border-gray-500">
             <FullLayout>
               <template #header>
-                <div class="border-b-2 border-gray-500 p-6 text-white">
-                  <div class="mb-4 text-3xl">
+                <div class="border-b-2 border-gray-500 p-6 text-white text-sm">
+                  <div class="mb-4">
                     {{ $t("Target") }}
                   </div>
                   <div class="flex">
                     <img
-                      class="w-40 h-40 mr-8"
+                      class="w-32 h-32 mr-6"
                       :src="spiderman.base64Image.getSrc(selectedTask.target_face_image)"
                       alt=""
                     >
@@ -29,6 +29,12 @@
                           .format('YYYY/MM/DD HH:mm:ss') }}
                       </div>
                     </div>
+                    <img
+                      class="w-12 h-12 cursor-pointer"
+                      src="@/assets/images/btn-add-to-album.png"
+                      alt=""
+                      @click="setModal('save-to-album')"
+                    >
                   </div>
                 </div>
 
@@ -264,6 +270,10 @@
   <ModalBookmarkForm
     @confirm="addVmsBookmark"
   />
+
+  <ModalSaveToAlbum
+    @add="handleAddToAlbum"
+  />
 </template>
 
 <script setup>
@@ -285,6 +295,7 @@ import ModalBookmarkForm from '@/modules/investigation/components/ModalBookmarkF
 
 import useStore from '@/modules/investigation/stores/index';
 import useVideo from '@/modules/investigation/composable/video';
+import ModalSaveToAlbum from '@/modules/investigation/components/ModalSaveToAlbum.vue';
 
 const devicesStore = useDevices();
 const { findDevice } = devicesStore;
@@ -384,6 +395,26 @@ async function addVmsBookmark() {
   }));
 
   if (results.some(({ status }) => status !== 'fulfilled')) return;
+  successStore.show();
+}
+
+async function handleAddToAlbum(form) {
+  const { albumId } = form;
+  const { target_face_image: faceImage, feature } = selectedTask.value;
+  const data = {
+    albumId,
+    id: spiderman.uuid(),
+    face_image: faceImage,
+    feature,
+  };
+
+  await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/albums/photoFeature`,
+    method: 'post',
+    headers: { sessionId: sessionId.value },
+    data,
+  });
+  setModal('');
   successStore.show();
 }
 </script>

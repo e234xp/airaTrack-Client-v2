@@ -91,6 +91,7 @@
             type="secondary"
             :is-enable="!!confirmedFace?.data.id"
             class="mx-6 mb-4 py-3"
+            @click="setModal('save-to-album')"
           >
             {{ $t("SaveToAlbum") }}
           </AppButton>
@@ -106,18 +107,30 @@
       </template>
     </FullLayout>
   </div>
+
+  <ModalSaveToAlbum
+    @add="handleAddToAlbum"
+  />
 </template>
 
 <script setup>
 import { storeToRefs } from 'pinia';
+
 import spiderman from '@/spiderman';
+import useUserStore from '@/stores/user';
+import successStore from '@/stores/success';
 
 import useStore from '@/modules/target/stores/index';
+import ModalSaveToAlbum from '@/modules/target/components/ModalSaveToAlbum.vue';
+
+const userStore = useUserStore();
+const { sessionId } = storeToRefs(userStore);
 
 const store = useStore();
-const { setPage } = store;
 const { selectedFace, confirmingFaces, confirmedFace } = storeToRefs(store);
-const { setSelectedFace, setConfirmingFaces, setConfirmedFace } = store;
+const {
+  setPage, setSelectedFace, setConfirmingFaces, setConfirmedFace, setModal,
+} = store;
 
 async function handleToggleFace(face) {
   if (confirmedFace.value?.data?.id === face.data.id) {
@@ -131,5 +144,21 @@ function clearSelection() {
   setSelectedFace(null);
   setConfirmingFaces([]);
   setConfirmedFace(null);
+}
+
+async function handleAddToAlbum(form) {
+  const { albumId } = form;
+  const { data: { id, face_image: faceImage, feature } } = confirmedFace.value;
+  const data = {
+    albumId, id, face_image: faceImage, feature,
+  };
+  await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/albums/photoFeature`,
+    method: 'post',
+    headers: { sessionId: sessionId.value },
+    data,
+  });
+  setModal('');
+  successStore.show();
 }
 </script>

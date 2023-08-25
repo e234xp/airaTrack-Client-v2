@@ -6,7 +6,7 @@
     >
       <div
         class="w-full lg:w-6/12 2xl:w-4/12
-       bg-green-100 border border-green-400 text-green-700 mt-3 px-4 py-3 rounded fixed"
+       bg-green-100 border border-green-400 text-green-700 mt-3 px-4 py-3 rounded fixed z-50"
       >
         <div class="flex justify-start">
           <div class="mr-6">

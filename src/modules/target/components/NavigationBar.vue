@@ -16,8 +16,9 @@
     <AppButton
       type="transparent"
       active-type="baseline"
-      :is-active="page === 'album-list'"
+      :is-active="page === 'album-list' || page === 'album-detail'"
       class="px-8 py-4 font-bold text-2xl"
+      @click="setPage('album-list')"
     >
       {{ $t('Album') }}
     </AppButton>
