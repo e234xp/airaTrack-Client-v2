@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "start": "npm run dev",
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "sh ./scripts/deploy.sh",
@@ -40,7 +41,7 @@
     "sass": "^1.63.6",
     "sass-loader": "^13.3.2",
     "tailwindcss": "^3.3.2",
-    "vite": "^4.3.9",
+    "vite": "^4.4.9",
     "vite-plugin-svg-icons": "^2.0.1",
     "vitest": "^0.32.0"
   }
