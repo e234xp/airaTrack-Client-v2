@@ -8,6 +8,12 @@
       <template #grow>
         <div class="mt-12 flex justify-center">
           <div class="w-full 2xl:w-352">
+            <div class="aira-row-auto-10 gap-4">
+              <img
+                class="w-full"
+                :src="spiderman.base64Image.getSrc(confirmedFace?.data.face_image)"
+                alt=""
+              >
 
               <div class="col-span-2 p-4">
                 <div class="aira-row-auto-8 gap-4 mb-4">

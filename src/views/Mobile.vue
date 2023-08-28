@@ -3,7 +3,6 @@
     <component
       :is="{
         list: PageList,
-        detail: PageDetail,
       }[page]"
     />
   </KeepAlive>
@@ -13,7 +12,6 @@
 import { storeToRefs } from 'pinia';
 
 import PageList from '@/modules/target/components/PageList.vue';
-import PageDetail from '@/modules/target/components/PageDetail.vue';
 import useStore from '@/modules/target/stores/index';
 
 const store = useStore();
