@@ -22,6 +22,16 @@
       </div>
     </div>
     <div class="flex-grow rounded-lg bg-day-chart/40 py-6 px-6 cursor-pointer">
+      <div
+        class="grid grid-flow-col justify-between"
+      >
+        <AppDatePicker
+          v-model:modelSelected="selectedDate"
+          :dark="true"
+        />
+      </div>
+      <AppDivider class="my-5" />
+
       <canvas
         id="chart"
         height="37"
@@ -147,11 +157,11 @@ onMounted(() => {
     options: {
       scales: {
         y: {
-          min: -1,
+          min: 0,
           ticks: { display: false },
           grid: {
             color(context) {
-              if (context.tick.value === -1) {
+              if (context.tick.value === 0) {
                 return '#b5bec0';
               }
               return 'rgba(0, 0, 0, 0)';
@@ -267,10 +277,22 @@ async function renderByDate(date) {
   chart.data.datasets[0].data = dataOfDate;
 
   // 設定 最大高度
-  chart.options.scales.y.max = Math.floor(maxOfData * 1.1);
+  const maxY = (() => {
+    let tmp = Math.floor(maxOfData * 1.1);
+
+    if (tmp === maxOfData) tmp = Math.floor(maxOfData * 1.5);
+    if (tmp === maxOfData) tmp = maxOfData * 2;
+
+    return tmp;
+  })();
+  chart.options.scales.y.max = maxY;
 
   // 設定 box 最大高度, 讓 box 回到 index = 0
-  chart.options.plugins.annotation.annotations.box.yMax = chart.options.scales.y.max - 1;
+  const maxAnnotationY = (() => {
+    if (chart.options.scales.y.max < 10) return chart.options.scales.y.max;
+    return chart.options.scales.y.max - 1;
+  })();
+  chart.options.plugins.annotation.annotations.box.yMax = maxAnnotationY;
 
   chart.update();
 }

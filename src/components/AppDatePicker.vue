@@ -1,5 +1,6 @@
 <template>
   <VueDatePicker
+    :dark="dark"
     input-class-name="h-12"
     :clearable="false"
     v-model="selected"
@@ -23,6 +24,10 @@ const props = defineProps({
   mode: {
     type: String,
     default: 'date',
+  },
+  dark: {
+    type: Boolean,
+    default: false,
   },
 });
 const emit = defineEmits(['update:modelSelected']);

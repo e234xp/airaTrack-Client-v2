@@ -4,18 +4,6 @@
       <template #header>
         <NavigationBar />
 
-        <div>
-          <div
-            class="py-3 px-6
-          grid grid-flow-col justify-between"
-          >
-            <AppDatePicker
-              v-model:modelSelected="selectedDate"
-            />
-          </div>
-          <AppDivider />
-        </div>
-
         <DayChart
           v-model:modelSelectedDate="selectedDate"
           v-model:modelSelectedHour="selectedHour"
