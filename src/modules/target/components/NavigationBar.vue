@@ -1,27 +1,29 @@
 <template>
-  <div
-    class="border-b-2 border-gray-500
-          grid grid-flow-col justify-center"
-  >
-    <AppButton
-      type="transparent"
-      active-type="baseline"
-      :is-active="page === 'list'"
-      class="px-8 py-4 font-bold text-2xl"
-      @click="setPage('list')"
+  <div>
+    <div
+      class="grid grid-flow-col justify-center text-3xl"
     >
-      {{ $t('Faces') }}
-    </AppButton>
+      <AppButton
+        type="transparent"
+        active-type="baseline"
+        :is-active="page === 'list'"
+        class="px-20 py-4"
+        @click="setPage('list')"
+      >
+        {{ $t('Faces') }}
+      </AppButton>
 
-    <AppButton
-      type="transparent"
-      active-type="baseline"
-      :is-active="page === 'album-list' || page === 'album-detail'"
-      class="px-8 py-4 font-bold text-2xl"
-      @click="setPage('album-list')"
-    >
-      {{ $t('Album') }}
-    </AppButton>
+      <AppButton
+        type="transparent"
+        active-type="baseline"
+        :is-active="page === 'album-list' || page === 'album-detail'"
+        class="px-20 py-4"
+        @click="setPage('album-list')"
+      >
+        {{ $t('Album') }}
+      </AppButton>
+    </div>
+    <AppDivider />
   </div>
 </template>
 
@@ -29,6 +31,7 @@
 import { storeToRefs } from 'pinia';
 
 import useStore from '@/modules/target/stores/index';
+import { AppDivider } from '../../../components/app';
 
 const store = useStore();
 const { page } = storeToRefs(store);

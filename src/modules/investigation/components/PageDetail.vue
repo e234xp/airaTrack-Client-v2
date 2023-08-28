@@ -10,7 +10,7 @@
           <div class="w-160 border-r-2 border-gray-500">
             <FullLayout>
               <template #header>
-                <div class="border-b-2 border-gray-500 p-6 text-white text-xl">
+                <div class="p-6 text-white text-xl">
                   <div class="mb-4">
                     {{ $t("Target") }}
                   </div>
@@ -37,6 +37,7 @@
                     >
                   </div>
                 </div>
+                <AppDivider />
 
                 <div class="border-gray-500 p-6 text-white">
                   <div class="mb-4 text-3xl">
@@ -303,6 +304,7 @@ import ModalBookmarkForm from '@/modules/investigation/components/ModalBookmarkF
 import useStore from '@/modules/investigation/stores/index';
 import useVideo from '@/modules/investigation/composable/video';
 import ModalSaveToAlbum from '@/modules/investigation/components/ModalSaveToAlbum.vue';
+import { AppDivider } from '../../../components/app';
 
 const devicesStore = useDevices();
 const { findDevice } = devicesStore;

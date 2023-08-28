@@ -2,7 +2,7 @@
   <div class="flex py-6">
     <div
       @click="handlePrevDate()"
-      class="w-28 rounded border-2 border-gray-500 bg-gray-800
+      class="w-28 rounded-lg border-2 border-gray-500 bg-secondary
         mx-3 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
@@ -31,7 +31,7 @@
       @click="
         handleNextDate()
       "
-      class="w-28 rounded border-2 border-gray-500 bg-gray-800
+      class="w-28 rounded-lg border-2 border-gray-500 bg-secondary
         mx-3 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >

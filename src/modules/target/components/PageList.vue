@@ -4,13 +4,16 @@
       <template #header>
         <NavigationBar />
 
-        <div
-          class="border-b-2 border-gray-500 py-3 px-6
+        <div>
+          <div
+            class="py-3 px-6
           grid grid-flow-col justify-between"
-        >
-          <AppDatePicker
-            v-model:modelSelected="selectedDate"
-          />
+          >
+            <AppDatePicker
+              v-model:modelSelected="selectedDate"
+            />
+          </div>
+          <AppDivider />
         </div>
 
         <DayChart
@@ -38,13 +41,13 @@
                 <div class="flex items-center">
                   <AppButton
                     type="transparent"
-                    class="px-5 py-1 text-2xl text-gray-100"
+                    class="px-5 py-1 text-2xl"
                     @click="handleToDetail(faceKey)"
                   >
-                    <div class="mr-1 flex items-center">
+                    <div class="mr-1 flex items-center text-default">
                       {{ $t('Extend') }}
                     </div>
-                    <div class="flex items-center">
+                    <div class="flex items-center text-white">
                       <AppSvgIcon
                         name="icon-chevron-right"
                         class="w-5 h-5"
@@ -52,19 +55,19 @@
                     </div>
                   </AppButton>
                 </div>
-                <div class="flex-grow flex items-center">
-                  <hr class="w-full border-gray-400">
+                <div class="flex-grow flex items-center w-full">
+                  <AppDivider />
                 </div>
               </div>
 
               <div class="flex justify-between">
                 <div
-                  class="min-h-2row w-16 rounded bg-gray-800
-                  mx-3 flex justify-center items-center text-white
+                  class="min-h-2row w-16 rounded-lg bg-secondary
+                  mx-3 flex justify-center items-center text-default
                   cursor-pointer hover:bg-primary-hover transition"
                   :class="{
-                    'pointer-events-none bg-opacity-40': hourFacePaginations[faceKey]
-                      .currentPage === 1
+                    'pointer-events-none': hourFacePaginations[faceKey]
+                      .currentPage === 0,
                   }"
                   @click="hourFacePaginations[faceKey]
                     .onTurnPage(hourFacePaginations[faceKey].currentPage - 1)"
@@ -79,11 +82,11 @@
                   class="flex-grow"
                 />
                 <div
-                  class="min-h-2row w-16 rounded bg-gray-800
-                        mx-3 flex justify-center items-center text-white
+                  class="min-h-2row w-16 rounded-lg bg-secondary
+                        mx-3 flex justify-center items-center text-default
                         cursor-pointer hover:bg-primary-hover transition"
                   :class="{
-                    'pointer-events-none bg-opacity-40': hourFacePaginations[faceKey]
+                    'pointer-events-none': hourFacePaginations[faceKey]
                       .currentPage === helpers.getTotalPages({
                         totalItems: hourFacePaginations[faceKey].totalItems,
                         numberPerPage: hourFacePerPage,
@@ -125,6 +128,7 @@ import useDevices from '@/stores/devices';
 
 import useStore from '@/modules/target/stores/index';
 import helpers from '@/modules/target/helpers';
+import { AppDivider } from '../../../components/app';
 
 const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);

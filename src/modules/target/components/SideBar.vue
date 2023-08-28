@@ -1,21 +1,25 @@
 <template>
-  <div class="w-96 bg-gray-600">
+  <div class="w-96 bg-side-bar/40">
     <FullLayout>
       <template #header>
         <div
-          class="mx-6 my-4 text-white text-left text-2xl font-bold"
+          class="mx-6 my-6 text-white text-left text-2xl"
         >
           {{ $t('Target') }}
         </div>
 
+        <AppDivider />
+
         <AppButton
           type="secondary"
-          class="mx-6 mb-8 py-3"
+          class="mx-6 my-6 py-3 text-xl"
         >
           {{ $t("Upload") }}
         </AppButton>
 
-        <div class="mx-6 mb-8">
+        <AppDivider />
+
+        <div class="mx-6 my-8">
           <div
             v-if="selectedFace"
             class="aira-row-auto-1 gap-4"
@@ -33,7 +37,7 @@
 
           <div
             v-else
-            class="break-words text-xl text-gray-300"
+            class="leading-10 break-words text-2xl text-default"
           >
             {{ $t('SelectTargetPrompt') }}
           </div>

@@ -5,15 +5,25 @@ module.exports = {
   darkMode: 'media',
   theme: {
     colors: {
-      primary: '#3183b1',
+      primary: '#43a0d1',
       'primary-hover': '#2c77a0',
-      secondary: '#151e1e',
+      secondary: '#22292a',
       white: '#ffffff',
       red: colors.red,
       green: colors.green,
       gray: colors.gray,
+      'side-bar': '#798586',
     },
     extend: {
+      textColor: {
+        default: '#b5bec0',
+      },
+      backgroundColor: {
+        default: '#485454',
+      },
+      fontFamily: {
+        custom: ['Helvetica', 'sans'],
+      },
       spacing: {
         112: '28rem',
         128: '32rem',
