@@ -143,6 +143,13 @@
                     >
                       {{ $t("VmsBookmark") }}
                     </AppButton>
+                    <AppButton
+                      type="primary"
+                      :is-enable="selectedResultIndexes.length > 0"
+                      class="px-16 py-3"
+                    >
+                      {{ $t("HtmlVideoArchive") }}
+                    </AppButton>
                   </div>
                 </div>
               </template>

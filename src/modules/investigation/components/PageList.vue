@@ -56,6 +56,7 @@
                 <AppButton
                   type="secondary"
                   class="mr-6 py-2 px-8"
+                  :is-enable="item.data_type==='stop' || item.data_type==='finish'"
                   @click="handleRemoveTask(item.task_id)"
                 >
                   {{ $t("Delete") }}
