@@ -1,8 +1,9 @@
 <template>
-  <KeepAlive include="PageList">
+  <KeepAlive include="MobilePageList">
     <component
       :is="{
-        list: PageList,
+        list: MobilePageList,
+        detail: MobilePageDetail,
       }[page]"
     />
   </KeepAlive>
@@ -11,7 +12,8 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 
-import PageList from '@/modules/target/components/PageList.vue';
+import MobilePageList from '@/modules/target/components/MobilePageList.vue';
+import MobilePageDetail from '@/modules/target/components/MobilePageDetail.vue';
 import useStore from '@/modules/target/stores/index';
 
 const store = useStore();
