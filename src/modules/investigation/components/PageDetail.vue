@@ -7,10 +7,10 @@
 
       <template #grow>
         <div class="flex h-full">
-          <div class="w-144 border-r-2 border-gray-500">
+          <div class="w-160 border-r-2 border-gray-500">
             <FullLayout>
               <template #header>
-                <div class="border-b-2 border-gray-500 p-6 text-white text-sm">
+                <div class="border-b-2 border-gray-500 p-6 text-white text-xl">
                   <div class="mb-4">
                     {{ $t("Target") }}
                   </div>
@@ -20,11 +20,11 @@
                       :src="spiderman.base64Image.getSrc(selectedTask.target_face_image)"
                       alt=""
                     >
-                    <div class="flex-grow text-2xl">
-                      <div class="mb-3">
+                    <div class="flex-grow text-2xl truncate">
+                      <div class="mb-3 truncate">
                         {{ targetDevice.name }}
                       </div>
-                      <div class="mb-3">
+                      <div class="mb-3 truncate">
                         {{ spiderman.dayjs(selectedTask.target.timestamp)
                           .format('YYYY/MM/DD HH:mm:ss') }}
                       </div>
@@ -89,7 +89,7 @@
                   />
                   <div
                     class="flex-grow border-4 border-double rounded
-                    flex text-white text-xl cursor-pointer"
+                    flex text-white text-xl cursor-pointer truncate"
                     :class="{
                       'bg-gradient-to-br from-green-600 to-green-900':index === videoResultIndex
                     }"
@@ -99,15 +99,15 @@
                     })"
                   >
                     <img
-                      class="w-28 h-28 mr-8"
+                      class="w-28 h-28 mr-4"
                       :src="spiderman.base64Image.getSrc(result.highest.face_image)"
                       alt=""
                     >
-                    <div class="flex flex-col justify-center">
-                      <div class="mb-2">
+                    <div class="flex flex-col justify-center truncate">
+                      <div class="mb-2 truncate">
                         {{ findDevice(result.highest.cid).name }}
                       </div>
-                      <div class="mb-2">
+                      <div class="mb-2 truncate">
                         {{ spiderman.dayjs(result.highest.timestamp)
                           .format('YYYY/MM/DD HH:mm:ss') }}
                       </div>

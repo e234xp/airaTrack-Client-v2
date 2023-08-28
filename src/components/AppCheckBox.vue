@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-between">
-    <div>
+    <div class="truncate">
       <input
         type="checkbox"
         class="w-4 h-4 mr-2 focus:ring-2 focus:ring-primary-500"

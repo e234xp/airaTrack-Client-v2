@@ -122,6 +122,8 @@
                 type="primary"
                 class="px-6 py-2 text-3xl"
                 @click="handleAddTask(form)"
+                :is-enable="form.archchannels.length > 0
+                  || form.livechannels.length > 0"
               >
                 {{ $t('AddInvestigation') }}
               </AppButton>
@@ -196,7 +198,7 @@ const form = ref({
   // 以下是 UI 會控制
   search_start_time: spiderman
     .dayjs(confirmedFace.value.timestamp)
-    .subtract(10, 'minute')
+    .subtract(1, 'hour')
     .format('YYYY-MM-DD HH:mm'),
   search_end_time: spiderman.dayjs(confirmedFace.value.timestamp).format('YYYY-MM-DD HH:mm'),
   task_name: `task-${spiderman.dayjs().format('YYYYMMDD')}`,
