@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-between">
-    <div>
+    <div class="truncate">
       <input
         type="checkbox"
         class="w-4 h-4 mr-2 focus:ring-2 focus:ring-primary-500"
@@ -77,7 +77,7 @@ const validators = {
     isPassed: () => !input.value,
     generateMessage: () => {
       const placeholder = props.placeholder ? props.placeholder : i18n.t('field');
-      return i18n.t('requiredMessage', { placeholder });
+      return i18n.t('RequiredMessage', { placeholder });
     },
   },
 };

@@ -1,7 +1,7 @@
 <template>
   <div
     :style="{ backgroundImage: spiderman.base64Image.getStyle(background) }"
-    class="h-screen bg-cover"
+    class="h-screen bg-cover font-custom"
   >
     <AppError
       :is-show="errorStore.isShow"

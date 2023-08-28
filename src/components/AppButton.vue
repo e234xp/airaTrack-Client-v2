@@ -2,17 +2,17 @@
   <div
     class="flex justify-center content-center cursor-pointer transition rounded"
     :class="{
-      'bg-primary hover:bg-primary-hover': type === 'primary',
-      'bg-gray-800 hover:bg-primary-hover': type === 'secondary',
+      'bg-primary hover:bg-primary-hover text-white': type === 'primary',
+      'bg-secondary hover:bg-primary-hover text-white': type === 'secondary',
       'hover:text-primary-hover': type === 'transparent',
 
-      'border-b-4 border-primary': isActive && activeType === 'baseline',
+      'text-default': !isActive,
+      'border-b-4 border-primary text-white': isActive && activeType === 'baseline',
       'text-primary': isActive && activeType !== 'baseline',
-      'text-white': !isActive || activeType === 'baseline',
 
       'pointer-events-none border-0 bg-opacity-40': !isEnable,
       'border-0': !isEnable && type === 'secondary',
-      'border-2 border-gray-400': isEnable && type === 'secondary',
+      'border-2 border-gray-500': isEnable && type === 'secondary',
     }"
   >
     <slot />

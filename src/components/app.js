@@ -8,6 +8,7 @@ import AppPagination from './AppPagination.vue';
 import AppError from './AppError.vue';
 import AppSuccess from './AppSuccess.vue';
 import AppModal from './AppModal.vue';
+import AppDivider from './AppDivider.vue';
 
 export {
   AppButton,
@@ -20,4 +21,5 @@ export {
   AppError,
   AppSuccess,
   AppModal,
+  AppDivider,
 };

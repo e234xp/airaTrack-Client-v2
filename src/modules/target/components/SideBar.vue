@@ -1,21 +1,25 @@
 <template>
-  <div class="w-96 bg-gray-600">
+  <div class="w-96 bg-side-bar/40">
     <FullLayout>
       <template #header>
         <div
-          class="mx-6 my-4 text-white text-left text-2xl font-bold"
+          class="mx-6 my-6 text-white text-left text-2xl"
         >
           {{ $t('Target') }}
         </div>
 
+        <AppDivider />
+
         <AppButton
           type="secondary"
-          class="mx-6 mb-8 py-3"
+          class="mx-6 my-6 py-3 text-xl"
         >
           {{ $t("Upload") }}
         </AppButton>
 
-        <div class="mx-6 mb-8">
+        <AppDivider />
+
+        <div class="mx-6 my-8">
           <div
             v-if="selectedFace"
             class="aira-row-auto-1 gap-4"
@@ -33,7 +37,7 @@
 
           <div
             v-else
-            class="break-words text-xl text-gray-300"
+            class="leading-10 break-words text-2xl text-default"
           >
             {{ $t('SelectTargetPrompt') }}
           </div>
@@ -91,6 +95,7 @@
             type="secondary"
             :is-enable="!!confirmedFace?.data.id"
             class="mx-6 mb-4 py-3"
+            @click="setModal('save-to-album')"
           >
             {{ $t("SaveToAlbum") }}
           </AppButton>
@@ -106,18 +111,30 @@
       </template>
     </FullLayout>
   </div>
+
+  <ModalSaveToAlbum
+    @add="handleAddToAlbum"
+  />
 </template>
 
 <script setup>
 import { storeToRefs } from 'pinia';
+
 import spiderman from '@/spiderman';
+import useUserStore from '@/stores/user';
+import successStore from '@/stores/success';
 
 import useStore from '@/modules/target/stores/index';
+import ModalSaveToAlbum from '@/modules/target/components/ModalSaveToAlbum.vue';
+
+const userStore = useUserStore();
+const { sessionId } = storeToRefs(userStore);
 
 const store = useStore();
-const { setPage } = store;
 const { selectedFace, confirmingFaces, confirmedFace } = storeToRefs(store);
-const { setSelectedFace, setConfirmingFaces, setConfirmedFace } = store;
+const {
+  setPage, setSelectedFace, setConfirmingFaces, setConfirmedFace, setModal,
+} = store;
 
 async function handleToggleFace(face) {
   if (confirmedFace.value?.data?.id === face.data.id) {
@@ -131,5 +148,21 @@ function clearSelection() {
   setSelectedFace(null);
   setConfirmingFaces([]);
   setConfirmedFace(null);
+}
+
+async function handleAddToAlbum(form) {
+  const { albumId } = form;
+  const { data: { id, face_image: faceImage, feature } } = confirmedFace.value;
+  const data = {
+    albumId, id, face_image: faceImage, feature,
+  };
+  await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/albums/photoFeature`,
+    method: 'post',
+    headers: { sessionId: sessionId.value },
+    data,
+  });
+  setModal('');
+  successStore.show();
 }
 </script>

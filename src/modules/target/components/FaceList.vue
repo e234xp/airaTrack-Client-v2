@@ -124,7 +124,7 @@ async function setConfirmingFacesAll(face) {
       return { id: f.id };
     }));
 
-    if (selectedFace.value.data.id === myId) {
+    if (selectedFace.value?.data.id === myId) {
       setConfirmingFaces([...confirmingFaces.value, ...tmp]);
     }
 

@@ -1,69 +1,74 @@
 <template>
   <div class="h-full flex flex-col">
-    <div
-      class="h-fit border-b-2 border-gray-500 bg-secondary/50 py-3
-    grid grid-flow-col justify-between"
-    >
-      <div class="ml-2 grid content-center">
-        <img
-          :src="spiderman.base64Image.getSrc(airaTrack)"
-          alt=""
-          class="w-48"
-        >
-      </div>
-      <div class="grid grid-flow-col content-center text-gray-300 text-3xl font-bold">
-        <AppButton
-          type="transparent"
-          @click="$router.push({ path: '/target' })"
-          :is-active="$route.path === '/target'"
-          class="mx-10"
-        >
-          {{ $t("Target") }}
-        </AppButton>
-        <AppButton
-          type="transparent"
-          @click="$router.push({ path: '/investigation' })"
-          :is-active="$route.path === '/investigation'"
-          class="mx-10"
-        >
-          {{ $t("Investigation") }}
-        </AppButton>
-        <AppButton
-          type="transparent"
-          :is-active="$route.path === '/case'"
-          class="mx-10"
-        >
-          {{ $t("Case") }}
-        </AppButton>
-      </div>
+    <div>
       <div
-        class="grid grid-flow-col content-center divide-x-2 divide-gray-500
-       text-white"
+        class="bg-secondary/40 py-6
+    grid grid-flow-col justify-between"
       >
-        <div class="grid content-center px-3 text-2xl">
-          {{ user.username }}
+        <div class="flex items-center">
+          <AppSvgIcon
+            name="logo-airaTrack"
+            class="h-8"
+          />
         </div>
-        <div class="px-3">
-          <div>
-            {{ current.date }}
-          </div>
-          <div>
-            {{ current.time }}
-          </div>
-        </div>
-        <div class="px-3 grid content-center">
+        <div class="grid grid-flow-col content-center text-gray-800 text-4xl font-bold">
           <AppButton
-            type="secondary"
-            :is-active="$route.path === '/case'"
+            type="transparent"
+            @click="$router.push({ path: '/target' })"
+            :is-active="$route.path === '/target'"
+            class="mx-12"
           >
-            <AppSvgIcon
-              name="icon-gear"
-              class="text-white w-8 h-8"
-            />
+            {{ $t("Target") }}
+          </AppButton>
+          <AppButton
+            type="transparent"
+            @click="$router.push({ path: '/investigation' })"
+            :is-active="$route.path === '/investigation'"
+            class="mx-12"
+          >
+            {{ $t("Investigation") }}
+          </AppButton>
+          <AppButton
+            type="transparent"
+            :is-active="$route.path === '/case'"
+            class="mx-12"
+          >
+            {{ $t("Case") }}
           </AppButton>
         </div>
+        <div
+          class="grid grid-flow-col content-center divide-x-2 divide-gray-500
+       text-default"
+        >
+          <div class="grid content-center px-5 text-3xl">
+            {{ user.username }}
+          </div>
+          <div class="flex">
+            <div class="px-5">
+              <div>
+                {{ current.date }}
+              </div>
+              <div class="flex justify-end">
+                {{ current.time }}
+              </div>
+            </div>
+            <div class="pr-5 grid content-center">
+              <AppButton
+                type="secondary"
+                :is-active="$route.path === '/case'"
+              >
+                <AppSvgIcon
+                  name="icon-gear"
+                  class="text-white w-10 h-10"
+                />
+              </AppButton>
+            </div>
+          </div>
+        </div>
       </div>
+      <AppDivider />
     </div>
+
     <div class="flex-grow overflow-hidden w-full flex">
       <slot />
     </div>
@@ -74,9 +79,8 @@
 import { ref, onUnmounted } from 'vue';
 import spiderman from '@/spiderman';
 
-import airaTrack from '@/assets/base64-images/airaTrack';
-
 import useUserStore from '@/stores/user';
+import { AppButton, AppDivider } from '../components/app';
 
 const userStore = useUserStore();
 const { user } = userStore;

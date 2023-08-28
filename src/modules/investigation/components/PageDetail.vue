@@ -7,30 +7,37 @@
 
       <template #grow>
         <div class="flex h-full">
-          <div class="w-144 border-r-2 border-gray-500">
+          <div class="w-160 border-r-2 border-gray-500">
             <FullLayout>
               <template #header>
-                <div class="border-b-2 border-gray-500 p-6 text-white">
-                  <div class="mb-4 text-3xl">
+                <div class="p-6 text-white text-xl">
+                  <div class="mb-4">
                     {{ $t("Target") }}
                   </div>
                   <div class="flex">
                     <img
-                      class="w-40 h-40 mr-8"
+                      class="w-32 h-32 mr-6"
                       :src="spiderman.base64Image.getSrc(selectedTask.target_face_image)"
                       alt=""
                     >
-                    <div class="flex-grow text-2xl">
-                      <div class="mb-3">
+                    <div class="flex-grow text-2xl truncate">
+                      <div class="mb-3 truncate">
                         {{ targetDevice.name }}
                       </div>
-                      <div class="mb-3">
+                      <div class="mb-3 truncate">
                         {{ spiderman.dayjs(selectedTask.target.timestamp)
                           .format('YYYY/MM/DD HH:mm:ss') }}
                       </div>
                     </div>
+                    <img
+                      class="w-12 h-12 cursor-pointer"
+                      src="@/assets/images/btn-add-to-album.png"
+                      alt=""
+                      @click="setModal('save-to-album')"
+                    >
                   </div>
                 </div>
+                <AppDivider />
 
                 <div class="border-gray-500 p-6 text-white">
                   <div class="mb-4 text-3xl">
@@ -83,7 +90,7 @@
                   />
                   <div
                     class="flex-grow border-4 border-double rounded
-                    flex text-white text-xl cursor-pointer"
+                    flex text-white text-xl cursor-pointer truncate"
                     :class="{
                       'bg-gradient-to-br from-green-600 to-green-900':index === videoResultIndex
                     }"
@@ -93,15 +100,15 @@
                     })"
                   >
                     <img
-                      class="w-28 h-28 mr-8"
+                      class="w-28 h-28 mr-4"
                       :src="spiderman.base64Image.getSrc(result.highest.face_image)"
                       alt=""
                     >
-                    <div class="flex flex-col justify-center">
-                      <div class="mb-2">
+                    <div class="flex flex-col justify-center truncate">
+                      <div class="mb-2 truncate">
                         {{ findDevice(result.highest.cid).name }}
                       </div>
-                      <div class="mb-2">
+                      <div class="mb-2 truncate">
                         {{ spiderman.dayjs(result.highest.timestamp)
                           .format('YYYY/MM/DD HH:mm:ss') }}
                       </div>
@@ -136,6 +143,13 @@
                       class="px-16 py-3"
                     >
                       {{ $t("VmsBookmark") }}
+                    </AppButton>
+                    <AppButton
+                      type="primary"
+                      :is-enable="selectedResultIndexes.length > 0"
+                      class="px-16 py-3"
+                    >
+                      {{ $t("HtmlVideoArchive") }}
                     </AppButton>
                   </div>
                 </div>
@@ -264,6 +278,10 @@
   <ModalBookmarkForm
     @confirm="addVmsBookmark"
   />
+
+  <ModalSaveToAlbum
+    @add="handleAddToAlbum"
+  />
 </template>
 
 <script setup>
@@ -285,6 +303,8 @@ import ModalBookmarkForm from '@/modules/investigation/components/ModalBookmarkF
 
 import useStore from '@/modules/investigation/stores/index';
 import useVideo from '@/modules/investigation/composable/video';
+import ModalSaveToAlbum from '@/modules/investigation/components/ModalSaveToAlbum.vue';
+import { AppDivider } from '../../../components/app';
 
 const devicesStore = useDevices();
 const { findDevice } = devicesStore;
@@ -384,6 +404,26 @@ async function addVmsBookmark() {
   }));
 
   if (results.some(({ status }) => status !== 'fulfilled')) return;
+  successStore.show();
+}
+
+async function handleAddToAlbum(form) {
+  const { albumId } = form;
+  const { target_face_image: faceImage, feature } = selectedTask.value;
+  const data = {
+    albumId,
+    id: spiderman.uuid(),
+    face_image: faceImage,
+    feature,
+  };
+
+  await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/albums/photoFeature`,
+    method: 'post',
+    headers: { sessionId: sessionId.value },
+    data,
+  });
+  setModal('');
   successStore.show();
 }
 </script>
