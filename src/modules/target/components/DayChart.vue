@@ -2,7 +2,7 @@
   <div class="flex py-6">
     <div
       @click="handlePrevDate()"
-      class="w-28 rounded-lg border-2 border-gray-500 bg-secondary
+      class="w-24 rounded-lg border-2 border-gray-500 bg-secondary
         mx-6 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
@@ -16,12 +16,12 @@
         />
       </div>
       <div
-        class="my-2 text-xl"
+        class="my-2 text"
       >
         {{ spiderman.dayjs(selectedDate).subtract(1,'day').format('DD, MMM') }}
       </div>
     </div>
-    <div class="flex-grow rounded-lg bg-day-chart/40 py-6 px-6 cursor-pointer">
+    <div class="flex-grow rounded-lg bg-day-chart/40 py-4 px-6 cursor-pointer">
       <div
         class="grid grid-flow-col justify-between"
       >
@@ -30,14 +30,14 @@
           :dark="true"
         />
       </div>
-      <AppDivider class="my-5" />
+      <AppDivider class="my-2" />
 
       <canvas
         id="chart"
-        height="37"
+        height="30"
       />
       <div
-        class="mt-4 flex justify-center text-primary text-3xl"
+        class="mt-2 flex justify-center text-primary text-xl"
       >
         {{ spiderman.dayjs(selectedDate).format('DD, MMMM') }}
       </div>
@@ -46,7 +46,7 @@
       @click="
         handleNextDate()
       "
-      class="w-28 rounded-lg border-2 border-gray-500 bg-secondary
+      class="w-24 rounded-lg border-2 border-gray-500 bg-secondary
         mx-6 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
@@ -60,7 +60,7 @@
         />
       </div>
       <div
-        class="my-2 text-xl"
+        class="my-2"
       >
         {{ spiderman.dayjs(selectedDate).add(1,'day').format('DD, MMM') }}
       </div>
@@ -157,12 +157,12 @@ onMounted(() => {
     options: {
       scales: {
         y: {
-          min: 0,
+          min: -1,
           ticks: { display: false },
           grid: {
             color(context) {
-              if (context.tick.value === 0) {
-                return '#b5bec0';
+              if (context.tick.value === -1) {
+                return '#839195';
               }
               return 'rgba(0, 0, 0, 0)';
             },
@@ -174,10 +174,10 @@ onMounted(() => {
               if (context.tick.value === selectedHour.value) {
                 return '#3cb2fe';
               }
-              return '#b5bec0';
+              return '#839195';
             },
             font: {
-              size: 26,
+              size: 16,
               family: 'Helvetica',
             },
           },
@@ -278,20 +278,15 @@ async function renderByDate(date) {
 
   // 設定 最大高度
   const maxY = (() => {
-    let tmp = Math.floor(maxOfData * 1.1);
-
-    if (tmp === maxOfData) tmp = Math.floor(maxOfData * 1.5);
-    if (tmp === maxOfData) tmp = maxOfData * 2;
+    if (maxOfData < 20) return 20;
+    const tmp = Math.floor(maxOfData * 1.1);
 
     return tmp;
   })();
   chart.options.scales.y.max = maxY;
 
   // 設定 box 最大高度, 讓 box 回到 index = 0
-  const maxAnnotationY = (() => {
-    if (chart.options.scales.y.max < 10) return chart.options.scales.y.max;
-    return chart.options.scales.y.max - 1;
-  })();
+  const maxAnnotationY = (() => chart.options.scales.y.max - 1)();
   chart.options.plugins.annotation.annotations.box.yMax = maxAnnotationY;
 
   chart.update();

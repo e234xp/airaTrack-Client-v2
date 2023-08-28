@@ -2,16 +2,16 @@
   <div class="h-full flex flex-col">
     <div>
       <div
-        class="bg-secondary/40 py-6
+        class="bg-secondary/40 py-4
     grid grid-flow-col justify-between"
       >
         <div class="flex items-center">
           <AppSvgIcon
             name="logo-airaTrack"
-            class="h-8"
+            class="h-6"
           />
         </div>
-        <div class="grid grid-flow-col content-center text-gray-800 text-4xl font-bold">
+        <div class="grid grid-flow-col content-center text-gray-800 text-3xl font-bold">
           <AppButton
             type="transparent"
             @click="$router.push({ path: '/target' })"

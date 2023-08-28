@@ -3,7 +3,7 @@
     <FullLayout>
       <template #header>
         <div
-          class="mx-6 my-6 text-white text-left text-2xl"
+          class="mx-6 py-3 text-white text-left text-2xl"
         >
           {{ $t('Target') }}
         </div>

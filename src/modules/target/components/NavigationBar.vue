@@ -1,13 +1,13 @@
 <template>
   <div>
     <div
-      class="grid grid-flow-col justify-center text-3xl"
+      class="grid grid-flow-col justify-center text-2xl"
     >
       <AppButton
         type="transparent"
         active-type="baseline"
         :is-active="page === 'list'"
-        class="px-20 py-4"
+        class="px-20 py-3"
         @click="setPage('list')"
       >
         {{ $t('Faces') }}
@@ -17,7 +17,7 @@
         type="transparent"
         active-type="baseline"
         :is-active="page === 'album-list' || page === 'album-detail'"
-        class="px-20 py-4"
+        class="px-20 py-3"
         @click="setPage('album-list')"
       >
         {{ $t('Album') }}
