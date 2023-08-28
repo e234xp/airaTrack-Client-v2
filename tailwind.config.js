@@ -5,7 +5,7 @@ module.exports = {
   darkMode: 'media',
   theme: {
     colors: {
-      primary: '#43a0d1',
+      primary: '#3cb2fe',
       'primary-hover': '#2c77a0',
       secondary: '#22292a',
       white: '#ffffff',
@@ -13,6 +13,7 @@ module.exports = {
       green: colors.green,
       gray: colors.gray,
       'side-bar': '#798586',
+      'day-chart': '#242928',
     },
     extend: {
       textColor: {

@@ -29,10 +29,10 @@
         >
           <div
             v-show="hourFaces[faceKey].length > 0"
-            class="flex justify-center mb-20 px-5"
+            class="flex justify-center px-5"
           >
             <div class="w-full">
-              <div class="mb-5 px-2 flex justify-start">
+              <div class="px-2 flex justify-start">
                 <div class="flex">
                   <div class="grid content-center text-white text-3xl">
                     {{ spiderman.dayjs(Number(faceKey)).format('HH:mm') }}
@@ -60,14 +60,14 @@
                 </div>
               </div>
 
-              <div class="flex justify-between">
+              <div class="my-7 flex justify-between">
                 <div
                   class="min-h-2row w-16 rounded-lg bg-secondary
                   mx-3 flex justify-center items-center text-default
                   cursor-pointer hover:bg-primary-hover transition"
                   :class="{
                     'pointer-events-none': hourFacePaginations[faceKey]
-                      .currentPage === 0,
+                      .currentPage === 1,
                   }"
                   @click="hourFacePaginations[faceKey]
                     .onTurnPage(hourFacePaginations[faceKey].currentPage - 1)"

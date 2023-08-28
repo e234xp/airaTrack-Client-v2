@@ -10,9 +10,9 @@
           v-for="item in list"
           v-show="dataType === 'all' || item.data_type === dataType"
           :key="item.task_id"
-          class="mx-8 py-8"
+          class="mx-8"
         >
-          <div class="flex">
+          <div class="flex py-8">
             <img
               class="w-72 h-72 mr-8"
               :src="spiderman.base64Image.getSrc(item.target_face_image)"

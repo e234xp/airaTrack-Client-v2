@@ -3,7 +3,7 @@
     <div
       @click="handlePrevDate()"
       class="w-28 rounded-lg border-2 border-gray-500 bg-secondary
-        mx-3 grid justify-center content-between text-white
+        mx-6 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
       <div class="invisible">
@@ -21,18 +21,23 @@
         {{ spiderman.dayjs(selectedDate).subtract(1,'day').format('DD, MMM') }}
       </div>
     </div>
-    <div class="flex-grow cursor-pointer">
+    <div class="flex-grow rounded-lg bg-day-chart/40 py-6 px-6 cursor-pointer">
       <canvas
         id="chart"
         height="37"
       />
+      <div
+        class="mt-4 flex justify-center text-primary text-3xl"
+      >
+        {{ spiderman.dayjs(selectedDate).format('DD, MMMM') }}
+      </div>
     </div>
     <div
       @click="
         handleNextDate()
       "
       class="w-28 rounded-lg border-2 border-gray-500 bg-secondary
-        mx-3 grid justify-center content-between text-white
+        mx-6 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
       <div class="invisible">
@@ -135,24 +140,39 @@ onMounted(() => {
         {
           label: '# of Faces',
           data: [],
-          backgroundColor: 'rgba(134,150,158,255)',
+          backgroundColor: 'rgba(142, 157, 164,255)',
         },
       ],
     },
     options: {
       scales: {
         y: {
-          display: false,
-          beginAtZero: true,
-          min: 0,
+          min: -1,
+          ticks: { display: false },
+          grid: {
+            color(context) {
+              if (context.tick.value === -1) {
+                return '#b5bec0';
+              }
+              return 'rgba(0, 0, 0, 0)';
+            },
+          },
         },
         x: {
           ticks: {
-            color: '#eee',
-            font: {
-              size: 16,
-              family: 'Sans-serif',
+            color(context) {
+              if (context.tick.value === selectedHour.value) {
+                return '#3cb2fe';
+              }
+              return '#b5bec0';
             },
+            font: {
+              size: 26,
+              family: 'Helvetica',
+            },
+          },
+          grid: {
+            display: false,
           },
         },
       },
@@ -166,11 +186,12 @@ onMounted(() => {
               type: 'box',
               xMin: selectedHour.value - 0.45,
               xMax: selectedHour.value + 0.45,
-              yMin: -1,
+              yMin: 0,
               yMax: 24,
               backgroundColor: 'rgba(255, 99, 132, 0)',
               borderWidth: 8,
               borderColor: 'rgba(60,178,254,255)',
+              borderRadius: 5,
             },
 
           },
