@@ -540,5 +540,9 @@
   "TimeRange": "Time range",
   "Description": "Comment",
   "GenerateVmsBookmark": "Create bookmark",
-  "AndMore": "and {number} more"
+  "AndMore": "and {number} more",
+  "Edit": "Edit",
+  "AlbumName": "Album name",
+  "RequiredMessage": "Required",
+  "HtmlVideoArchive": "HTML video archive"
 }

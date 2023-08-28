@@ -540,5 +540,9 @@
   "TimeRange": "時間範囲",
   "Description": "コメント",
   "GenerateVmsBookmark": "ブックマークを作成します",
-  "AndMore": "および{number}詳細"
+  "AndMore": "および{number}詳細",
+  "Edit": "編集",
+  "AlbumName": "アルバム名",
+  "RequiredMessage": "必須",
+  "HtmlVideoArchive": "HTMLビデオアーカイブ"
 }
