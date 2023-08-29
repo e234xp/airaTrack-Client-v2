@@ -2,6 +2,7 @@
   <ModalLayout
     size="xl"
     :is-open="modal==='pdf'"
+    @close="setModal('')"
   >
     <template #header>
       {{ $t('GeneratePdfReport') }}

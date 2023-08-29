@@ -3,9 +3,9 @@
     <div class="mb-2 flex justify-between">
       <div>
         <img
-          :src="spiderman.base64Image.getSrc(airaTrack)"
+          src="@/assets/images/logo-track.png"
           alt=""
-          class="w-48"
+          class="h-6"
         >
       </div>
       <div class="grid content-end text-white text-xl">
@@ -87,7 +87,7 @@
       <img
         src="@/assets/images/logo.png"
         alt=""
-        class="w-16"
+        class="h-6"
       >
     </div>
   </div>
@@ -100,7 +100,6 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
-import airaTrack from '@/assets/base64-images/airaTrack';
 import useSubmit from '@/composable/useSubmit';
 
 import useUserStore from '@/stores/user';

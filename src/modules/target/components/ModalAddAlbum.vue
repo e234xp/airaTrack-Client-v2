@@ -2,6 +2,7 @@
   <ModalLayout
     size="xl"
     :is-open="modal === 'add-album'"
+    @close="setModal('')"
   >
     <template #header>
       {{ $t('Add') }}

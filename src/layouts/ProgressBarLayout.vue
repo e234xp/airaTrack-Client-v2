@@ -2,16 +2,17 @@
   <div class="h-full flex flex-col">
     <div>
       <div
-        class="bg-secondary/40 py-4
+        class="bg-secondary/40 py-1
     grid grid-flow-col justify-between"
       >
         <div class="flex items-center">
-          <AppSvgIcon
-            name="logo-airaTrack"
-            class="h-6"
-          />
+          <img
+            src="@/assets/images/logo-track.png"
+            alt=""
+            class="h-6 px-5"
+          >
         </div>
-        <div class="grid grid-flow-col content-center text-gray-800 text-3xl font-bold">
+        <div class="grid grid-flow-col content-center text-gray-800 text-2xl font-bold">
           <AppButton
             type="transparent"
             @click="$router.push({ path: '/target' })"
@@ -40,7 +41,7 @@
           class="grid grid-flow-col content-center divide-x-2 divide-gray-500
        text-default"
         >
-          <div class="grid content-center px-5 text-3xl">
+          <div class="grid content-center px-5 text-2xl">
             {{ user.username }}
           </div>
           <div class="flex">
@@ -59,7 +60,7 @@
               >
                 <AppSvgIcon
                   name="icon-gear"
-                  class="text-white w-10 h-10"
+                  class="text-white w-8 h-8"
                 />
               </AppButton>
             </div>

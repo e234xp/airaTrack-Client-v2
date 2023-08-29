@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="grid grid-flow-col justify-center"
+      class="grid grid-flow-col justify-center text-2xl"
     >
       <AppButton
         type="transparent"
@@ -11,7 +11,7 @@
           setPage('list');
           setDataType('all');
         "
-        class="px-8 py-4 font-bold text-2xl"
+        class="w-56 py-3"
       >
         {{ $t('All') }}
       </AppButton>
@@ -24,7 +24,7 @@
           setPage('list');
           setDataType('finish');
         "
-        class="px-8 py-4 font-bold text-2xl"
+        class="w-56 py-3"
       >
         {{ $t('Completed') }}
       </AppButton>
@@ -37,7 +37,7 @@
           setPage('list');
           setDataType('progress');
         "
-        class="px-8 py-4 font-bold text-2xl"
+        class="w-56 py-3"
       >
         {{ $t('Processing') }}
       </AppButton>

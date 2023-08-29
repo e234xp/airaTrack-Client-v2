@@ -7,15 +7,24 @@
   <!-- Modal -->
   <div
     v-if="isOpen"
-    class="fixed inset-0 flex items-center justify-center z-50"
+    class="fixed inset-0 flex items-center justify-center z-50 text-white"
   >
     <div
-      class="bg-white py-6 px-8 rounded-lg shadow-lg"
+      class="border border-gray-300 bg-modal rounded-lg shadow-lg
+      px-6 pt-4 pb-8"
       :class="{
         'w-176': size === 'xl'
       }"
     >
-      <h2 class="text-4xl font-semibold mb-6">
+      <div class="flex justify-end">
+        <AppSvgIcon
+          name="icon-close"
+          class="w-12 h-12"
+          @click="$emit('close')"
+        />
+      </div>
+
+      <h2 class="text-2xl mb-6 text-center">
         <slot name="header" />
       </h2>
 
@@ -31,6 +40,8 @@
 </template>
 
 <script setup>
+import { AppSvgIcon } from '../components/app';
+
 defineProps({
   isOpen: {
     type: Boolean,
@@ -41,4 +52,6 @@ defineProps({
     default: '1/2',
   },
 });
+
+defineEmits(['close']);
 </script>

@@ -7,7 +7,7 @@
         type="transparent"
         active-type="baseline"
         :is-active="page === 'list'"
-        class="px-20 py-3"
+        class="w-56 py-3"
         @click="setPage('list')"
       >
         {{ $t('Faces') }}
@@ -17,7 +17,7 @@
         type="transparent"
         active-type="baseline"
         :is-active="page === 'album-list' || page === 'album-detail'"
-        class="px-20 py-3"
+        class="w-56 py-3"
         @click="setPage('album-list')"
       >
         {{ $t('Album') }}

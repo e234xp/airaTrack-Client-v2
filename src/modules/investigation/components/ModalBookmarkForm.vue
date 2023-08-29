@@ -2,6 +2,7 @@
   <ModalLayout
     size="xl"
     :is-open="modal==='bookmark'"
+    @close="setModal('')"
   >
     <template #header>
       {{ $t('VmsBookmark') }}

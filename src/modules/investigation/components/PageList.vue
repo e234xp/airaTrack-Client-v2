@@ -178,7 +178,7 @@
 
 <script setup>
 import {
-  ref, onMounted,
+  ref, onMounted, onUnmounted,
 } from 'vue';
 import { storeToRefs } from 'pinia';
 import spiderman from '@/spiderman';
@@ -197,8 +197,12 @@ const { sessionId } = storeToRefs(userStore);
 
 const list = ref([]);
 
-onMounted(() => {
-  refreshList();
+onMounted(async () => {
+  await refreshList();
+  const progressItem = list.value
+    .find((item) => (item.data_type === 'progress'));
+
+  setRefreshInterval(progressItem.task_id);
 });
 
 async function refreshList() {
@@ -223,24 +227,34 @@ async function handleStartTask(taskId) {
       data: { task_id: taskId },
     });
 
-    const refreshIntervalID = setInterval(
-      async () => {
-        await refreshList();
-        const isFinish = (list.value
-          .find((item) => (item.task_id === taskId)))
-          .progress === 100;
-
-        if (isFinish) {
-          canStartTask.value = true;
-          clearInterval(refreshIntervalID);
-        }
-      },
-      1 * 1000,
-    );
+    setRefreshInterval(taskId);
   } catch {
     canStartTask.value = true;
   }
 }
+
+let refreshIntervalID;
+async function setRefreshInterval(taskId) {
+  canStartTask.value = false;
+
+  refreshIntervalID = setInterval(
+    async () => {
+      await refreshList();
+      const isFinish = (list.value
+        .find((item) => (item.task_id === taskId)))
+        .progress === 100;
+
+      if (isFinish) {
+        canStartTask.value = true;
+        clearInterval(refreshIntervalID);
+      }
+    },
+    5 * 1000,
+  );
+}
+onUnmounted(() => {
+  clearInterval(refreshIntervalID);
+});
 
 async function handleRemoveTask(taskId) {
   await spiderman.apiService({

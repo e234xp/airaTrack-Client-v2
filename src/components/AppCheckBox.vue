@@ -1,9 +1,10 @@
 <template>
   <div class="flex justify-between">
-    <div class="truncate">
+    <label class="truncate">
       <input
         type="checkbox"
-        class="w-4 h-4 mr-2 focus:ring-2 focus:ring-primary-500"
+        class="w-4 h-4 mr-2 focus:ring-2 focus:ring-white
+        accent-gray-900"
         v-model="input"
         :value="value"
         @change="$emit('onChange')"
@@ -11,7 +12,7 @@
         :checked="checked"
       >
       {{ placeholder }}
-    </div>
+    </label>
 
     <div
       v-if="isShowError"

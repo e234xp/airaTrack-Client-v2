@@ -2,6 +2,7 @@
   <ModalLayout
     size="xl"
     :is-open="modal === 'save-to-album'"
+    @close="setModal('')"
   >
     <template #header>
       {{ $t('SaveToAlbum') }}

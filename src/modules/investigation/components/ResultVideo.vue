@@ -31,29 +31,39 @@
       >
     </div>
 
-    <div class="flex justify-center">
-      <img
-        src="@/assets/images/btn-prev.png"
-        class="w-16 mx-1 cursor-pointer"
-        @click="$emit('onPrev')"
-      >
-      <img
-        src="@/assets/images/btn-play.png"
-        v-if="!isPlaying"
-        class="w-16 mx-1 cursor-pointer"
-        @click="play"
-      >
-      <img
-        src="@/assets/images/btn-pause.png"
-        v-else
-        class="w-16 mx-1 cursor-pointer"
-        @click="pause"
-      >
-      <img
-        src="@/assets/images/btn-next.png"
-        class="w-16 mx-1 cursor-pointer"
-        @click="$emit('onNext')"
-      >
+    <slot name="select-video-bar" />
+
+    <div class="mx-4 flex">
+      <div class="flex-1 invisible">
+        dummy
+      </div>
+      <div class="flex-1 flex justify-center">
+        <img
+          src="@/assets/images/btn-prev.png"
+          class="w-12 mx-1 cursor-pointer"
+          @click="$emit('onPrev')"
+        >
+        <img
+          src="@/assets/images/btn-play.png"
+          v-if="!isPlaying"
+          class="w-12 mx-1 cursor-pointer"
+          @click="play"
+        >
+        <img
+          src="@/assets/images/btn-pause.png"
+          v-else
+          class="w-12 mx-1 cursor-pointer"
+          @click="pause"
+        >
+        <img
+          src="@/assets/images/btn-next.png"
+          class="w-12 mx-1 cursor-pointer"
+          @click="$emit('onNext')"
+        >
+      </div>
+      <div class="flex-1 flex justify-end">
+        <slot name="video-bar-turn-page" />
+      </div>
     </div>
   </div>
 </template>

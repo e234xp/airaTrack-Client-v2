@@ -14,17 +14,34 @@ export default () => {
   const videoUrl = ref(null);
 
   let taskResults = null;
-  function setVideoResultIndex({ index, results }) {
+
+  const videoProgressBarInfo = ref(null);
+  const videoProgressBarTimeSlot = ref(null);
+  const videoTimeSlotsPersentage = ref(null);
+
+  function setVideoResultIndex({ index, results, range = 1 * 60 * 60 * 1000 }) {
     videoResultIndex.value = index;
     videoResult.value = results[index];
-    videoDuration.value = (videoResult.value.endtime - videoResult.value.starttime) / 1000;
+    videoDuration.value = videoResult.value
+      ? (videoResult.value.endtime - videoResult.value.starttime) / 1000
+      : 0;
     videoUrl.value = getVideoUrl(videoResult.value);
     taskResults = results;
 
-    const startTime = spiderman.dayjs(spiderman.dayjs(videoResult.value.starttime)
-      .format('YYYY/MM/DD HH:00:00'))
-      .valueOf();
-    setProgressBar({ startTime, results });
+    setProgressBarInfo({ results, range });
+    const page = Math.ceil(
+      (videoResult.value.starttime
+        - videoProgressBarInfo.value.minStartTime) / videoProgressBarInfo.value.range,
+    );
+    turnPage(page);
+
+    const element = document.getElementById(`result-${index}`);
+    if (!element) return;
+
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   }
 
   function getVideoUrl(result) {
@@ -53,50 +70,61 @@ export default () => {
     setVideoResultIndex({ index: videoResultIndex.value + 1, results: taskResults });
   }
 
-  const videoProgressBarInfo = ref(null);
-  const videoProgressBarTimeSlot = ref(null);
-  const videoTimeSlotsPersentage = ref(null);
-  function setProgressBar({ startTime, results }) {
-    videoProgressBarInfo.value = generateProgressBarInfo(results);
-    videoProgressBarTimeSlot.value = generateProgressBarTimeSlot(startTime);
-    videoTimeSlotsPersentage.value = generateTimeSlotsPersentage({
-      results,
-      barTimeSlot: videoProgressBarTimeSlot.value,
-    });
+  function setProgressBarInfo({ results, range }) {
+    videoProgressBarInfo.value = generateProgressBarInfo({ results, range });
   }
 
-  function generateProgressBarInfo(results) {
-    const minStartTime = spiderman.dayjs(spiderman.dayjs(results[0].starttime)
-      .format('YYYY/MM/DD HH:00:00'))
-      .valueOf();
+  function generateProgressBarInfo({ results, range }) {
+    const minStartTime = range * Math.floor(results[0].starttime / range);
 
-    const maxStartTime = spiderman.dayjs(spiderman.dayjs(results[results.length - 1].starttime)
-      .format('YYYY/MM/DD HH:00:00'))
-      .valueOf();
+    const maxStartTime = range * Math.floor(results[results.length - 1].starttime / range);
+
+    const totalPage = Math.ceil((maxStartTime - minStartTime) / range) + 1;
 
     return {
       minStartTime,
       maxStartTime,
+      totalPage,
+      range,
     };
   }
 
-  function generateProgressBarTimeSlot(startTime) {
-    const endTime = spiderman.dayjs(spiderman.dayjs(startTime)
-      .add(1, 'hour')
-      .format('YYYY/MM/DD HH:00:00'))
+  function turnPage(page) {
+    videoProgressBarTimeSlot.value = generateProgressBarTimeSlot({
+      page,
+      range: videoProgressBarInfo.value.range,
+    });
+    videoTimeSlotsPersentage.value = generateTimeSlotsPersentage({
+      results: taskResults,
+      barTimeSlot: videoProgressBarTimeSlot.value,
+    });
+  }
+
+  function generateProgressBarTimeSlot({ page, range }) {
+    const startTime = spiderman.dayjs(spiderman.dayjs(videoProgressBarInfo.value.minStartTime)
+      .add((page - 1) * range, 'millisecond')
+      .format('YYYY/MM/DD HH:mm:ss'))
       .valueOf();
 
-    return { startTime, endTime };
+    const endTime = spiderman.dayjs(spiderman.dayjs(startTime)
+      .add(range, 'millisecond')
+      .format('YYYY/MM/DD HH:mm:ss'))
+      .valueOf();
+
+    const currentPage = page;
+
+    return { startTime, endTime, currentPage };
   }
 
   function generateTimeSlotsPersentage({ results, barTimeSlot }) {
     const { startTime: barStartTime, endTime: barEndTime } = barTimeSlot;
 
     const filteredTimeSlots = results
-      .map(({ starttime, endtime }, index) => ({
+      .map(({ starttime, endtime, resultFrom }, index) => ({
         index,
         starttime,
         endtime,
+        resultFrom,
       }))
       .filter((result) => {
         const { starttime: startTime, endtime: endTime } = result;
@@ -113,7 +141,9 @@ export default () => {
       });
 
     const timeSlotsPersentage = filteredTimeSlots.map((result) => {
-      const { index, starttime, endtime } = result;
+      const {
+        index, starttime, endtime, resultFrom,
+      } = result;
 
       const start = starttime > barStartTime
         ? Math.floor(
@@ -133,6 +163,7 @@ export default () => {
         index,
         start,
         width,
+        resultFrom,
       };
     });
 
@@ -151,6 +182,7 @@ export default () => {
     videoProgressBarInfo,
     videoProgressBarTimeSlot,
     videoTimeSlotsPersentage,
-    setProgressBar,
+    setProgressBarInfo,
+    turnPage,
   };
 };

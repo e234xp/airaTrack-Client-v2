@@ -16,8 +16,8 @@
         class="absolute top-0 left-0 w-full h-full flex justify-end items-end"
       >
         <div
-          class="w-9 h-7 flex justify-center items-center
-                        text font-bold
+          class="w-8 h-6 flex justify-center items-center
+                        text-sm font-bold
                         bg-white text-gray-600"
         >
           <template v-if="face.data.face_be_merged.length + 1<=99">

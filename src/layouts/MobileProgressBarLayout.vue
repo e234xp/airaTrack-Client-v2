@@ -6,13 +6,12 @@
     >
       <div class="ml-2 grid content-center">
         <img
-          :src="spiderman.base64Image.getSrc(airaTrack)"
+          src="@/assets/images/logo-track.png"
           alt=""
-          class="w-48"
+          class="h-6"
         >
       </div>
-      <div class="grid grid-flow-col content-center text-gray-300 text-3xl font-bold">
-      </div>
+      <div class="grid grid-flow-col content-center text-gray-300 text-3xl font-bold" />
       <div
         class="grid grid-flow-col content-center divide-x-2 divide-gray-500
        text-white"

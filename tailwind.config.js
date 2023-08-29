@@ -8,12 +8,17 @@ module.exports = {
       primary: '#3cb2fe',
       'primary-hover': '#2c77a0',
       secondary: '#22292a',
-      white: '#ffffff',
+      white: '#f2f2f2',
       red: colors.red,
       green: colors.green,
       gray: colors.gray,
       'side-bar': '#798586',
+      modal: 'rgb(65,73,74)',
       'day-chart': '#242928',
+      'video-bar': '#131617',
+      'progress-bar': '#646f71',
+      'live-channel': '#8fb5ec',
+      'archive-channel': '#77a17a',
     },
     extend: {
       textColor: {
@@ -52,6 +57,7 @@ module.exports = {
     opacity: {
       50: '.50',
       40: '.40',
+      0: '.0',
     },
   },
   variants: {
