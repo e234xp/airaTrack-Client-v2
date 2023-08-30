@@ -12,7 +12,7 @@
         {{ $t('Version') }}: {{ spiderman.system.version }}
       </div>
     </div>
-    <div class="w-112 bg-secondary shadow-md rounded mb-4 py-8 px-6">
+    <div class="sm:w-full md:w-112 bg-secondary shadow-md rounded mb-4 py-8 px-6">
       <div class="text-center mb-4 text-white font-bold text-3xl">
         {{ $t("LoginTitle") }}
       </div>
@@ -52,6 +52,20 @@
             繁體中文: 'zh',
           }"
           v-model:modelInput="language"
+          rule="required"
+          :has-submitted="hasSubmitted"
+        />
+      </div>
+
+      <div class="mb-6">
+        <AppInput
+          type="select"
+          svg-icon="icon-gear"
+          :options="{
+            [$t('GeneralMode')]: 'general',
+            [$t('UploadMode')]: 'upload',
+          }"
+          v-model:modelInput="form.mode"
           rule="required"
           :has-submitted="hasSubmitted"
         />
@@ -122,21 +136,24 @@ const {
 
 const { hasSubmitted, generateSubmit } = useSubmit();
 
-// todo
+// todo 拿掉 帳號密碼
 const form = ref({
   username: 'Admin',
   password: '123456',
+  mode: 'general',
 });
 
 const handleLogin = generateSubmit(async () => {
   setUser(await loginUser(form.value));
   startMaintainUser();
 
-  await setupResourses();
-  router.push({ path: '/target' });
+  await setupResources();
+
+  if (form.value.mode === 'general') router.push({ path: '/target' });
+  if (form.value.mode === 'upload') router.push({ path: '/upload-mobile' });
 });
 
-async function setupResourses() {
+async function setupResources() {
   setDevices(await getDevices(sessionId.value));
   setLiveDevices(await getLiveDevices(sessionId.value));
 }

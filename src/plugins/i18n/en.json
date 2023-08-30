@@ -544,5 +544,7 @@
   "Edit": "Edit",
   "AlbumName": "Album name",
   "RequiredMessage": "Required",
-  "HtmlVideoArchive": "HTML video archive"
+  "HtmlVideoArchive": "HTML video archive",
+  "GeneralMode": "Main console",
+  "UploadMode": "Photo upload tool"
 }

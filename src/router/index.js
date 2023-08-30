@@ -14,8 +14,8 @@ const router = createRouter({
       component: () => import('../views/InvestigationView.vue'),
     },
     {
-      path: '/m',
-      component: () => import('../views/Mobile.vue'),
+      path: '/upload-mobile',
+      component: () => import('../views/UploadMobile.vue'),
     },
     {
       path: '/:pathMatch(.*)*',

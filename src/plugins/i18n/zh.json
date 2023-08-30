@@ -544,5 +544,7 @@
   "Edit": "編輯",
   "AlbumName": "相簿名稱",
   "RequiredMessage": "必填",
-  "HtmlVideoArchive": "HTML 視頻存檔"
+  "HtmlVideoArchive": "HTML 視頻存檔",
+  "GeneralMode": "主控台",
+  "UploadMode": "照片上傳工具"
 }

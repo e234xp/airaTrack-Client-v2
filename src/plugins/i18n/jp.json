@@ -544,5 +544,7 @@
   "Edit": "編集",
   "AlbumName": "アルバム名",
   "RequiredMessage": "必須",
-  "HtmlVideoArchive": "HTMLビデオアーカイブ"
+  "HtmlVideoArchive": "HTMLビデオアーカイブ",
+  "GeneralMode": "メインコンソール",
+  "UploadMode": "写真アップロードツール"
 }
