@@ -19,6 +19,7 @@
           class="w-8 h-6 flex justify-center items-center
                         text-sm font-bold
                         bg-white text-gray-600"
+          :id="`${type}-${face.data.id}`"
         >
           <template v-if="face.data.face_be_merged.length + 1<=99">
             {{ face.data.face_be_merged.length + 1 }}
@@ -62,7 +63,10 @@ defineProps({
       return [];
     },
   },
-
+  type: {
+    type: String,
+    default: '',
+  },
 });
 
 const userStore = useUserStore();

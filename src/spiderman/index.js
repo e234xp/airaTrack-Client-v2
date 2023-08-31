@@ -7,7 +7,7 @@ import base64Image from './base64-image';
 import apiService from './api-service';
 
 const system = {
-  version: '2.0.0 230830',
+  version: '2.0.0 230831',
   apiBaseUrl: import.meta.env.MODE === 'development'
     ? 'http://211.75.111.228:8083'
     : '',

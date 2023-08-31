@@ -22,6 +22,7 @@
           <div class="w-full 2xl:w-9/12">
             <FaceList
               :faces="faces"
+              type="detail"
             />
           </div>
         </div>
@@ -134,6 +135,8 @@ const totalPages = computed(() => helpers.getTotalPages({
 
 const faces = ref([]);
 
+const performAnimation = helpers.getPerformAnimationFn('detail');
+
 onMounted(async () => {
   ({ data: faces.value, totalItems: totalItems.value } = await helpers.getLiveFaces({
     startTime,
@@ -143,6 +146,10 @@ onMounted(async () => {
     cameraList,
     sessionId: sessionId.value,
   }));
+
+  const currentKey = helpers.getCurrentKey();
+  if (selectedFaceKey.value !== currentKey) return;
+  performAnimation(faces.value);
 });
 
 async function handleTurnPage(pageNumber) {
@@ -161,7 +168,7 @@ async function handleTurnPage(pageNumber) {
 }
 
 // 每隔一段時間去要最新的 faces
-const timer = setInterval(() => {
+const timer = setInterval(async () => {
   const currentKey = (() => {
     const tenMinutesMs = 10 * 60 * 1000;
     return Math.floor(spiderman.dayjs().valueOf() / tenMinutesMs) * tenMinutesMs;
@@ -169,7 +176,9 @@ const timer = setInterval(() => {
 
   if (selectedFaceKey.value !== currentKey) return;
 
-  handleTurnPage(currentPage.value);
+  await handleTurnPage(currentPage.value);
+
+  performAnimation(faces.value);
 }, 10 * 1000);
 
 onUnmounted(() => {

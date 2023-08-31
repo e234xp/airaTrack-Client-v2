@@ -67,6 +67,7 @@
                 </div>
                 <FaceList
                   :faces="hourFaces[faceKey]"
+                  type="list"
                   class="flex-grow"
                 />
                 <div
@@ -141,6 +142,8 @@ watch([selectedDate, selectedHour], ([date, hour]) => {
   getLiveFaceHourly({ date, hour });
 }, { immediate: true });
 
+const performAnimation = helpers.getPerformAnimationFn('list');
+
 async function getLiveFaceHourly({ date, hour }) {
   const TEN_MINUTES_MS = 600000;
 
@@ -190,26 +193,26 @@ async function getLiveFaceHourly({ date, hour }) {
     return acc;
   }, {});
 
+  const currentKey = helpers.getCurrentKey();
   // 去同時要每 10 分鐘的資料
   await Promise.allSettled(hourFaceKeys.value.map(async (key) => {
     const result = await hourFacePaginations.value[key].onTurnPage(1);
+    if (key !== currentKey) return { result };
 
+    performAnimation(hourFaces.value[key]);
     return { result };
   }));
 }
 
-// 每隔一段時間去要最新的 faces
-const timer = setInterval(() => {
-  const currentKey = (() => {
-    const tenMinutesMs = 10 * 60 * 1000;
-    return Math.floor(spiderman.dayjs().valueOf() / tenMinutesMs) * tenMinutesMs;
-  })();
-
+const timer = setInterval(async () => {
+  const currentKey = helpers.getCurrentKey();
   if (!hourFaceKeys.value.includes(currentKey)) return;
 
-  hourFacePaginations.value[currentKey].onTurnPage(
+  await hourFacePaginations.value[currentKey].onTurnPage(
     hourFacePaginations.value[currentKey].currentPage,
   );
+
+  performAnimation(hourFaces.value[currentKey]);
 }, 10 * 1000);
 
 onUnmounted(() => {
@@ -221,3 +224,20 @@ function handleToDetail(faceKey) {
   setPage('detail');
 }
 </script>
+
+<style>
+/* 定義動畫 */
+@keyframes colorTransition {
+  0%, 100% {
+    background-color: white;
+  }
+  50% {
+    background-color: #ffc93e;
+  }
+}
+
+/* 添加動畫效果 */
+.animate-color-transition {
+  animation: colorTransition 1s forwards;
+}
+</style>
