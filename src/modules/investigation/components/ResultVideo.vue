@@ -7,7 +7,6 @@
         ref="videoRef"
         :key="videoUrl"
         autoplay
-        loop
         @timeupdate="handleTimeUpdate"
         @ended="handleVideoEnded"
         @playing="handleVideoStarted"
@@ -18,7 +17,7 @@
       </video>
     </div>
 
-    <div class="px-8">
+    <div class="px-4">
       <input
         type="range"
         class="w-full h-2 bg-gray-200

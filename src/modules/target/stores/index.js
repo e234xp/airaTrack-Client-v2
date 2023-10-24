@@ -1,6 +1,8 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
+import * as actions from './actions';
+
 export default defineStore('module-target', () => {
   const initialState = {
     selectedFace: null,
@@ -59,6 +61,8 @@ export default defineStore('module-target', () => {
   }
 
   return {
+    ...actions,
+
     initStore,
 
     page,

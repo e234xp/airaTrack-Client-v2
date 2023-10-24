@@ -11,7 +11,7 @@
           setPage('list');
           setDataType('all');
         "
-        class="w-56 py-3"
+        class="w-56 !text-xl"
       >
         {{ $t('All') }}
       </AppButton>
@@ -24,7 +24,7 @@
           setPage('list');
           setDataType('finish');
         "
-        class="w-56 py-3"
+        class="w-56 !text-xl"
       >
         {{ $t('Completed') }}
       </AppButton>
@@ -37,7 +37,7 @@
           setPage('list');
           setDataType('progress');
         "
-        class="w-56 py-3"
+        class="w-56 !text-xl"
       >
         {{ $t('Processing') }}
       </AppButton>

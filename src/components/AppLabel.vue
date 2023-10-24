@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="text-base">
     <label
-      class="block text-xl font-bold mb-2"
+      class="block text-xl font"
       :class="`text-${textColor}`"
     >
       {{ label }}

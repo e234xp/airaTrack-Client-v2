@@ -1,17 +1,18 @@
 <template>
   <div>
     <nav
-      class="isolate inline-flex -space-x-px rounded-md shadow-sm bg-white"
+      class="isolate inline-flex -space-x-px rounded-md shadow-sm"
     >
       <a
-        @click="$emit('onTurnPage', currentPage - 1)"
+        @click.prevent="$emit('onTurnPage', currentPage - 1)"
         href="#"
         class="relative inline-flex items-center rounded-l-md
-        px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300
+        px-2 py-2
         hover:bg-primary-hover hover:text-white focus:z-20 focus:outline-offset-0"
         :class="{
-          'pointer-events-none': currentPage === 1,
-          'opacity-50 cursor-not-allowed': currentPage === 1
+          'pointer-events-none text-gray-400': currentPage === 1,
+          'opacity-50 cursor-not-allowed': currentPage === 1,
+          'text-gray-200': currentPage !== 1
         }"
         :disabled="currentPage === 1"
       >
@@ -24,29 +25,29 @@
       <a
         v-for="page in displayPages"
         :key="page"
-        @click="$emit('onTurnPage', page)"
+        @click.prevent="$emit('onTurnPage', page)"
         href="#"
         :class="{
-          'bg-primary text-white': page === currentPage,
-          'text-gray-900': page !== currentPage,
+          'bg-primary': page === currentPage
         }"
         class="relative inline-flex items-center
-        px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-gray-300
+        px-4 py-2 text-sm font-semibold text-white
         hover:bg-primary-hover hover:text-white focus:z-20 focus:outline-offset-0"
       >
         {{ page }}
       </a>
       <a
-        @click="$emit('onTurnPage', currentPage + 1)"
+        @click.prevent="$emit('onTurnPage', currentPage + 1)"
         href="#"
+        class="relative inline-flex items-center rounded-r-md
+        px-2 py-2
+        hover:bg-primary-hover hover:text-white focus:z-20 focus:outline-offset-0"
         :class="{
-          'pointer-events-none': currentPage === totalPages,
-          'opacity-50 cursor-not-allowed': currentPage === totalPages
+          'pointer-events-none text-gray-400': currentPage === totalPages,
+          'opacity-50 cursor-not-allowed': currentPage === totalPages,
+          'text-gray-200': currentPage !== totalPages
         }"
         :disabled="currentPage === totalPages"
-        class="relative inline-flex items-center rounded-r-md
-        px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300
-        hover:bg-primary-hover hover:text-white focus:z-20 focus:outline-offset-0"
       >
         <AppSvgIcon
           name="icon-chevron-right"

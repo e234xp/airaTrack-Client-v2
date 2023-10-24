@@ -1,5 +1,5 @@
 import axios from 'axios';
-import errorStore from '@/stores/error';
+import errorStore from '@/components/AppError/error';
 
 const axiosInstance = (() => {
   const tmp = axios.create({

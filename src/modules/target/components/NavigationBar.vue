@@ -7,20 +7,20 @@
         type="transparent"
         active-type="baseline"
         :is-active="page === 'list'"
-        class="w-56 py-3"
+        class="w-56 text-xl"
         @click="setPage('list')"
       >
-        {{ $t('Faces') }}
+        <p>{{ $t('FaceBoard') }}</p>
       </AppButton>
 
       <AppButton
         type="transparent"
         active-type="baseline"
         :is-active="page === 'album-list' || page === 'album-detail'"
-        class="w-56 py-3"
+        class="w-56 text-xl"
         @click="setPage('album-list')"
       >
-        {{ $t('Album') }}
+        <p>{{ $t('Album') }}</p>
       </AppButton>
     </div>
     <AppDivider />

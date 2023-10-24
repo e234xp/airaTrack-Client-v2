@@ -51,7 +51,6 @@ const { user } = userStore;
 // }, 1000);
 
 onUnmounted(() => {
-  console.log('clearInterval');
   clearInterval(timer);
 });
 </script>

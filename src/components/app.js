@@ -5,10 +5,11 @@ import AppInput from './AppInput.vue';
 import AppCheckBox from './AppCheckBox.vue';
 import AppSvgIcon from './AppSvgIcon.vue';
 import AppPagination from './AppPagination.vue';
-import AppError from './AppError.vue';
-import AppSuccess from './AppSuccess.vue';
-import AppModal from './AppModal.vue';
+import AppError from './AppError/AppError.vue';
+import AppSuccess from './AppSuccess/AppSuccess.vue';
+import AppModal from './AppModal/AppModal.vue';
 import AppDivider from './AppDivider.vue';
+import AppToggle from './AppToggle.vue';
 
 export {
   AppButton,
@@ -22,4 +23,5 @@ export {
   AppSuccess,
   AppModal,
   AppDivider,
+  AppToggle
 };

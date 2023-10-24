@@ -3,47 +3,54 @@
     <div
       v-for="face in faces"
       :key="face.data.id"
-      class="select-none relative cursor-pointer"
+      class="select-none relative cursor-pointer w-full h-24"
+      :class="{ 'pointer-events-none': face.data.id === '' }"
       @click="handleToggleFace(face)"
     >
-      <img
-        class="w-40"
-        :src="spiderman.base64Image.getSrc(face.data.face_image)"
-        alt=""
-      >
-      <div
-        v-show="face.data.face_be_merged.length > 0"
-        class="absolute top-0 left-0 w-full h-full flex justify-end items-end"
-      >
-        <div
-          class="w-8 h-6 flex justify-center items-center
-                        text-sm font-bold
-                        bg-white text-gray-600"
-          :id="`${type}-${face.data.id}`"
+      <template v-if="face.data.face_image">
+        <img
+          class="w-full h-full object-cover"
+          :src="spiderman.base64Image.getSrc(face.data.face_image)"
+          alt=""
         >
-          <template v-if="face.data.face_be_merged.length + 1<=99">
-            {{ face.data.face_be_merged.length + 1 }}
-          </template>
-          <template v-else>
-            99+
-          </template>
+        <div
+          v-show="face.data.face_be_merged.length > 0"
+          class="absolute top-0 left-0 w-full h-full flex justify-end items-end p-1"
+        >
+          <div
+            class="relative h-6 flex justify-center items-center
+                          text-sm font-bold rounded-2xl
+                          bg-primary text-white"
+            :class="[face.data.face_be_merged.length + 1 <= 99 ? 'w-8' : 'w-10' ]"
+            :id="`${type}-${face.data.id}`"
+          >
+            <template v-if="face.data.face_be_merged.length + 1<=99">
+              {{ face.data.face_be_merged.length + 1 }}
+            </template>
+            <template v-else>
+              99+
+            </template>
+          </div>
         </div>
-      </div>
-      <template
-        v-if="face.data.id === selectedFace?.data.id"
-      >
-        <div
-          class="absolute inset-0 bg-gray-900 opacity-40"
-        />
-        <div
-          class="absolute top-0 left-0 w-full h-full
-                       flex items-center justify-center"
+        <template
+          v-if="face.data.id === selectedFace?.data.id"
         >
-          <AppSvgIcon
-            name="icon-check"
-            class="text-white w-16 h-16"
+          <div
+            class="absolute inset-0 bg-gray-900 opacity-40"
           />
-        </div>
+          <div
+            class="absolute top-0 left-0 w-full h-full
+                        flex items-center justify-center"
+          >
+            <AppSvgIcon
+              name="icon-check"
+              class="text-white w-16 h-16"
+            />
+          </div>
+        </template>
+      </template>
+      <template v-else>
+        <div class="w-full" style="padding-top: 100%"></div>
       </template>
     </div>
   </div>
@@ -53,7 +60,6 @@
 import spiderman from '@/spiderman';
 import { storeToRefs } from 'pinia';
 
-import useUserStore from '@/stores/user';
 import useStore from '@/modules/target/stores/index';
 
 defineProps({
@@ -69,13 +75,10 @@ defineProps({
   },
 });
 
-const userStore = useUserStore();
-const { sessionId } = storeToRefs(userStore);
-
 const store = useStore();
 const { selectedFace, confirmingFaces } = storeToRefs(store);
 const {
-  setSelectedFace, setConfirmingFaces, setConfirmedFace,
+  setSelectedFace, setConfirmingFaces, setConfirmedFace, getLiveFaceImage
 } = store;
 
 async function handleToggleFace(face) {
@@ -106,14 +109,8 @@ async function setConfirmingFacesAll(face) {
     // eslint-disable-next-line no-await-in-loop
     await Promise.allSettled(faceBatch.map(async (f) => {
       const image = {};
-      ({ b64: image.b64, feature: image.feature } = await spiderman.apiService({
-        url: `${spiderman.system.apiBaseUrl}/airaTracker/livefaceimage`,
-        method: 'post',
-        headers: { sessionId: sessionId.value },
-        data: {
-          face_file: f.face_file,
-        },
-      }));
+
+      ({ b64: image.b64, feature: image.feature } = await getLiveFaceImage(f.face_file));
 
       tmp = [...tmp, {
         camera_id: face.camera_id,

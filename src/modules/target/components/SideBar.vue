@@ -1,9 +1,9 @@
 <template>
-  <div class="w-96 bg-side-bar/40">
+  <div class="w-80 bg-side-bar/40">
     <FullLayout>
       <template #header>
         <div
-          class="border-b-4 border-white/0 mx-6 py-3 text-white text-left text-2xl"
+          class="mx-5 py-2 text-white text-xl"
         >
           {{ $t('Target') }}
         </div>
@@ -12,14 +12,17 @@
 
         <AppButton
           type="secondary"
-          class="mx-6 my-6 py-3 text-xl"
+          class="mx-4 my-4"
+          @click="onUpload"
         >
           {{ $t("Upload") }}
         </AppButton>
 
         <AppDivider />
+      </template>
 
-        <div class="mx-6 my-8">
+      <template #grow>
+        <div class="m-4">
           <div
             v-if="selectedFace"
             class="aira-row-auto-1 gap-4"
@@ -33,50 +36,47 @@
                 alt=""
               >
             </div>
+
           </div>
 
           <div
             v-else
-            class="leading-10 break-words text-2xl text-default"
+            class="break-words text-base text-default"
           >
             {{ $t('SelectTargetPrompt') }}
           </div>
         </div>
-      </template>
 
-      <template #grow>
-        <div class="mx-6 mb-8">
+        <AppDivider v-if="selectedFace" />
+
+        <div class="m-4 aira-row-auto-1 gap-4">
           <div
-            class="aira-row-auto-1 gap-4"
+            v-for="face in confirmingFaces"
+            :key="face.data.id"
+            class="select-none relative cursor-pointer"
+            @click="handleToggleFace(face)"
           >
-            <div
-              v-for="face in confirmingFaces"
-              :key="face.data.id"
-              class="select-none relative cursor-pointer"
-              @click="handleToggleFace(face)"
+            <img
+              class="w-full h-full"
+              :src="spiderman.base64Image.getSrc(face?.data.face_image)"
+              alt=""
             >
-              <img
-                class="w-full h-full"
-                :src="spiderman.base64Image.getSrc(face?.data.face_image)"
-                alt=""
+            <template
+              v-if="face.data.id === confirmedFace?.data.id"
+            >
+              <div
+                class="absolute inset-0 bg-gray-900 opacity-40"
+              />
+              <div
+                class="absolute top-0 left-0 w-full h-full
+                      flex items-center justify-center"
               >
-              <template
-                v-if="face.data.id === confirmedFace?.data.id"
-              >
-                <div
-                  class="absolute inset-0 bg-gray-900 opacity-40"
+                <AppSvgIcon
+                  name="icon-check"
+                  class="text-white w-16 h-16"
                 />
-                <div
-                  class="absolute top-0 left-0 w-full h-full
-                       flex items-center justify-center"
-                >
-                  <AppSvgIcon
-                    name="icon-check"
-                    class="text-white w-16 h-16"
-                  />
-                </div>
-              </template>
-            </div>
+              </div>
+            </template>
           </div>
         </div>
       </template>
@@ -86,7 +86,7 @@
           <AppButton
             type="primary"
             :is-enable="!!confirmedFace?.data.id"
-            class="mx-6 mb-4 py-3"
+            class="mx-4 mb-4"
             @click="setPage('adding-investgation')"
           >
             {{ $t("Investigation") }}
@@ -94,7 +94,7 @@
           <AppButton
             type="secondary"
             :is-enable="!!confirmedFace?.data.id"
-            class="mx-6 mb-4 py-3"
+            class="mx-4 mb-4"
             @click="setModal('save-to-album')"
           >
             {{ $t("SaveToAlbum") }}
@@ -102,7 +102,7 @@
           <AppButton
             type="secondary"
             :is-enable="!!selectedFace?.data.id"
-            class="mx-6 mb-4 py-3"
+            class="mx-4 mb-4"
             @click="clearSelection()"
           >
             {{ $t("ClearSelection") }}
@@ -119,21 +119,20 @@
 
 <script setup>
 import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
 
 import spiderman from '@/spiderman';
-import useUserStore from '@/stores/user';
-import successStore from '@/stores/success';
+import successStore from '@/components/AppSuccess/success';
 
 import useStore from '@/modules/target/stores/index';
 import ModalSaveToAlbum from '@/modules/target/components/ModalSaveToAlbum.vue';
 
-const userStore = useUserStore();
-const { sessionId } = storeToRefs(userStore);
+const router = useRouter();
 
 const store = useStore();
 const { selectedFace, confirmingFaces, confirmedFace } = storeToRefs(store);
 const {
-  setPage, setSelectedFace, setConfirmingFaces, setConfirmedFace, setModal,
+  setPage, setSelectedFace, setConfirmingFaces, setConfirmedFace, setModal, addPhotoFeature
 } = store;
 
 async function handleToggleFace(face) {
@@ -156,13 +155,12 @@ async function handleAddToAlbum(form) {
   const data = {
     albumId, id, face_image: faceImage, feature,
   };
-  await spiderman.apiService({
-    url: `${spiderman.system.apiBaseUrl}/airaTracker/albums/photoFeature`,
-    method: 'post',
-    headers: { sessionId: sessionId.value },
-    data,
-  });
+  await addPhotoFeature(data);
   setModal('');
   successStore.show();
+}
+
+function onUpload() {
+  setModal('upload');
 }
 </script>

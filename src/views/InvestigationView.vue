@@ -17,7 +17,12 @@ import PageDetail from '@/modules/investigation/components/PageDetail.vue';
 import useStore from '@/modules/investigation/stores/index';
 
 const store = useStore();
-const { page } = storeToRefs(store);
-const { initStore } = store;
+const { page, caseData } = storeToRefs(store);
+const { initStore, setPage, switchCaseData} = store;
 initStore();
+
+if (caseData.value) {
+  setPage('detail');
+  switchCaseData();
+}
 </script>

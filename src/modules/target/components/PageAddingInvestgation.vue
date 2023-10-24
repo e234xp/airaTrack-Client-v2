@@ -6,50 +6,55 @@
       </template>
 
       <template #grow>
-        <div class="mt-12 flex justify-center">
-          <div class="w-full 2xl:w-352">
-            <div class="aira-row-auto-10 gap-4">
+        <div class="mt-12 flex justify-center" style="height: calc(100% - 3rem)">
+          <div class="w-full 2xl:w-352 h-full">
+            <div class="flex justify-center gap-4 h-full">
               <img
-                class="w-full"
+                class="w-1/5 object-contain object-top"
                 :src="spiderman.base64Image.getSrc(confirmedFace?.data.face_image)"
                 alt=""
               >
 
-              <div class="col-span-2 p-4">
-                <div class="aira-row-auto-8 gap-4 mb-4">
-                  <AppLabel :label="$t('TaskName')">
+              <div class="px-4 h-full w-2/3">
+                <div class="flex mb-4 mr-4">
+                  <AppLabel :label="$t('TaskName')" class="w-1/2">
                     <AppInput
+                      dark
                       v-model:modelInput="form.task_name"
                       :placeholder="$t('TaskName')"
+                      :dark="true"
                     />
                   </AppLabel>
                 </div>
-                <div class="aira-row-auto-8 gap-4 mb-4">
-                  <AppLabel :label="$t('StartTime')">
+                <div class="flex gap-4 mb-4">
+                  <AppLabel :label="$t('StartTime')" class="w-1/2">
                     <AppDatePicker
                       v-model:modelSelected="form.search_start_time"
+                      :dark="true"
                       mode="date-time"
                     />
                   </AppLabel>
-                  <AppLabel :label="$t('EndTime')">
+                  <AppLabel :label="$t('EndTime')" class="w-1/2">
                     <AppDatePicker
                       v-model:modelSelected="form.search_end_time"
+                      :dark="true"
                       mode="date-time"
                     />
                   </AppLabel>
                 </div>
-                <div class="aira-row-auto-8 gap-4 mb-4">
-                  <div>
-                    <div class="mb-1 text-white text-2xl">
-                      Live Channel
+                <div class="flex gap-2 mb-8" style="height: calc(100% - 20rem)">
+                  <div class="w-1/2 pr-1">
+                    <div class="text-white text-xl">
+                      {{ $t('LiveChannel') }}
                       ({{ form.livechannels.length }}/{{ liveChannelAmount }})
                     </div>
 
                     <div
-                      class="border-t-4 border-primary rounded bg-gray-800 bg-opacity-50 py-2 px-4"
+                      class="border-t-4 border-live-channel rounded bg-gray-800 bg-opacity-50 py-2 px-4 overflow-y-auto"
+                      style="height: calc(100% - 2rem)"
                     >
                       <AppCheckBox
-                        class="mb-7 text-3xl text-white"
+                        class="mb-4 text-xl text-white"
                         :placeholder="$t('All')"
                         :checked="form.livechannels.length===livedevices.length"
                         @on-change="()=>{
@@ -63,7 +68,7 @@
                       <AppCheckBox
                         v-for="livedevice in livedevices"
                         :key="livedevice.camera_id"
-                        class="mb-4 text-3xl text-white"
+                        class="mb-2 text-xl text-white"
                         :placeholder="livedevice.name"
                         v-model:modelInput="form.livechannels"
                         :value="livedevice"
@@ -74,16 +79,17 @@
                     </div>
                   </div>
 
-                  <div>
-                    <div class="mb-1 text-white text-2xl">
-                      Nx Video Archive
-                      ({{ form.archchannels.length }}/{{ archiveAmount }})
+                  <div class="w-1/2 pl-1">
+                    <div class="text-white text-xl">
+                      {{ $t('NxVideoArchive') }}
+                      <!-- ({{ form.archchannels.length }}/{{ archiveAmount }}) -->
                     </div>
                     <div
-                      class="border-t-4 border-primary rounded bg-gray-800 bg-opacity-50 py-2 px-4"
+                      class="border-t-4 border-archive-channel rounded bg-gray-800 bg-opacity-50 py-2 px-4 overflow-y-auto"
+                      style="height: calc(100% - 2rem)"
                     >
                       <AppCheckBox
-                        class="mb-7 text-3xl text-white"
+                        class="mb-4 text-xl text-white"
                         :placeholder="$t('All')"
                         :checked="form.archchannels.length===devices.length"
                         @on-change="()=>{
@@ -97,7 +103,7 @@
                       <AppCheckBox
                         v-for="device in devices"
                         :key="device.camera_id"
-                        class="mb-4 text-3xl text-white"
+                        class="mb-2 text-xl text-white"
                         :placeholder="device.name"
                         v-model:modelInput="form.archchannels"
                         :value="device"
@@ -108,25 +114,25 @@
                     </div>
                   </div>
                 </div>
+                <div class="flex justify-end gap-4">
+                  <AppButton
+                    type="secondary"
+                    class="px-6"
+                    @click="setPage('list')"
+                  >
+                    {{ $t('Return') }}
+                  </AppButton>
+                  <AppButton
+                    type="primary"
+                    class="px-6"
+                    @click="handleAddTask(form)"
+                    :is-enable="form.archchannels.length > 0
+                      || form.livechannels.length > 0"
+                  >
+                    {{ $t('AddInvestigation') }}
+                  </AppButton>
+                </div>
               </div>
-            </div>
-            <div class="flex justify-end">
-              <AppButton
-                type="secondary"
-                class="mr-8 px-6 py-2 text-3xl"
-                @click="setPage('list')"
-              >
-                {{ $t('Return') }}
-              </AppButton>
-              <AppButton
-                type="primary"
-                class="px-6 py-2 text-3xl"
-                @click="handleAddTask(form)"
-                :is-enable="form.archchannels.length > 0
-                  || form.livechannels.length > 0"
-              >
-                {{ $t('AddInvestigation') }}
-              </AppButton>
             </div>
           </div>
         </div>
@@ -145,30 +151,21 @@ import spiderman from '@/spiderman';
 import NavigationBar from '@/modules/target/components/NavigationBar.vue';
 
 import useStore from '@/modules/target/stores/index';
-
 import useDevices from '@/stores/devices';
-import useUserStore from '@/stores/user';
 
 const router = useRouter();
 
 const store = useStore();
 const { confirmedFace } = storeToRefs(store);
-const { setPage } = store;
+const { setPage, getLicense, addTask } = store;
 
 const devicesStore = useDevices();
 const { devices, livedevices } = storeToRefs(devicesStore);
 
-const userStore = useUserStore();
-const { sessionId } = storeToRefs(userStore);
-
 const liveChannelAmount = ref(0);
 const archiveAmount = ref(0);
 onMounted(async () => {
-  const { license } = await spiderman.apiService({
-    url: `${spiderman.system.apiBaseUrl}/airaTracker/license`,
-    method: 'get',
-    headers: { sessionId: sessionId.value },
-  });
+  const { license } = await getLicense();
 
   // filter 掉過期的
   const validLicenses = license.filter(({ trial_end_time: trialEndTime }) => {
@@ -211,12 +208,7 @@ async function handleAddTask(theForm) {
   taskForm.search_start_time = spiderman.dayjs(theForm.search_start_time).valueOf();
   taskForm.search_end_time = spiderman.dayjs(theForm.search_end_time).valueOf();
 
-  await spiderman.apiService({
-    url: `${spiderman.system.apiBaseUrl}/airaTracker/v2/addtask`,
-    method: 'post',
-    headers: { sessionId: sessionId.value },
-    data: taskForm,
-  });
+  addTask(taskForm);
 
   router.push({ path: '/investigation' });
 }

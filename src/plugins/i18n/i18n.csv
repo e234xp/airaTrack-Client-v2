@@ -1,0 +1,566 @@
+,en,jp,zh
+AM,AM,AM,上午
+AbnormalColor,Abnormal Color,異常,異常
+AbnormalPerson,Abnormal Person,異常者,異常人員
+Absent,Absent,欠席,缺席
+AccessControl,Access Control,アクセスレベル,門禁
+AccessControlDeviceSettings,Device Settings,デバイス,門禁裝置設定
+AccessControlDeviceType,Type,タイプ,門禁裝置類別
+AccessControlManagement,Settings Management,設定,門禁管理
+AccessControlName,Access Control Name,名前,門禁名稱
+AccessControlSettingsList,Access Control Settings List,アクセスレベル設定リスト,門禁設定列表
+Account,Account Name,アカウント,帳號
+AccountInfo,Account Info,アカウント情報,帳號資訊
+AccountManagement,Account,アカウント,帳號管理
+Acknowledge,Acknowledge,認める,確認
+Add,Add,追加,新增
+AddInvestigation,Build task,タスクを構築します,建立任務
+AddPerson,Add Person,パーソン追加,新增人員
+AddToCase,Add to case,ケースに追加します,加到案件
+AddVisitor,Add Visitor,ビジター追加,新增訪客
+AdjustClockInEnabled,record with the scheduled clock-in time when arrive before the scheduled clock-in time.,予定勤務時間より早く到着した場合は、予定勤務時間に従って記録します。,若表定上班時間之前到達，以表定上班時間記錄。
+AdjustClockOutEnabled,record with the scheduled clock-out time when leave after the scheduled clock-out time.,予定退勤時刻を過ぎて退勤する場合は、予定退勤時刻で記録します。,若表定下班時間之後離開，以表定下班時間記錄。
+AdvertisingMode,Advertising Mode,広告モード,形象廣告模式
+AlarmSettings,Alarm Settings,アラーム設定,警示設定
+AlarmVolume,Alarm Volume,アラーム音量,警示音量
+Album,Album,アルバム,相簿
+AlbumName,Album name,アルバム名,相簿名稱
+All,All,全て,全部
+AllPerson,All Person,全パーソン,全部
+AllTemperature,All Temperature,全部で,全部
+AndMore,and {number} more,および{number}詳細,及另外 {number} 項
+Announcement,Announcement,表示,公告
+AntiSpoofingThreshold,Anti Spoofing Threshold,なりすまし防止閾値,防偽閥值
+Apply,Apply,適用,套用
+AsAdmin,As Admin,管理者,指定為 Admin
+AssignedGroup,Central Assigned Group,中央割り当てグループ,中央指派群組
+Attendance,Attendance,出退勤,出勤
+AttendanceChange,Attendance operations,勤怠管理,出勤操作
+AttendanceLogChange,Edit Attendance Record,出席記録を編集します,變更出勤紀錄
+AttendanceOperations,Attendance Operations,勤怠管理,出勤操作
+AttendanceSettings,Attendance Settings,出席設定,出勤設定
+AvailableWifi,Available Wi-Fi SSID,利用可能なWi-Fi SSID,可用的無線網路
+AverageResidenceTime,Average Dwell Time,平均滞在時間,平均停留時間
+BackgroundColor,Background Color,背景色,背景顏色
+BackgroundImage,Background Image,背景イメージ,背景圖片
+BackupAndRestore,Backup & Restore,バックアップ&リストア,備份與還原
+BackupDatabase,Backup Database,バックアップDB,備份資料庫
+Blank,Blank,空白,空白
+Body,Body,Body,Body
+BottomMessage,Message On Bottom,下部のメッセージ,底部資訊
+BreakTimeMins,Break Time (minutes): ,休憩時間 (分):,休息時間（分鐘）：
+BreakTimeTitle,Break Time,休憩時間,休息時間
+Cancel,Cancel,キャンセル,取消
+Cancelled,Cancelled,キャンセル,已取消
+CannotBeBlank,Can not be Blank!,フィールドの空白 スペース は使えません,不能為空
+Capacity,Occupancy Board,出席ボード,點名看板
+Capacity_Mode,Checkin Attendance,出退勤ステータス,登記出勤
+Caption,Caption,テキスト1,標題
+CapturedPhoto,Captured Photo,撮影した写真,抓拍照片
+CardNumber,Card Number,カード番号,卡號
+Case,Case,場合,案件
+Celsius,Celsius (°C),摂氏 (°C),攝氏 (°C)
+CentralManagement,Central Management,中央管理,中央管理
+ChangeAttendanceRecord,Change Logs,変更ログ,變更日誌
+ChangeAttendanceRecords,Change attendance record,出席記録を変更する,變更出勤紀錄
+ChangeAttendanceTime,Corrected Time,修正された時間,補打卡時間
+ChangeLogsModifier,Change Logs Modifier,レコードエディター,紀錄修改人
+ChangeLogsNewTime,Corrected Time,修正時刻,修正時間
+ChangeLogsPerson,Person,人員,人員
+ChangeLogsReason,Reason,理由,原因
+ChangeLogsTargetPerson,Target,目標,目標對象
+ChangeLogsTimeRange,Time range ,時間範囲,時間區間
+ChangeLogsTitle,Change logs,変更ログ,變更日誌
+ChangeLogsType,Type,類型,類型
+ChangeReason,"Reason (required, less than 50 characters):",理由 (必須、50 文字未満):,原因（必填，少於 50 字）：
+CheckInfo,Check,見る,檢視
+ChooseAnotherFile,Reselect,再選択,重新選擇
+ChooseFile,Choose File,選択,選擇檔案
+ClearSelection,Clear selection,明確な選択,取消選擇
+ClockIn,Clock In,出社,上班
+ClockInTime,Clock-in Time,出勤時間,上班時間
+ClockInTimeBuffer,Clock-in Flexibility (minute),出社バッファー（分）,上班時間緩衝 (分鐘)
+ClockInUpperBound,Count as late when arrive after:,以降に到着した場合は遅刻としてカウントされます,判定遲到，晚於：
+ClockModeCard,Card Mode,カード,刷卡
+ClockModeClockIn,Clock In,出社,上班卡
+ClockModeClockOut,Clock Out,退社,下班卡
+ClockModeManualClockIn,Clock-in manually,手動での出勤,補打上班卡
+ClockModeManualClockOut,Clock-out manually,手動で退勤する,補打下班卡
+ClockModeNono,None,なし,None
+ClockModePass,Passing Mode,通過,通行模式
+ClockOut,Clock Out,退出,下班
+ClockOutLowerBound,Count as early leaving when leave before:,より前の退勤は早退としてカウントされます,判定早退，早於：
+ClockOutTime,Clock-out Time,退勤時間,下班時間
+ClockOutTimeBuffer,Clock-out Flexibility (minute),退社バッファー（分）,下班時間緩衝 (分鐘)
+ClockTime,Clock Time,時間,打卡時間
+ClockinMode,Clock-In Mode,出退勤モード,打卡鐘模式
+ClockingMode,Clocking Mode,モード,打卡模式
+Color,Color,カラー,字體顏色
+Compact,Compact,コンパクト,緊湊
+CompanyInfo,Company Info,会社情報,公司信息
+CompanyName,Company Name,会社名,公司名稱
+Complete,Complete,完了,完成
+CompleteAndRestart,"Complete, System will restart in 60 secs, please wait.",システムは60秒以内に再起動します 暫くお待ちください,"完成, 系統將會在 60秒 內重新啟動, 請稍待"
+Completed,Completed,完了しました,已完成
+Confirm,Confirm,確認,確定
+ConfirmPassword,Confirm Password,再入力,確認密碼
+ConfirmToChangeNetwork,Are you sure? You will have to reconnect.,再接続が必要ですが宜しいですか？,確定要變更？你將需要重新連線
+ConfirmToDelete,Are you sure to delete?,本当に削除しますか？,你確定要刪除嗎？
+ConfirmToFactoryDefault,Will lost all data and reboot,全てのデータが削除され再起動します,將刪除所有資料，系統將重新啟動
+ConfirmToProcess,Are you sure to do this?,これを確実に行いますか？,你確定要這樣做嗎？
+ConfirmToReboot,System will reboot,システム再起動,系統將重新啟動
+ConnectTimetoutMs,Connect Timetout(ms),接続タイムアウト(ms),連線逾時(ms)
+ContentField,Content,コンテンツ,內容欄位
+CorrectAttendance,Change Attendance record,出席記録を変更する,變更出勤紀錄
+Create,Create,登録,創建
+CreateAccessControl,Create Access Control,アクセスレベル追加,新增門禁
+CreateAccount,Create Account,アカウント作成,創建帳號
+CreateDate,Create Date,登録日,建立時間
+CreateEventControl,Create Event,イベント作成,新增事件
+CreateGroup,Create Group,グループ登録,創建群組
+CurrentDeviceTime,Device Time,デバイス時間,裝置時間
+CurrentIpAddress,Current IP Address,現在のIPアドレス,目前 IP 位址
+CurrentLocalTime,Local Time,ローカル時間,本地時間
+CurrentRecords,Current Records,現在の記録,當前紀錄
+CurrentSsid,Current SSID,現在のSSID,目前 SSID
+CurrentSystemTime,Current System Time,現在のシステム時間,目前系統時間
+CurrentVersionNumber,Current Version Number,現在のバージョン,目前版號
+Custom,Custom,カスタマイズ,客製化
+CustomButton,Custom Function Button,カスタム機能ボタン,自定義功能按鈕
+DNS,DNS,DNS,DNS
+DailyAttendanceRemark,The working hours of the day will be calculated after the scheduled clock-out time of the day,一日の労働時間はその日の非番時間を過ぎて計算されます,當日工時會在當日下班時間後計算
+DailyAttendanceStatus,Daily Status,日次ステータス,當日出勤狀態
+Date,Date,日にち,日期
+DateDepiction,Date must not be greater than today,日付は今日より大きくてはなりません,日期不得大於今天
+DateTime,DateTime,日時,日期/時間
+DateTitle,Date:,日にち：,日期：
+Day,DAY,日,日
+DbBackupTime,Database Backup Time :,バックアップ時間,資料庫備份時間 :
+Default,Default,プリセット,預設
+DefaultValue,Default Value,デフォルト値,預設值
+DefinedClockInTime,Scheduled Clock-in Time,予定出勤時間,表定上班時間
+DefinedClockOutTime,Scheduled Clock-out Time,予定退勤時間,表定下班時間
+Delete,Delete,削除,刪除
+DeletePhoto,Delete Photo,削除,刪除照片
+Department,Department,部署,部門
+Description,Comment,コメント,說明
+Deselect,Deselect,選択解除,移除選擇
+Detail,View,ビュー,檢視
+Devices,Device,デバイス,設備
+DigitalSignage,Digital Signage,サイネージ,數位看板
+Disable,Disable,無効,停用
+DisableIntercom,Disable Intercom,無効,停用
+DisableStranger,Disable Stranger Card,見知らぬ人カードを無効にする,停用陌生人卡
+DisplayAttribute,Displayed Information,表示する情報,顯示資訊
+DisplayChart,Display chart,チャートを表示する,顯示圖表
+DisplayGroup,Display Group,グループ,顯示群組
+DisplayImage,Display Image,画像,顯示圖片
+DisplayMode,Display Mode,ディスプレイモード,顯示模式
+DisplayPhoto,Photo to display,表示する写真,要顯示的照片
+Displays,Boards,ボード,看板
+Download,Download,ダウンロード,下載
+Duration,Duration,時間,輪巡時間
+Edit,Edit,編集,編輯
+EffectivOn,Effective On,開始日,生效於
+EffectiveDate,Effective Date,発効日,生效日期
+EmailAddress,Email Address,Emailアドレス,電子信箱
+Employee,Employee:,職員：,員工：
+Enable,Enable,有効,啟用
+EnableIdCard,Enable Card Reader Access,カードリーダーへのアクセスを有効にする,啟用讀卡通行
+EnableIdCardPassMode,Bypass Mode,バイパスモード,自由通行模式
+EnableIntercom,Enable Intercom,有効,啟用
+EnableOvertime,Count as overtime,残業をカウントする,計算加班
+EnableStranger,Enable Stranger Card,見知らぬ人カードを有効にする,啟用陌生人卡
+EnableTwoFactorAuthentication,Two Factor Authentication,2ファクタ認証,啟用雙重認證
+EnabledMask,Enabled Info Mask,非表示,人員資訊遮蔽
+End,End ,終わり,結束
+EndSignal,End Signal,終了信号,結束訊號
+EndTime,End time,終了時間,結束時間
+EnteredColor,Entered Color,入室,已進入
+EntireFacility,All people,総人数,總人數
+EntryChannel,Entered,入室,已進入
+EthernetMode,Ethernet Mode,イーサネットモード,區域網路模式
+EventControlManagement,Event Management,設定,事件管理
+EventControlName,Event Control Name,イベント名,事件名稱
+EventControlSettingsList,Settings List,設定リスト,事件管理列表
+EventControlType,Event Type,タイプ,事件類別
+Events,Events,イベント,事件
+Excecute,Excecute,実行,執行
+ExitChannel,Exited,退室,已離開
+ExitedColor,Exited Color,退室,已離開
+Expected,Expected,該当,應到
+ExpireDate,Expiration Date,有効期限,失效日期
+ExpireOn,Expire On,満了日,失效於
+Export,Export,エクスポート,匯出
+ExportExcel,Export as Excel,Excelとしてエクスポート,匯出為 Excel
+ExportSetting,Export Settings,エクスポート設定,匯出設定
+Extend,Expand,拡大する,展開
+ExtensionNumber,Extension Number,内線番号,分機號碼
+FaceDetectThreshold,Face Detection Threshold,顔検出のしきい値,人臉檢測閾值
+FaceMaskDetection,Masks are required to pass,通過にはマスク必須,需要戴口罩才能通過
+FaceMaskEnhancement,Face Mask Enhancement,マスク認識強化,增強口罩辨識
+FaceVerifySettings,Recognition Parameters,顔認識パラメータ,辨識參數
+FaceBoard,Face Wall,顔の壁,人臉牆
+FactoryDefault,Factory Default,初期化,系統重設
+Fahrenheit,Fahrenheit (°F),華氏 (°F),華氏 (°F)
+FailRecords,Faild Records,失敗履歴,失敗筆數
+Failed,Failed,失敗,失敗
+FalseAlarm,False Alarm,誤報,誤報
+FetchViaHttp,Fetch Via HTTP/GET,HTTP/GET から取得,經由 HTTP/GET 取得
+FieldData,Field Data,フィールド値,欄位值
+FieldKey,Field Key,フィールドキー,欄位代碼
+FieldName,Field Name,フィールド名,欄位名稱
+FileName,File Name :,ファイル名 :,檔案名稱 :
+FileType,File type,ファイルの種類,文件類型
+Font,Font,フォント,字體
+FontSize,Font Size,フォントサイズ,字體大小
+ForgetPunchDate,Date,日にち,日期
+ForgotAttendanceRecord,Forgot to clock in/clock out,出退勤の打刻を忘れた,忘記簽到/簽退
+ForgotClockInDateTime,Forgot ClockIn DateTime,Forgot ClockIn DateTime,忘記打卡日期/時間
+ForgotPassword,Forget password,パスワードを忘れる,忘記密碼
+ForgotPunchInDateTime,Select the date,日付を選択してください,請選擇日期
+ForheadTemperature,Forhead Temperature,額の温度,額溫
+Fri,Fri,金,五
+GET,GET,GET,GET
+Gateway,Default Gateway,ゲートウェイ,閘道
+GeneralMode,Main console,メインコンソール,主控台
+GeneralSettings,General Settings,全般設定,一般設定
+GenerateBackup,Generate Backup,生成,產生備份檔
+GeneratePdfReport,Export as PDF,PDFとしてエクスポート,匯出 PDF
+GenerateVmsBookmark,Create bookmark,ブックマークを作成します,產生書籤
+GeneratedQrcode,QR Code,QRコード,QR Code
+GoBack,Back,戻る,返回
+GoodRecords,Normal,通常,正常
+Greeting,Greeting,テキスト2,問候語
+GreetingMode,Greeting Mode,固定モード,問候語模式
+Group,Group,グループ,群組
+GroupName,Group Name,グループ名,群組名稱
+GroupPersonList,Group Person List,グループパーソンリスト,群組人員
+GroupToApply,Apply to Group,グループ,套用群組
+HasLeft,Left,去りました,已離場
+HighTemperatureOnly,Over Temperature Only,温度異常時のみ,僅有溫度異常時
+HighTemperatureThreshold,High Temperature Threshold,温度閾値,體溫過高閥值
+HoldingTime,Hold time (ms),ホールド時間 (ミリ秒),保持時間（毫秒）
+Holidays,Holidays,休日,假日
+HostAddress,Host Address,ホストアドレス,主機地址
+HostName,Host Name,ホスト名,主機名稱
+HourlyNumberOfAdmission,Present,人々の数,場內人數
+HourlyNumberOfEntry,Number of people entering,入場人数,進場人數
+HourlyNumberOfLeave,Number of people leaving,退出者数,離場人數
+HtmlVideoArchive,HTML video archive,HTMLビデオアーカイブ,HTML 視頻存檔
+HttpCommand,HTTP Command,Httpコマンド,HTTP 命令
+HttpEnabledSSL,Enable Http SSL,Http SSL有効,啟用 Http 的 SSL
+HttpUrl,URL,URL,URL
+Hyperthermia,Temperature is too high,温度異常,溫度過高
+IdleTime,Auto back to the first page,最初のページに自動的に戻る,自動回首頁
+Import,Import,インポート,匯入
+ImportFailure,Import Failure,インポート失敗,匯入失敗的資料 :
+IndicationSettings,Result Prompts,結果プロンプト,結果提示
+Info,Info,情報,資訊
+Init,New,新しい,新增
+InputAccessControlInfo,Access Control Info,アクセスレベル,輸入門禁資訊
+InputEventControlInfo,Input Event Control Info,イベント情報,輸入事件資訊
+InputEventControlNotify,Input Event Control Notify,イベント通知,輸入通知資訊
+InputGroupInfo,Input Group Info,グループ情報,輸入群組資訊
+InputPersonInfo,Input Person Info,パーソン情報,輸入人員資訊
+InputVisitorInfo,Input Visitor Info,ビジター情報,輸入訪客資訊
+Insert,Insert,追加,加入
+Intercom,Intercom,インターホン,門禁對講機
+IntercomUrl,Download,ダウンロード,下載
+InvalidBreakTime,The working time must be greater than 0 (scheduled clock-out time - scheduled clock-in time - break time),労働時間は 0 より大きくなければなりません (予定退勤時間 - 予定出勤時間 - 休憩時間),上班時間必須大於0（表定下班時間 - 表定上班時間 - 休息時間）
+InvalidJSON,Invalid JSON,無効JSONタイプ,無效JSON格式
+InvalidOvertime,The overtime start time cannot be earlier than the scheduled clock-out time,残業の開始時刻は、予定された退勤時刻より早くすることはできません,加班開始時間不能早於表定下班時間
+InvalidQueryString,Invalid QueryString,無效QueryStringタイプ,無效QueryString格式
+InvalidURL,Invalid URL,無效URLタイプ,無效URL格式
+InvalidWorkDuration,Scheduled clock-out time must be later than scheduled clock-in time,予定退勤時間は予定出勤時間より遅くする必要があります,表定下班時間需晚於表定上班時間
+InvalidXML,Invalid XML,無効XMLタイプ,無效XML格式
+Investigation,Investigation,履歴,調查
+IpAddress,IP Address,IPアドレス,IP 位址
+IsHighTemperature,IsHighTemperature,温度異常,温度過高
+IsStranger,Stranger,未登録,陌生人
+JSON,JSON,JSON,JSON
+JSONType,JSON Format,JSON タイプ,JSON 格式
+JobTitle,Job Title,タイトル,職稱
+Keyword,Keyword,フィルター,關鍵字
+KeywordName,Name,キーワード,姓名
+LARGE,Large (1080p),大 (1080p),大 (1080p)
+LanSettings,LAN Settings,LAN設定,有線網路設定
+LastMonth,Last Month,先月,上月
+LatePerson,Late,遅れる,遲到
+LeaveEarly,Leave Early,早退,早退
+Level,Level,レベル,等級
+LineAccessToken,Line Access Token,LINE通知アクセストークン,Line 接入權杖
+LineNotify,LINE Notification,LINE通知,LINE 通知
+Linked,Connected,接続済み,已連線
+LiveChannel,Cameras,カメラ,攝影機
+Login,Login,ログイン,登入
+LoginPassword,Password,パスワード,密碼
+LoginSubtitle,Sign in to your account,アカウント情報入力,登入您的使用者帳號
+LoginTitle,Login,ログイン,登入
+LoginUsername,Username,ユーザー名,使用者
+Logo,Logo,ロゴ,商標
+LostConnection,Lost Connection,接続断,失去連線
+Maintitle,Main Title,メインタイトル,主標題
+MaxFileSize,Max File Size,最大サイズ,大於限制大小
+Modifier,Modified by,編集者,修改者
+Modify,Modify,編集,編輯
+ModifyAccessControl,Modify Access Control,アクセスレベル編集,編輯門禁
+ModifyCapacityControl,Attendance Board Settings,出席ボードの設定,設定登記出勤
+ModifyEventControl,Modify Event,イベントを変更する,修改事件
+ModifyGroup,Modify Group,グループ編集,修改群組
+ModifyOccupancyControl,Occupancy Board Settings,占有ボードの設定,點名看板設定
+ModifyPerson,Modify Person,パーソン編集,修改人員
+ModifyVisitor,Modify Visitor,ビジター編集,修改訪客
+ModifyWelcomeControl,Welcome Board Settings,ウェルカムボードの設定,迎賓看板設定
+Mon,Mon,月,一
+MonthlyAttendanceRemark,The working hours of the day will be calculated after the scheduled clock-out time of the day,一日の労働時間はその日の非番時間を過ぎて計算されます,當日工時會在當日下班時間後計算
+MonthlyAttendanceStatus,Monthly Status,月次ステータス,當月出勤狀態
+MoreThan4lettersAndNumbers,At least 4 alphanumeric characters without repetition,繰り返しを含まない少なくとも 4 文字の英数字,至少需要 4 個字母數字字符且不重複
+Netmask,Subnet Mask,ネットマスク,子網路遮罩
+NetworkLoss,Network Loss,ネットワークロス,連線失敗
+NetworkSettings,Network Settings,ネットワーク設定,網路設定
+Next,Next,次,下一步
+No,No,いいえ,否
+NoEmptyNoSpace,Cannot be empty or blank.,空または空白にすることはできません,不能為空或空白
+NoEmptyNoSpaceNoSpecial,"Cannot be empty nor included spaces, special characters.",空、スペース、特殊文字は使用できません,不能為空、空格或特殊字元
+NoEmptyNoSpaceOnly,Cannot be empty or blank.,空または空白にすることはできません,不能為空或空白
+NoEmptyNorSpaceNeigherRepeat,"Cannot be empty, cannot be duplicated",空にすることはできず、繰り返すこともできません,不能為空，不能重複
+NoEntryRecord,no clock-in record,出勤記録がない,缺上班紀錄
+NoLeaveRecord,no clock-out record,退勤記録なし,缺下班紀錄
+NoRecord,No Records,記録なし,無打卡紀錄
+NonHolidays,Non-holidays,非休日,非假日
+None,None,なし,不顯示
+Normal,Normal,通常,正常
+NormalTemperatureOnly,Normal Temperature Only,溫度正常時時のみ,僅有溫度正常時
+NotLinked,Not Connected,接続されていません,未連線
+Now,Now,今,現在
+NtpServer,NTP Server,NTPサーバー,時間伺服器
+NumberOfDisplayPersons,Number of people,人数を表示,顯示人數
+NumberOfEntry,Number Of Entry,入室数,今日進場人數
+NumberOfPersonInGroup,Persons,パーソン,人員數量
+NumberOfVisitorInGroup,Visitors,ビジター,訪客數量
+NumbersOnly,Numbers Only,数字が必要,僅能使用數字
+NumbersOnlyIn20Bytes,Up to 20 digits,20桁まで,最多 20 位數字
+NxVideoArchive,Video archives,ビデオアーカイブ,視頻錄像
+OK,OK,OK,確定
+Occupancy,Attendance Board,出席ボード,出勤看板
+OccupancySize,Occupancy Size,表示,每頁人數
+Occupancy_Mode,Occupancy Board,在室ステータス,點名看板
+OperationFailed,Operation Failed,操作失敗,操作失敗
+Other,Other,他の,其它
+OverTemperature,Too high,異常,過高
+Overtime,Overtime hours,残業時間,加班時數
+OvertimeDays,Overtime Days,残業日数,加班天數
+OvertimeGuide,"Daily overtime hours are calculated until 00:00 of the next day. If there is no record before 00:00, it will be deemed as no off-duty record",1日の残業時間は翌日の00:00まで計算されます。 0時までに記録がない場合は非番記録なしとみなします,日加班時間計算至隔日 00:00 為止。若 00:00 前無紀錄，視為無下班紀錄
+OvertimeMinimum,Overtime must be at least (minutes):,残業時間は少なくとも (分) でなければなりません:,加班時長至少須達（分鐘）：
+OvertimeStartTime,Start time for overtime work:,時間外労働の開始時刻：,加班起算時間：
+OvertimeTitle,Work Overtime,残業する,加班
+PM,PM,PM,下午
+POST,POST,POST,POST
+PageDisplay,Page Display,ページディスプレイ,頁面顯示
+PageLayout,Page Layout,ページレイアウト,頁面排版
+PartialName,Partial Name,名前の一部,部分姓名
+Password,Password,パスワード,密碼
+PasswordIsDifferent,Passwords do not match,パスワードが一致していません,密碼不匹配
+Paused,Paused,一時停止,已暫停
+PdfExport,Export as PDF,PDFとしてエクスポート,匯出 PDF
+Pending,Pending,保留中,等待中
+People,People,人,人
+PeopleInTheVenue,Occupancy Count,人々の数,場內人數
+Permission,Permission,権限,權限
+Person,Person,パーソン,人員
+PersonDailyAttendanceReport,Daily Report,日報,日出勤
+PersonId,Person ID,パーソンID,人員編號
+PersonInfo,Person Info,パーソン情報,人員資訊
+PersonInfoFile,Person Info File,パーソン情報ファイル,人員資料
+PersonList,Person List,パーソンリスト,人員列表
+PersonMonthlyAttendanceReport,Monthly Report,月例報告,月出勤
+PersonMonthlyReport,Person Monthly Report,月次レポート,人員月出勤報表
+PersonName,Person Name,パーソン名,人員姓名
+PersonReport,Person Report,パーソン,人員報表
+PersonalDisplay,Personal Display,人事ディスプレイ,人員顯示
+PersonnelInfo,Personnel Info,パーソン情報,人員信息
+PersonsManagement,Person,パーソン,人員
+PhoneNumber,Phone Number,電話番号,電話號碼
+PleaseEnterName,Please enter a name,名前を入力してください,請輸入人名
+PleaseSelectBeforePresent,Time-travel to future moments feature coming soon!,将来の瞬間へのタイムトラベルは、近日公開予定です！,穿越到未來的功能即將上線！
+Port,Port,ポート,端口
+Present,Present,在室,實到
+Previous,Previous,前,上一步
+PriorityIsEthernet,( Wired Network Preferred),(有線ネットワークが好ましい),(有線網路優先)
+Processing,Processing,処理,處理中
+QueryString,URL parameter,URL パラメータ,URL 參數
+ReasonDepiction,"Reason (required, less than 50 characters):",理由 (必須、50 文字未満):,原因（必填，少於 50 字）：
+Reboot,Reboot,再起動,重新開機
+Register,Register,登録,註冊
+RegisterCompleted,Registration Completed,登録完了,註冊完成
+RegisterFailed,Registration Failed,登録失敗,註冊失敗
+RegisterPhoto,Registered photo,登録写真,註冊照片
+Relay1,Relay 1,リレー1,繼電器 1
+Relay2,Relay 2,リレー2,繼電器 2
+Remark,Comment,コメント,說明
+Remarks,Remarks,備考,備註
+RememberMe,Remember Me,設定保存,記住帳號密碼
+RemoteTrigger,Remote Trigger,リモート トリガー,遠端觸發
+Remove,Remove,削除,移除
+RepeatFieldKey,Field Key cannot be repeated!,フィールドキー繰り返し不可,欄位代碼不能重複!
+RepeatResult,Key cannot be repeated!,フィールド 繰り返し不可,欄位不能重複!
+Reports,Reports,レポート,報表
+RequiredMessage,Required,必須,必填
+Reset,Reset,リセット,重置
+ResetTime,ResetTime (hour),リセット時間,重置時間（小時）
+RestoreDatabase,Restore Database,リストアDB,還原資料庫
+ResultType,Result Type,タイプ,類別
+Return,Return,戻る,返回
+ReturnToAll,Return To All,戻る,返回全部
+RunningTime,Execution time,実行時間,執行時間
+SMALL,Small (720p),小 (720p),小 (720p)
+SMTPBCC,BCC,BCC,密件副本
+SMTPCC,CC,CC,副本
+SMTPEnabledSecure,Enable SMTPS,SMTPSを有効にする,啟用 SMTPS
+SMTPMethod,SMTP Method,SMTP Method,SMTP 方法
+SMTPSender,Sender,送信者,寄件者
+SMTPSubject,Subject,主題,主旨
+SMTPTo,To,To,收件者
+Sat,Sat,土,六
+Save,Save,保存,儲存
+SaveChanges,Save Changes,保存,儲存變更
+SaveToAlbum,Add to album,アルバムに追加します,加到相簿
+Score,Score,スコア,分數
+Search,Search,検索,搜尋
+Select,Select,選択,選擇
+SelectAll,Select all,すべて選択,全選
+SelectDatetimeRange,specify a date range,日付範囲を指定する,指定日期範圍
+SelectGroupPerson,Select Person,パーソン選択,選擇群組人員
+SelectPhoto,Select Photo,選択,選擇照片
+SelectRegisterPhoto,Select Registered Photo,写真選択,選擇註冊照片
+SelectSchedule,Select Schedule,スケジュール,選擇排程
+SelectTargetPrompt,"Please select one face from the left face wall. Then, select one of the similar faces listed in this panel to start the investigation.",左の顔の壁から1つの顔を選択してください。次に、このパネルにリストされている同様の顔のいずれかを選択して、調査を開始します。,請從左邊的人臉牆選擇一張臉，再從本面板列出相近的人臉中選取一張，以展開調查
+Selected,Selected,選択済み,已選擇
+SelectedWeeklySchedule,Weekly Schedule,スケジュール,固定週間排程
+SendMail,E-Mail Notification,Email通知,電子郵件通知
+SepcifiedHolidays,Designated Holidays,指定休日,指定假日
+SepcifiedNonHolidays,Designated Non-Holidays,祝日2,指定非假日
+SettingName,Setting Name,設定名,設定名稱
+Settings,Settings,設定,設定
+Setup_Mode,Setup Mode,設定モード,系統設定模式
+ShowCompleteUrl,Display URL,URL表示,顯示URL
+ShowVerifyIndication,Show Result Prompt,結果プロンプトを表示,顯示結果提示
+SortBy,Sort By,並び替え,排序依據
+SortByGroupName,Sort by group name,グループ名で並べ替える,依群組名稱排序
+SpecifiedDatetimeRange,Specified Date Range,指定された日付範囲,指定日期範圍
+Staff,Staff,職員,職員
+Standard,Standard,標準,標準
+Start,Start,始める,起始
+StartSignal,Start Signal,開始信号,起始訊號
+StartTime,Start time,始まる時間,開始時間
+StaticPicture,Picture,画像,圖片
+StaticSettings,Use Static Settings,靜態設定を使用する,使用靜態設定
+StayDuration,Stay Max Duration (minute),滞在時間 (分),最長持續時間（分鐘）
+StayTimeout,Max Duration (minutes),最大時間（分）,停留時間過久
+Stopped,Stopped,停止,已停止
+Stranger,Stranger,未登録,陌生人
+StrangerID,Stranger Card Number,見知らぬ人のカード番号,陌生人卡號碼
+Subject,Subject,主題,主題
+SubjectName,Clock-in time type:,出勤時間のタイプ:,打卡時間類型：
+Subtitle,Subtitle,副題,副標題
+SuccessRecords,Success Records,成功履歴,成功筆數
+Successful,Successful,成功,成功
+SummaryBy,Grouping criteria,グループ化,分組依據
+SummaryDisplay,Group display,グループごとに表示,依群組顯示
+SummaryView,Display by group,グループ表示,分組顯示
+Sun,Sun,日,日
+SynyMethodLocalTime,Sync with local time,ローカル時間と同期,與本地時間同步
+SynyMethodNtpServer,Sync with NTP server,NTPサーバーと同期,與時間伺服器同步
+SystemLog,System Log,システムログ,系統日誌
+SystemSettings,System Settings,システム設定,系統設定
+TabletDisplaySettings,Recognition Result Display Settings (Tablet),認識結果表示設定（タブレット）,平板顯示設定
+TabletInterfaceLangurage,Tablet Interface Language,言語,平板介面語言
+TabletInterfaceLangurageList,Langurage,言語,語言列表
+TabletSystemPassword,System Password,パスワード,系統管理密碼
+TakePhoto,Take Photo,撮影,拍攝照片
+Target,Target,目標,目標
+TargetScore,Score,スコア,分數
+TaskName,Task,タスク,任務
+Temperature,Temperature,温度,體溫
+TemperatureDisplayingUnit,Temperature Unit,温度単位,溫度顯示單位
+TemperatureTriggerRule,Temperature Trigger Rules,温度トリガールール,溫度觸發條件
+Template,Download Template,テンプレートをダウンロード,下載範本
+TextColor,Text Color,テキストの色,文字顏色
+ThisMonth,This Month,今月,本月
+Thu,Thu,木,四
+Time,TIME,時間,時間
+TimeRange,Time range,時間範囲,搜尋時段
+TimeSettings,Time Settings,時間設定,時間設置
+TimeStamp,Entered Time,入室時間,進入時間
+TimeTitle,Time:,時間：,時間：
+Timezone,Time Zone,タイムゾーン,時區
+Title,Title,タイトル,標題
+Today,Today,今日,今日
+TopMessage,Message On Top,上のメッセージ,上部資訊
+TotalRecords,Total Records,履歴合計,總筆數
+Tue,Tue,火,二
+TurnsIpCamera,As an IP Camera,IPカメラ,成為網路攝影機
+UnverifiedIndication,Recognition failure prompt,認識失敗プロンプト,辨識失敗提示
+UpgradeSoftware,Upgrade Software,アップグレード,軟體更新
+Upload,Upload,アップロード,上傳
+UploadFile,Upload File,アップロードファイル,上傳照片
+UploadMode,Photo upload tool,写真アップロードツール,照片上傳工具
+UseWebCamPhoto,Use Photo,写真,使用照片
+Username,User Name,ユーザー名,帳號
+UsernameorPasswordError,Incorrect account or password,アカウントまたはパスワードが間違っています,帳號或密碼錯誤
+VerifiedIndication,Recognition success prompt,認識成功プロンプト,辨識成功提示
+VerifiedTimeStamp,Verified Time,検出時間,辨識時間
+VerifyResultDisplayDuration,Result Display Duration (milliseconds),識別結果表示時間(ミリ秒),辨識結果顯示時間(毫秒)
+VerifyResultPhoto,Shown Photo,示された写真,顯示的照片
+VerifyThreshold,Recognition Threshold,認識閾値,辨識閥值
+Version,Version,バージョン,版本
+VersionNumber,Version Number,バージョン,版號
+Visitor,Visitor,ビジター,訪客
+VisitorId,Visitor ID,ビジターID,訪客編號
+VisitorList,Visitor List,ビジターリスト,訪客列表
+VisitorName,Visitor Name,ビジター名,訪客姓名
+VisitorReport,Visitor Report,ビジター,訪客報表
+VisitorsManagement,Visitor,ビジター,訪客
+VmsBookmark,VMS bookmark,VMSブックマーク,VMS 書籤
+Wed,Wed,水,三
+Welcome,Welcome Board,ウェルカムボード,迎賓看板
+WelcomeGreeting,Welcome,いらっしゃいませ,歡迎詞
+Welcome_Mode,Welcome Board,ウェルカム ボード,迎賓看板
+Wiegand,Wiegand,ウィーガンド,韋根
+WiegandBox,Wiegand converter,ウィーガンドコンバーター,韋根轉換器
+WiegandFormat,Wiegand Format,フォーマット,韋根格式
+WifiPassword,Wi-Fi Password,Wi-Fiパスワード,無線網路密碼
+WifiSettings,Wi-Fi Settings,Wi-Fi設定,無線網路設定
+WifiSsid,Wi-Fi SSID,Wi-Fi SSID,無線網路 SSID
+WillLossAllPersonData,"Will Loss All Person Data, Continue ?","すべてのパーソンデータが失われます, 継続する?","將遺失所有人員資料, 要繼續?"
+WithPhoto,With Photo,写真あり,含照片
+WithoutPhoto,Without Photo,写真なし,不含照片
+WorkShift,Clock-in time type:,出勤時間のタイプ:,打卡時間類型：
+WorkingHousCalculatingTip,The working hours of the day will be calculated after the scheduled clock-out time,その日の労働時間は、予定された退勤時刻の後に計算されます。,當天的工作時間將在預定的下班時間後計算
+WorkingTime,Working hours,勤務時間,上班時數
+XML,XML,XML,XML
+XMLType,XML Format,XML タイプ,XML 格式
+Yes,Yes,はい,是
+Yesterday,Yesterday,昨日,昨日
+lessThan50words,Up to 50 words,最大50文字まで,最多50字
+personUnit,people,人員,人員
+reason,Reason,理由,事由
+txtSeparator,Separator,セパレーター,分隔符號
+MobileUploadStep1,Step1: Select a photo in your phone,ステップ1：携帯電話で写真を選択します,步驟1：在手機中選擇一張照片
+MobileUploadStep2,Step2: Upload to airaTrack,ステップ2：airatrackにアップロードします,步驟2：上傳到Airatrack
+IncidentList,Incident List,インシデントリスト,事件清單
+LiveChannel,Live Channel,ライブチャンネル,即時攝影機
+NxVideoArchive,Nx Video Archive,NXビデオアーカイブ,Nx 影像
+EngVersion,Engineer Version,エンジニアバージョン,開發版本
+AddUser,Add User,ユーザーを追加する,添加用戶
+Activate,ACTIVATE,活性化,啟用
+Restart,RESTART,再起動,重新開始
+Error,error,エラー,錯誤
+Expired,expired,期限切れ,已到期
+Activated,activated,アクティブ化,活性
+DbFolder,Database folder,データベースフォルダー,數據庫文件夾
+SingleFileTime,Single file time (minutes),シングルファイル時間（分）,單文件時間（分鐘）
+RetentionDay,Face picture retention days,顔図保持日,臉部保留日
+MergeScore,Face merge score,フェイスマージスコア,面部合併得分
+EditUser,Edit User,ユーザーを編集します,編輯用戶

@@ -33,8 +33,8 @@ import spiderman from '@/spiderman';
 
 import background from '@/assets/base64-images/background';
 
-import errorStore from '@/stores/error';
-import successStore from '@/stores/success';
-import modalStore from '@/stores/modal';
+import errorStore from '@/components/AppError/error';
+import successStore from '@/components/AppSuccess/success';
+import modalStore from '@/components/AppModal/modal';
 
 </script>

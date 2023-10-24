@@ -10,6 +10,8 @@
       }[page]"
     />
   </KeepAlive>
+
+  <ModalUpload />
 </template>
 
 <script setup>
@@ -20,6 +22,7 @@ import PageDetail from '@/modules/target/components/PageDetail.vue';
 import PageAddingInvestgation from '@/modules/target/components/PageAddingInvestgation.vue';
 import PageAlbumList from '@/modules/target/components/PageAlbumList.vue';
 import PageAlbumDetail from '@/modules/target/components/PageAlbumDetail.vue';
+import ModalUpload from '@/modules/target/components/ModalUpload.vue';
 
 import useStore from '@/modules/target/stores/index';
 

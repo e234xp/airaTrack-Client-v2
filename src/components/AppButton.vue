@@ -1,32 +1,32 @@
 <template>
   <div
-    class="flex justify-center content-center cursor-pointer transition rounded"
-    :class="{
-      'bg-primary hover:bg-primary-hover text-white': type === 'primary',
-      'bg-secondary hover:bg-primary-hover text-white': type === 'secondary',
+    class="flex justify-center items-center cursor-pointer transition text-sm py-2"
+    :class="[{
+      'bg-primary hover:bg-primary-hover hover:border-primary-hover border border-transparent rounded leading-4': type === 'primary',
+      'bg-secondary hover:bg-primary-hover hover:border-primary-hover border rounded leading-4': type === 'secondary',
+      'bg-danger hover:bg-danger-hover hover:border-danger-hover border border-transparent rounded': type === 'danger',
       'hover:text-primary-hover': type === 'transparent',
 
-      'text-default': !isActive,
-      'border-b-4 border-primary text-white': isActive && activeType === 'baseline',
-      'text-primary': isActive && activeType !== 'baseline',
+      'text-default font-normal': !isActive,
+      'relative text-white hover:text-white after:block after:w-full after:border-2 after:border-solid after:border-primary after:absolute after:-bottom-1': isActive && activeType === 'baseline',
+      'text-primary hover:text-primary': isActive && activeType !== 'baseline',
 
-      'pointer-events-none border-0 bg-opacity-40': !isEnable,
-      'border-0': !isEnable && type === 'secondary',
-      'border-2 border-gray-500': isEnable && type === 'secondary',
-    }"
+      'pointer-events-none border bg-opacity-40': !isEnable
+    }, classParse]"
   >
     <slot />
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue';
 
-defineProps({
+const props = defineProps({
   type: {
     type: String,
     default: 'primary',
     validator(value) {
-      return ['primary', 'secondary', 'transparent'].includes(value);
+      return ['primary', 'secondary', 'transparent', 'danger'].includes(value);
     },
   },
   isActive: {
@@ -45,4 +45,18 @@ defineProps({
     default: true,
   },
 });
+
+const classParse = computed({
+  get: () => {
+    switch (props.type) {
+      case 'secondary':
+        return props.isEnable ? 'border-gray-500 text-white shadow-md' : 'border-transparent text-gray-600';
+      case 'primary':
+      case 'danger':
+      return props.isEnable ? 'text-white shadow-md' : 'text-gray-400';
+      default:
+        return '';
+    }
+  }
+})
 </script>

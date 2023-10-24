@@ -41,6 +41,7 @@ function getPerformAnimationFn(type) {
 
   return (faces) => {
     const mappedFaces = faces
+      .filter((item) => item.data.id !== '')
       .map(({
         data: {
           id,
@@ -75,11 +76,11 @@ function getPerformAnimationFn(type) {
       const element = document.getElementById(`${type}-${id}`);
       if (!element) return;
 
-      element.classList.remove('animate-color-transition');
+      element.classList.remove('animate-pulse-transition');
       // eslint-disable-next-line no-void
       void element.offsetWidth;
 
-      element.classList.add('animate-color-transition');
+      element.classList.add('animate-pulse-transition');
     });
   }
 }

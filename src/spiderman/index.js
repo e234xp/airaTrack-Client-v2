@@ -6,6 +6,7 @@ import localStorage from './local-storage';
 import base64Image from './base64-image';
 import apiService from './api-service';
 
+// http://192.168.10.76:8082
 const system = {
   version: '2.0.0 230831',
   apiBaseUrl: import.meta.env.MODE === 'development'

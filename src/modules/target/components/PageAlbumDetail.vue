@@ -6,7 +6,7 @@
       </template>
 
       <template #grow>
-        <div class="mx-4 my-3">
+        <div class="m-4">
           <div class="flex justify-between">
             <div class="mb-4 flex justify-start">
               <AppButton
@@ -60,10 +60,10 @@
             <div
               v-for="face in faces"
               :key="face.data.id"
-              class="select-none relative cursor-pointer"
+              class="select-none relative cursor-pointer w-full h-24"
             >
               <img
-                class="w-40"
+                class="w-full h-full object-cover"
                 :src="spiderman.base64Image.getSrc(face.data.face_image)"
                 alt=""
                 @click="selectFace(face)"
@@ -87,41 +87,23 @@ import { onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import spiderman from '@/spiderman';
-import useUserStore from '@/stores/user';
 
 import NavigationBar from '@/modules/target/components/NavigationBar.vue';
 import SideBar from '@/modules/target/components/SideBar.vue';
 import FaceList from '@/modules/target/components/FaceList.vue';
 import useStore from '@/modules/target/stores/index';
 
-const userStore = useUserStore();
-const { sessionId } = storeToRefs(userStore);
-
 const store = useStore();
 const { selectedAlbum } = storeToRefs(store);
-const { setPage } = store;
+const { setPage, getAlbumData, getAlbumPhoto, deleteAlbumPhoto } = store;
 
 const faces = ref([]);
 onMounted((async () => {
-  const { fileData: photoIds } = await spiderman.apiService({
-    url: `${spiderman.system.apiBaseUrl}/airaTracker/albumdata`,
-    method: 'get',
-    headers: { sessionId: sessionId.value },
-    params: {
-      albumId: selectedAlbum.value.albumId,
-    },
-  });
+  const { fileData: photoIds } = await getAlbumData(selectedAlbum.value.albumId);
 
   const photos = {};
   await Promise.allSettled(photoIds.map(async (photoId) => {
-    const { base64Image, faceFeature } = await spiderman.apiService({
-      url: `${spiderman.system.apiBaseUrl}/airaTracker/albums/photo`,
-      method: 'get',
-      headers: { sessionId: sessionId.value },
-      params: {
-        photoName: photoId,
-      },
-    });
+    const { base64Image, faceFeature } = await getAlbumPhoto(photoId);
 
     photos[photoId] = {
       base64Image, faceFeature,
@@ -178,12 +160,7 @@ async function handleDelete() {
     albumData: selectedFaces.value.map(({ photoId }) => photoId),
   };
 
-  await spiderman.apiService({
-    url: `${spiderman.system.apiBaseUrl}/airaTracker/albums/photo`,
-    method: 'delete',
-    headers: { sessionId: sessionId.value },
-    data,
-  });
+  await deleteAlbumPhoto(data);
 
   faces.value = faces.value.filter((face) => !data.albumData.includes(face.photoId));
   toggleEditMode();

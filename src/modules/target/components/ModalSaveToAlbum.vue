@@ -1,6 +1,5 @@
 <template>
   <ModalLayout
-    size="xl"
     :is-open="modal === 'save-to-album'"
     @close="setModal('')"
   >
@@ -10,17 +9,19 @@
 
     <template #default>
       <AppInput
+        dark
         type="select"
         :options="options"
+        class="mb-6"
         v-model:modelInput="form.albumId"
       />
     </template>
 
     <template #footer>
-      <div class="flex justify-end text-2xl">
+      <div class="flex justify-end gap-4">
         <AppButton
           type="secondary"
-          class="ml-6 px-6 py-2"
+          class="px-6"
           @click="setModal('')"
         >
           {{ $t('Cancel') }}
@@ -28,7 +29,7 @@
 
         <AppButton
           type="primary"
-          class="ml-6 px-6 py-2"
+          class="px-6"
           @click="handleAdd"
         >
           {{ $t('Add') }}
@@ -41,33 +42,22 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-
-import spiderman from '@/spiderman';
-import useUserStore from '@/stores/user';
-
 import useStore from '@/modules/target/stores/index';
 
 const emit = defineEmits(['add']);
 
-const userStore = useUserStore();
-const { sessionId } = storeToRefs(userStore);
-
 const store = useStore();
 const { modal } = storeToRefs(store);
-const { setModal } = store;
+const { setModal, getAlbum } = store;
 
 const options = ref(null);
 const form = ref({
   albumId: '',
 });
 onMounted(async () => {
-  const albums = (await spiderman.apiService({
-    url: `${spiderman.system.apiBaseUrl}/airaTracker/album`,
-    method: 'get',
-    headers: { sessionId: sessionId.value },
-  }))
-    .data
-    .filter(({ albumName }) => albumName !== 'Upload Photo');
+  const { data } = await getAlbum();
+
+  const albums = data.filter(({ albumName }) => albumName !== 'Upload Photo');
   options.value = albums.reduce((obj, album) => {
     const tmp = obj;
 

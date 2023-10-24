@@ -6,19 +6,19 @@
       </template>
 
       <template #grow>
-        <div class="mx-4 my-3">
-          <div class="mb-4 flex justify-end">
+        <div class="mx-4 my-4">
+          <div class="mb-4 flex justify-end gap-4">
             <template v-if="!isEditMode">
               <AppButton
                 type="secondary"
-                class="w-40 ml-6 py-2"
+                class="w-40"
                 @click="toggleEditMode"
               >
                 {{ $t('Edit') }}
               </AppButton>
               <AppButton
                 type="primary"
-                class="w-40 ml-6 py-2"
+                class="w-40"
                 @click="handleToAddAlbum"
               >
                 {{ $t('Add') }}
@@ -27,14 +27,14 @@
             <template v-else>
               <AppButton
                 type="secondary"
-                class="w-40 ml-6 py-2"
+                class="w-40"
                 @click="toggleEditMode"
               >
                 {{ $t('Cancel') }}
               </AppButton>
               <AppButton
-                type="primary"
-                class="w-40 ml-6 py-2"
+                type="danger"
+                class="w-40"
                 :is-enable="selectedAlbums.length>0"
                 @click="handleDelete"
               >
@@ -92,21 +92,14 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { storeToRefs } from 'pinia';
-
-import spiderman from '@/spiderman';
-import useUserStore from '@/stores/user';
 
 import NavigationBar from '@/modules/target/components/NavigationBar.vue';
 import SideBar from '@/modules/target/components/SideBar.vue';
 import ModalAddAlbum from '@/modules/target/components/ModalAddAlbum.vue';
 import useStore from '@/modules/target/stores/index';
 
-const userStore = useUserStore();
-const { sessionId } = storeToRefs(userStore);
-
 const store = useStore();
-const { setPage, setModal, setSelectedAlbum } = store;
+const { setPage, setModal, setSelectedAlbum, getAlbum, addAlbum, deleteAlbum } = store;
 
 const albums = ref([]);
 onMounted(() => {
@@ -114,11 +107,7 @@ onMounted(() => {
 });
 
 async function getAlbums() {
-  ({ data: albums.value } = await spiderman.apiService({
-    url: `${spiderman.system.apiBaseUrl}/airaTracker/album`,
-    method: 'get',
-    headers: { sessionId: sessionId.value },
-  }));
+  ({ data: albums.value } = await getAlbum());
 }
 
 function handleToDetail(album) {
@@ -133,12 +122,7 @@ function handleToAddAlbum() {
 async function handleAddAlbum(form) {
   if (!form.albumName) return;
 
-  await spiderman.apiService({
-    url: `${spiderman.system.apiBaseUrl}/airaTracker/album`,
-    method: 'post',
-    headers: { sessionId: sessionId.value },
-    data: form,
-  });
+  await addAlbum(form);
 
   await getAlbums();
 
@@ -168,14 +152,7 @@ function toggleEditMode() {
 
 async function handleDelete() {
   await Promise.allSettled(selectedAlbums.value.map(async ({ albumId }) => {
-    await spiderman.apiService({
-      url: `${spiderman.system.apiBaseUrl}/airaTracker/album`,
-      method: 'delete',
-      headers: { sessionId: sessionId.value },
-      data: {
-        albumId,
-      },
-    });
+    await deleteAlbum(albumId);
 
     return { result: 'ok' };
   }));

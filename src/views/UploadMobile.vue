@@ -12,8 +12,8 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 
-import MobilePageList from '@/modules/target/components/MobilePageList.vue';
-import MobilePageDetail from '@/modules/target/components/MobilePageDetail.vue';
+import MobilePageList from '@/modules/uploadMobile/components/MobilePageList.vue';
+import MobilePageDetail from '@/modules/uploadMobile/components/MobilePageDetail.vue';
 import useStore from '@/modules/target/stores/index';
 
 const store = useStore();

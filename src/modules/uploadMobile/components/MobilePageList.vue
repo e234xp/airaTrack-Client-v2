@@ -6,7 +6,7 @@
 
       <template #grow>
         <div class="grid content-start text-white text-xl mx-6 mt-5">
-          Step1: Select a photo in your phone
+          {{ $t('MobileUploadStep1') }}
         </div>
         {{flag_aaa}}
         <input type="file" id="fileSelecter" accept="image/*" @change="fileOnChange" style="display: none;" />
@@ -20,7 +20,7 @@
         </div>
 
         <div class="grid content-start text-white text-xl mx-6 mt-5">
-          Step2: Upload to airaTrack
+          {{ $t('MobileUploadStep2') }}
           <span class="grid justify-center content-center text-green-600">{{ flag_faceUploadSuccess }}</span>
         </div>
 
@@ -33,22 +33,17 @@
 </template>
 
 <script setup>
-  import {
-    onUnmounted, ref, watch,
-  } from 'vue';
-  import { storeToRefs } from 'pinia';
+  import { ref } from 'vue';
   import spiderman from '@/spiderman';
-
-  import useUserStore from '@/stores/user';
   // import useDevices from '@/stores/devices';
 
-  import useStore from '@/modules/target/stores/index';
+  import useStore from '@/modules/uploadMobile/stores/index';
 
-  import * as faceapi from "face-api.js";
-  faceapi.nets.tinyFaceDetector.loadFromUri("/models");
+  import * as faceapi from 'face-api.js';
+  faceapi.nets.tinyFaceDetector.loadFromUri('/models');
 
-  const userStore = useUserStore();
-  const { sessionId } = storeToRefs(userStore);
+  const store = useStore();
+  const { uploadPhoto } = store;
 
   let value_imageB64 = ref('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAsSAAALEgHS3X78AAAADUlEQVR4nGP4//8/AwAI/AL+p5qgoAAAAABJRU5ErkJggg==');
   let flag_faceDetected = ref(false);
@@ -60,7 +55,7 @@
 
   function clickOnPickUploadPhoto() {
     const self = this;
-    const input = document.getElementById("fileSelecter");
+    const input = document.getElementById('fileSelecter');
     input.click();
 
     // self.selectPhotoFromFile(function (img) {
@@ -219,16 +214,7 @@
 
   async function clickOnPhotoUpload() {
 
-
-    const data = {
-      face_image: value_imageB64.value
-    };
-    const result = await spiderman.apiService({
-      url: `${spiderman.system.apiBaseUrl}/airaTracker/albums/uploadPhoto`,
-      method: 'post',
-      headers: { sessionId: sessionId.value },
-      data,
-    });
+    const result = await uploadPhoto(value_imageB64.value);
 
     flag_faceUploadSuccess.value = 'upload successfully!';
 

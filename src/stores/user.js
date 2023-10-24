@@ -18,6 +18,16 @@ export default defineStore('user', () => {
     return { sessionId: tmpSessionId, user: tmpUser };
   }
 
+  async function logout() {
+    return await spiderman.apiService({
+      url: `${spiderman.system.apiBaseUrl}/airaTracker/logout`,
+      method: 'post',
+      headers: {
+        sessionId: sessionId.value,
+      }
+    });
+  }
+
   function setUser(data) {
     ({ user: user.value, sessionId: sessionId.value } = data);
   }
@@ -39,6 +49,7 @@ export default defineStore('user', () => {
   return {
     sessionId,
     user,
+    logout,
     loginUser,
     setUser,
     startMaintainUser,

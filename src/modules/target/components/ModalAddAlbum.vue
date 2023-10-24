@@ -1,6 +1,5 @@
 <template>
   <ModalLayout
-    size="xl"
     :is-open="modal === 'add-album'"
     @close="setModal('')"
   >
@@ -10,19 +9,20 @@
 
     <template #default>
       <AppInput
+        dark
         v-model:modelInput="form.albumName"
         :placeholder="$t('AlbumName')"
-        class="mb-8 text-2xl"
+        class="mb-6 text-base"
         @submit="handleAdd"
         :has-submitted="hasSubmitted"
       />
     </template>
 
     <template #footer>
-      <div class="flex justify-end text-2xl">
+      <div class="flex justify-end gap-4">
         <AppButton
           type="secondary"
-          class="ml-6 px-6 py-2"
+          class="px-6"
           @click="setModal('')"
         >
           {{ $t('Cancel') }}
@@ -30,7 +30,7 @@
 
         <AppButton
           type="primary"
-          class="ml-6 px-6 py-2"
+          class="px-6"
           @click="handleAdd"
         >
           {{ $t('Add') }}

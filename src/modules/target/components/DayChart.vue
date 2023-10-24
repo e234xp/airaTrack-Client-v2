@@ -1,9 +1,9 @@
 <template>
-  <div class="flex py-6">
+  <div class="flex py-4">
     <div
       @click="handlePrevDate()"
-      class="w-24 rounded-lg border-2 border-gray-500 bg-secondary
-        mx-6 grid justify-center content-between text-white
+      class="w-20 rounded-lg border border-gray-500 bg-secondary
+        ml-6 mr-4 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
       <div class="invisible">
@@ -12,23 +12,38 @@
       <div class="my-2 flex justify-center">
         <AppSvgIcon
           name="icon-chevron-left"
-          class="w-8 h-8"
+          class="w-6 h-6"
         />
       </div>
       <div
-        class="my-2 text"
+        class="mb-2 text"
       >
         {{ spiderman.dayjs(selectedDate).subtract(1,'day').format('DD, MMM') }}
       </div>
     </div>
-    <div class="flex-grow rounded-lg bg-day-chart/40 py-4 px-6 cursor-pointer">
+    <div class="flex-grow rounded-lg bg-day-chart/40 p-4 cursor-pointer">
       <div
-        class="grid grid-flow-col justify-between"
+        class="flex text-white gap-4"
       >
-        <AppDatePicker
-          v-model:modelSelected="selectedDate"
-          :dark="true"
-        />
+        <div class="flex items-center gap-2" style="width: 27%">
+          <div>{{ $t('TimeTitle') }}</div>
+          <AppSwitch :value="selectedTimeType" :list="timeTypeList" @select="onSelectTimeType"></AppSwitch>
+          <AppDatePicker
+            v-model:modelSelected="selectedDate"
+            class="!w-2/3"
+            :dark="true"
+            v-if="selectedTimeType === 'custom'"
+          />
+        </div>
+        <div class="flex items-center gap-2" style="width: 43%">
+          <div>{{ $t('Camera') }}</div>
+          <AppSwitch :value="selectedCameraType" :list="cameraTypeList" @select="onSelectCameraType"></AppSwitch>
+          <BadgeList
+            :list="cameraList"
+            :limit="3"
+            v-if="selectedCameraType === 'select'"
+          />
+        </div>
       </div>
       <AppDivider class="my-2" />
 
@@ -37,7 +52,7 @@
         height="30"
       />
       <div
-        class="mt-2 flex justify-center text-primary text-xl"
+        class="flex justify-center text-primary text-xl"
       >
         {{ spiderman.dayjs(selectedDate).format('DD, MMMM') }}
       </div>
@@ -46,8 +61,8 @@
       @click="
         handleNextDate()
       "
-      class="w-24 rounded-lg border-2 border-gray-500 bg-secondary
-        mx-6 grid justify-center content-between text-white
+      class="w-20 rounded-lg border border-gray-500 bg-secondary
+        mr-6 ml-4 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
     >
       <div class="invisible">
@@ -56,11 +71,11 @@
       <div class="my-2 flex justify-center">
         <AppSvgIcon
           name="icon-chevron-right"
-          class="w-8 h-8"
+          class="w-6 h-6"
         />
       </div>
       <div
-        class="my-2"
+        class="mb-2"
       >
         {{ spiderman.dayjs(selectedDate).add(1,'day').format('DD, MMM') }}
       </div>
@@ -70,23 +85,29 @@
 
 <script setup>
 import {
-  onMounted, computed, watch, onUnmounted,
+  onMounted, computed, watch, onUnmounted, ref
 } from 'vue';
 import { storeToRefs } from 'pinia';
-import spiderman from '@/spiderman';
-import errorStore from '@/stores/error';
-
+import { useI18n } from 'vue-i18n';
 import Chart from 'chart.js/auto';
 import annotationPlugin from 'chartjs-plugin-annotation';
 
-import useUserStore from '@/stores/user';
-import useDevices from '@/stores/devices';
+import spiderman from '@/spiderman';
+import errorStore from '@/components/AppError/error';
+import AppSwitch from '@/components/AppSwitch.vue';
 
-const userStore = useUserStore();
-const { sessionId } = storeToRefs(userStore);
+import useDevices from '@/stores/devices';
+import useStore from '@/modules/target/stores/index';
+
+import BadgeList from './BadgeList.vue';
 
 const devicesStore = useDevices();
 const { livedevices } = storeToRefs(devicesStore);
+
+const store = useStore();
+const { getLiveFaceHourlyCount } = store;
+
+const i18n = useI18n();
 
 // selectedDate 與外部做連接
 const props = defineProps({
@@ -106,12 +127,52 @@ const emit = defineEmits([
 
 const selectedDate = computed({
   get: () => props.modelSelectedDate,
-  set: (value) => emit('update:modelSelectedDate', spiderman.dayjs(value).format('YYYY-MM-DD')),
+  set: (value) => {
+    if (spiderman.dayjs().isBefore(value, 'date')) {
+      errorStore.show({ error: new Error('PleaseSelectBeforePresent') });
+      return;
+    }
+    emit('update:modelSelectedDate', spiderman.dayjs(value).format('YYYY-MM-DD'))
+  }
 });
 const selectedHour = computed({
   get: () => props.modelSelectedHour,
   set: (value) => emit('update:modelSelectedHour', value),
 });
+
+const selectedTimeType = ref('now');
+const timeTypeList = ref([
+  {
+    value: 'now',
+    text: 'Now'
+  }, {
+    value: 'custom',
+    icon: 'icon-calendar'
+  }
+]);
+function onSelectTimeType(val) {
+  selectedTimeType.value = val;
+}
+
+const selectedCameraType = ref('all');
+const cameraTypeList = ref([
+  {
+    value: 'all',
+    text: i18n.t('All')
+  }, {
+    value: 'select',
+    icon: 'icon-camera'
+  }
+]);
+function onSelectCameraType(val) {
+  selectedCameraType.value = val;
+}
+
+const cameraList = computed({
+  get: () => {
+    return livedevices.value.map(({ camera_id: cameraId, name }) => ({ value: cameraId, text: name }));
+  }
+})
 
 function setDate(date) {
   selectedDate.value = spiderman.dayjs(date).format('YYYY-MM-DD');
@@ -150,18 +211,23 @@ onMounted(() => {
         {
           label: '# of Faces',
           data: [],
-          backgroundColor: 'rgba(142, 157, 164,255)',
+          backgroundColor: 'rgba(142, 157, 164, 0.8)',
         },
       ],
     },
     options: {
+      layout: {
+        padding: {
+          bottom: 8
+        }
+      },
       scales: {
         y: {
-          min: -1,
+          min: 0,
           ticks: { display: false },
           grid: {
             color(context) {
-              if (context.tick.value === -1) {
+              if (context.tick.value === 0) {
                 return '#839195';
               }
               return 'rgba(0, 0, 0, 0)';
@@ -186,7 +252,36 @@ onMounted(() => {
           },
         },
       },
+      transitions: {
+        show: {
+          animations: {
+            x: {
+              from: 0
+            },
+            y: {
+              from: 0
+            }
+          }
+        },
+        hide: {
+          animations: {
+            x: {
+              from: 0
+            },
+            y: {
+              from: 0
+            }
+          }
+        }
+      },
       plugins: {
+        tooltip: {
+          callbacks: {
+            title: function (context) {
+              return `${context[0].label}:00`;
+            }
+          }
+        },
         legend: {
           display: false,
         },
@@ -197,13 +292,21 @@ onMounted(() => {
               xMin: selectedHour.value - 0.45,
               xMax: selectedHour.value + 0.45,
               yMin: 0,
-              yMax: 24,
+              yMax: 25,
               backgroundColor: 'rgba(255, 99, 132, 0)',
-              borderWidth: 8,
+              borderWidth: 4,
               borderColor: 'rgba(60,178,254,255)',
-              borderRadius: 5,
+              borderRadius: 4,
             },
-
+            box1: {
+              type: 'box',
+              xMin: selectedHour.value - 0.45,
+              xMax: selectedHour.value + 0.45,
+              yMin: 0,
+              yMax: 25,
+              backgroundColor: 'rgba(60, 178, 254, 0.2)',
+              borderWidth: 0
+            },
           },
         },
       },
@@ -260,17 +363,7 @@ onUnmounted(() => {
 
 async function renderByDate(date) {
   const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
-  // todo 改為真實串接
-  const { data: dataOfDate } = await spiderman.apiService({
-    url: `${spiderman.system.apiBaseUrl}/airaTracker/livefacehourlycount`,
-    method: 'post',
-    headers: { sessionId: sessionId.value },
-    data: {
-      report_date: date,
-      camera_list: cameraList,
-    },
-  });
-
+  const dataOfDate = await getLiveFaceHourlyCount(date, cameraList);
   const maxOfData = Math.max(...dataOfDate);
 
   // 設定 data
@@ -288,6 +381,7 @@ async function renderByDate(date) {
   // 設定 box 最大高度, 讓 box 回到 index = 0
   const maxAnnotationY = (() => chart.options.scales.y.max - 1)();
   chart.options.plugins.annotation.annotations.box.yMax = maxAnnotationY;
+  chart.options.plugins.annotation.annotations.box1.yMax = maxAnnotationY;
 
   chart.update();
 }
@@ -295,6 +389,9 @@ async function renderByDate(date) {
 function renderHourAnnotation(hour) {
   chart.options.plugins.annotation.annotations.box.xMin = hour - 0.45;
   chart.options.plugins.annotation.annotations.box.xMax = hour + 0.45;
+
+  chart.options.plugins.annotation.annotations.box1.xMin = hour - 0.45;
+  chart.options.plugins.annotation.annotations.box1.xMax = hour + 0.45;
 
   chart.update();
 }

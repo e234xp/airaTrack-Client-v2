@@ -18,6 +18,14 @@ const router = createRouter({
       component: () => import('../views/UploadMobile.vue'),
     },
     {
+      path: '/case',
+      component: () => import('../views/CaseView.vue'),
+    },
+    {
+      path: '/config',
+      component: () => import('../views/ConfigView.vue'),
+    },
+    {
       path: '/:pathMatch(.*)*',
       component: () => import('../views/LoginView.vue'),
     },

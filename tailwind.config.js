@@ -7,11 +7,15 @@ module.exports = {
     colors: {
       primary: '#3cb2fe',
       'primary-hover': '#2c77a0',
-      secondary: '#22292a',
+      secondary: 'rgba(0, 0, 0, 0.40)',
+      danger: '#dc3545',
+      'danger-hover': '#a71d31',
       white: '#f2f2f2',
+      black: colors.black,
       red: colors.red,
       green: colors.green,
       gray: colors.gray,
+      orange: colors.orange,
       'side-bar': '#798586',
       modal: 'rgb(65,73,74)',
       'day-chart': '#242928',
@@ -19,6 +23,7 @@ module.exports = {
       'progress-bar': '#646f71',
       'live-channel': '#8fb5ec',
       'archive-channel': '#77a17a',
+      transparent: colors.transparent
     },
     extend: {
       textColor: {
@@ -52,7 +57,7 @@ module.exports = {
       },
     },
     minHeight: {
-      '2row': '14rem',
+      '2row': '13.5rem',
     },
     opacity: {
       50: '.50',

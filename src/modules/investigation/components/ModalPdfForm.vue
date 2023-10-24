@@ -1,6 +1,5 @@
 <template>
   <ModalLayout
-    size="xl"
     :is-open="modal==='pdf'"
     @close="setModal('')"
   >
@@ -9,38 +8,41 @@
     </template>
 
     <template #default>
-      <div class="mb-2 text-2xl">
+      <div class="text-xl">
         {{ $t('Title') }}
       </div>
       <AppInput
+        dark
         v-model:modelInput="pdfForm.title"
         :placeholder="$t('Title')"
-        class="mb-8 text-2xl"
+        class="mb-4 text-base"
       />
-      <div class="mb-2 text-2xl">
+      <div class="text-xl">
         {{ $t('Subject') }}
       </div>
       <AppInput
+        dark
         v-model:modelInput="pdfForm.subject"
         :placeholder="$t('Subject')"
-        class="mb-8 text-2xl"
+        class="mb-4 text-base"
       />
-      <div class="mb-2 text-2xl">
+      <div class="text-xl">
         {{ $t('Remark') }}
       </div>
       <AppInput
+        dark
         v-model:modelInput="pdfForm.remark"
         :placeholder="$t('Remark')"
-        class="mb-8 text-2xl"
+        class="mb-6 text-base"
         rule=""
       />
     </template>
 
     <template #footer>
-      <div class="flex justify-end text-2xl">
+      <div class="flex justify-end gap-4">
         <AppButton
           type="secondary"
-          class="ml-6 px-6 py-2"
+          class="px-6"
           @click="setModal('')"
         >
           {{ $t('Cancel') }}
@@ -48,7 +50,7 @@
 
         <AppButton
           type="primary"
-          class="ml-6 px-6 py-2"
+          class="px-6"
           v-print="{
             id: 'printPdf',
             popTitle: 'PDF',

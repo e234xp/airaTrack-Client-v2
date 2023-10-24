@@ -2,7 +2,7 @@
   <ProgressBarLayout>
     <FullLayout>
       <template #header>
-        <div class="flex justify-between m-8">
+        <div class="flex justify-between m-4">
           <AppButton
             type="secondary"
             class="px-5 py-2 text-3xl"
@@ -10,7 +10,7 @@
           >
             {{ $t('Return') }}
           </AppButton>
-          <div class="flex items-center text-white text-3xl">
+          <div class="flex items-center text-white text-2xl">
             {{ spiderman.dayjs(selectedFaceKey).format('DD MMM, YYYY HH:mm') }}
           </div>
           <div />
@@ -19,7 +19,7 @@
 
       <template #grow>
         <div class="flex justify-center">
-          <div class="w-full 2xl:w-9/12">
+          <div class="w-full px-4">
             <FaceList
               :faces="faces"
               type="detail"

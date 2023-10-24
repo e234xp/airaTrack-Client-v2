@@ -3,7 +3,7 @@
     <div class="flex justify-between">
       <div
         v-if="svgIcon"
-        class="border border-gray-500 bg-gray-700 rounded grid content-center"
+        class="border-l border-t border-b border-gray-500 bg-gray-700 rounded grid content-center"
       >
         <AppSvgIcon
           :name="svgIcon"
@@ -16,9 +16,14 @@
       >
         <select
           v-model="input"
-          class="shadow appearance-none border border-gray-500
-          rounded w-full h-12 px-3 pr-8 text-gray-700"
-          :class="{ 'border-red-500': isShowError }"
+          class="shadow appearance-none border-gray-500 border
+          rounded w-full h-11 px-4 text-gray-700
+          focus:border-primary focus:shadow-outline focus:outline-none"
+          :class="{ 
+            'border-red-500': isShowError,
+            'bg-gray-700': dark,
+            'text-white': dark
+          }"
         >
           <option
             v-if="placeholder"
@@ -30,6 +35,7 @@
             v-for="(value, key) in options"
             :key="key"
             :value="value"
+            class="bg-primary"
           >
             {{ key }}
           </option>
@@ -41,16 +47,23 @@
           <AppSvgIcon
             name="icon-chevron-botton"
             class="text-gray-700 w-4 h-4"
+            :class="{
+              'text-white': dark
+            }"
           />
         </div>
       </div>
 
       <input
         v-else
-        class="shadow appearance-none border rounded
-        w-full h-12 px-3 text-gray-700 leading-tight focus:border-primary focus:shadow-outline"
+        class="shadow appearance-none rounded
+        w-full h-11 px-4 text-gray-700 leading-tight border
+        focus:border-primary focus:shadow-outline focus:outline-none"
         :class="{
-          'border-red-500': isShowError
+          'border-red-500 focus:border-red-500': isShowError,
+          'bg-gray-700': dark,
+          'text-white': dark,
+          'border-gray-500': dark
         }"
         :type="type"
         :placeholder="placeholder"
@@ -70,7 +83,7 @@
 
 <script setup>
 import {
-  computed, defineProps, defineEmits, ref,
+  computed, ref,
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -105,12 +118,19 @@ const props = defineProps({
       return {};
     },
   },
+  dark: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const emit = defineEmits(['update:modelInput', 'submit']);
+const emit = defineEmits(['update:modelInput', 'submit', 'valid']);
 const input = computed({
   get: () => props.modelInput,
-  set: (value) => emit('update:modelInput', value),
+  set: (value) => {
+    emit('update:modelInput', value);
+    emit('valid', !validators[props.rule].valid(value));
+  }
 });
 
 const hasTouched = ref(false);
@@ -122,12 +142,21 @@ const handleBlur = () => {
 const i18n = useI18n();
 const validators = {
   required: {
-    isPassed: () => !input.value,
+    valid: (val) => !val,
+    isPassed: () => validators.required.valid(input.value),
     generateMessage: () => {
-      const placeholder = props.placeholder ? props.placeholder : i18n.t('field');
+      const placeholder = props.placeholder !== '' ? props.placeholder : i18n.t('field');
       return i18n.t('RequiredMessage', { placeholder });
     },
   },
+  ip: {
+    valid: (val) => !val || !/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(val),
+    isPassed: () => validators.ip.valid(input.value),
+    generateMessage: () => {
+      const placeholder = props.placeholder !== '' ? props.placeholder : i18n.t('field');
+      return 'Invalid IP address';
+    }
+  }
 };
 
 const isShowError = computed(() => {

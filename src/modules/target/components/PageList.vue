@@ -17,29 +17,31 @@
         >
           <div
             v-show="hourFaces[faceKey].length > 0"
-            class="flex justify-center px-5"
+            class="flex justify-center pl-5 pr-2"
           >
-            <div class="w-full">
-              <div class="px-2 flex justify-start">
+            <div class="w-full" ref="container">
+              <div class="pl-6 pr-2 flex justify-start">
                 <div class="flex">
-                  <div class="grid content-center text-white text-3xl">
+                  <div class="grid content-center text-white text-2xl leading-4">
                     {{ spiderman.dayjs(Number(faceKey)).format('HH:mm') }}
                   </div>
                 </div>
                 <div class="flex items-center">
                   <AppButton
                     type="transparent"
-                    class="px-5 py-1 text-2xl"
+                    class="px-4 text-2xl leading-5"
                     @click="handleToDetail(faceKey)"
                   >
-                    <div class="mr-1 flex items-center text-default">
-                      {{ $t('Extend') }}
-                    </div>
-                    <div class="flex items-center text-white">
-                      <AppSvgIcon
-                        name="icon-chevron-right"
-                        class="w-5 h-5"
-                      />
+                    <div class="flex gap-0 hover:gap-2 transition-all">
+                      <div class="mr-1 flex items-center text-default text-base">
+                        {{ $t('Extend') }}
+                      </div>
+                      <div class="flex items-center text-white">
+                        <AppSvgIcon
+                          name="icon-chevron-right"
+                          class="w-3 h-3"
+                        />
+                      </div>
                     </div>
                   </AppButton>
                 </div>
@@ -48,13 +50,13 @@
                 </div>
               </div>
 
-              <div class="my-7 flex justify-between">
+              <div class="mt-4 mb-8 ml-6 flex justify-between">
                 <div
-                  class="min-h-2row w-16 rounded-lg bg-secondary
-                  mx-3 flex justify-center items-center text-default
-                  cursor-pointer hover:bg-primary-hover transition"
+                  class="min-h-2row w-14 rounded-lg bg-transparent
+                  mr-5 flex justify-center items-center text-default
+                  cursor-pointer hover:bg-secondary transition"
                   :class="{
-                    'pointer-events-none': hourFacePaginations[faceKey]
+                    'pointer-events-none opacity-0': hourFacePaginations[faceKey]
                       .currentPage === 1,
                   }"
                   @click="hourFacePaginations[faceKey]
@@ -62,7 +64,7 @@
                 >
                   <AppSvgIcon
                     name="icon-chevron-left"
-                    class="w-8 h-8"
+                    class="w-5 h-5"
                   />
                 </div>
                 <FaceList
@@ -71,11 +73,11 @@
                   class="flex-grow"
                 />
                 <div
-                  class="min-h-2row w-16 rounded-lg bg-secondary
+                  class="min-h-2row w-14 rounded-lg bg-transparent
                         mx-3 flex justify-center items-center text-default
-                        cursor-pointer hover:bg-primary-hover transition"
+                        cursor-pointer hover:bg-secondary transition"
                   :class="{
-                    'pointer-events-none': hourFacePaginations[faceKey]
+                    'pointer-events-none opacity-0': hourFacePaginations[faceKey]
                       .currentPage === helpers.getTotalPages({
                         totalItems: hourFacePaginations[faceKey].totalItems,
                         numberPerPage: hourFacePerPage,
@@ -86,7 +88,7 @@
                 >
                   <AppSvgIcon
                     name="icon-chevron-right"
-                    class="w-8 h-8"
+                    class="w-5 h-5"
                   />
                 </div>
               </div>
@@ -132,6 +134,8 @@ const hourFaceKeys = ref([]);
 const hourFaces = ref({});
 const hourFacePaginations = ref({});
 const hourFacePerPage = ref(24);
+
+const container = ref(null);
 
 const store = useStore();
 const {
@@ -184,7 +188,8 @@ async function getLiveFaceHourly({ date, hour }) {
           sessionId: sessionId.value,
         });
 
-        hourFaces.value[key] = data;
+        const dummy = data.length > 0 ? [...data, ...new Array(hourFacePerPage.value - data.length).fill().map(() => ({ data: { id: ''} }))] : data;
+        hourFaces.value[key] = dummy;
         hourFacePaginations.value[key].totalItems = totalItems;
 
         return data;
@@ -229,15 +234,43 @@ function handleToDetail(faceKey) {
 /* 定義動畫 */
 @keyframes colorTransition {
   0%, 100% {
-    background-color: white;
+    background-color: #2c77a0;
   }
   50% {
-    background-color: #ffc93e;
+    background-color: #3cb2fe;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  60% {
+    transform: scale(1.7);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
   }
 }
 
 /* 添加動畫效果 */
 .animate-color-transition {
-  animation: colorTransition 1s forwards;
+  animation: colorTransition 1s forwards infinite;
+}
+
+.animate-pulse-transition::before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  animation: pulse 1.5s ease;
+  border-radius: 1rem;
+  border: 4px double #3cb2fe;
 }
 </style>

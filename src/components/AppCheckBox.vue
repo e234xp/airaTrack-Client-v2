@@ -3,7 +3,7 @@
     <label class="truncate">
       <input
         type="checkbox"
-        class="w-4 h-4 mr-2 focus:ring-2 focus:ring-white
+        class="w-4 h-4 mr-2
         accent-gray-900"
         v-model="input"
         :value="value"
@@ -25,7 +25,7 @@
 
 <script setup>
 import {
-  computed, defineProps, defineEmits, ref,
+  computed, ref,
 } from 'vue';
 import { useI18n } from 'vue-i18n';
 
