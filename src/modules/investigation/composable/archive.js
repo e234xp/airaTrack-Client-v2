@@ -3,8 +3,7 @@ import fetchTimeout from 'fetch-timeout';
 import spiderman from '@/spiderman';
 import useUserStore from '@/stores/user';
 import useDevices from '@/stores/devices';
-
-import { getVideoUrl } from './video.js';
+import useVideo from '@/modules/investigation/composable/video';
 
 function formatDataTime(timestamp) {
   if (timestamp == '')
@@ -18,7 +17,7 @@ function DataTime(timestamp) {
       return '';
   else
       return spiderman.dayjs(timestamp).format('YYYY/MM/DD');
-},
+}
 
 function getCameraName(cameraId) {
   const devicesStore = useDevices();
@@ -29,18 +28,17 @@ function getCameraName(cameraId) {
 
 async function fetchVideoResource(item) {
   try {
-      let response = await fetchTimeout(`${item.videoUrl}`, {
+      const response = await fetchTimeout(`${item.videoUrl}`, {
           method: 'GET',
           mode: 'cors',
           credentials: 'omit',
       })
 
-      let blob = await response.blob();
-      return blob
+      return await response.blob();
   } catch { err => console.log(err) }
 }
 
-export default function downloadReport(form, faceDataList, timestamp, faceImage, startTime, endTime) {
+export default async function downloadReport(form, taskName, faceDataList, timestamp, faceImage, startTime, endTime) {
   let liveMap = new Map();
   let liveCameras = '';
   let archMap = new Map();
@@ -49,6 +47,8 @@ export default function downloadReport(form, faceDataList, timestamp, faceImage,
 
   const userStore = useUserStore();
   const { user } = userStore;
+
+  const { getVideoUrl } = useVideo();
 
   const { username } = user;
   const reportTitle = 'Investigation Report';
@@ -246,8 +246,8 @@ export default function downloadReport(form, faceDataList, timestamp, faceImage,
           <div class="right">
               <span class="subject">Subject : ${reportsubject}</span>
               <div class="detail"> <span>Report by :</span><h4>${username}</h4></div>
-              <div class="detail"> <span>Create Date :</span><h4>${DataTime(this.investigationTime)}</h4></div>
-              <div class="detail"> <span>Investigation period :</span><h4>${formatDataTime(startTime)} - ${this.formatDataTime(endTime)}</h4></div>
+              <div class="detail"> <span>Create Date :</span><h4>${DataTime(investigationTime)}</h4></div>
+              <div class="detail"> <span>Investigation period :</span><h4>${formatDataTime(startTime)} - ${formatDataTime(endTime)}</h4></div>
               <div class="detail"> <span>Investigation Camera :</span></div>
               ${camList}
           </div>
@@ -324,7 +324,7 @@ export default function downloadReport(form, faceDataList, timestamp, faceImage,
 
           _item.videoUrl = url;
 
-          let blob = await self.fetchVideoResource(_item);
+          let blob = await fetchVideoResource(_item);
           console.log(videoFilenameFormat, blob.size);
           if (blob.size <= 102400) {
               var txtFile =  videoFilenameFormat.replace('.webm', '.txt') ;
@@ -340,7 +340,6 @@ export default function downloadReport(form, faceDataList, timestamp, faceImage,
   let lastitem = 1;
   let doJobWithThrottle = (items, throttle = 1) => {
       console.log("LayoutInvestigation", "doJobWithThrottle");
-
 
       return new Promise(resolve => {
           const takeOne = async () => {
@@ -372,17 +371,18 @@ export default function downloadReport(form, faceDataList, timestamp, faceImage,
   fileContent += `<div id="app">${header}${summary}${remark}${incidentSummary}${footer1}</div>`;
   fileContent += `<div id="app2">${header}${incidentInfo}${videoGroup}${footer2}</div>`;
   fileContent += `</body></html>`;
+  console.log(fileContent);
 
-  zip.file("index.html", fileContent);
+//   zip.file('index.html', fileContent);
 
-  try {
-      zip.generateAsync({ type: "blob" }).then((blob) => {
-          saveAs(blob, `${this.taskName}.zip`);
-          this.isDownloadingReport = false;
-          this.$store.state.isDownloadingReport = this.isDownloadingReport;
-      })
-  }
-  catch (e) {
-      console.log(e);
-  }
+//   try {
+//       zip.generateAsync({ type: 'blob' }).then((blob) => {
+//           saveAs(blob, `${taskName}.zip`);
+//         //   this.isDownloadingReport = false;
+//         //   this.$store.state.isDownloadingReport = this.isDownloadingReport;
+//       })
+//   }
+//   catch (e) {
+//       console.log(e);
+//   }
 }

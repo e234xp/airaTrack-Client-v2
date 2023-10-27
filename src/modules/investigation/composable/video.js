@@ -195,6 +195,7 @@ export default () => {
     setProgressBarInfo,
     turnPage,
 
-    getSnapshotUrl
+    getSnapshotUrl,
+    getVideoUrl
   };
 };

@@ -441,6 +441,7 @@ import ModalSaveToAlbum from '@/modules/investigation/components/ModalSaveToAlbu
 import useStore from '@/modules/investigation/stores/index';
 import useTarget from '@/modules/target/stores/index';
 import useVideo from '@/modules/investigation/composable/video';
+import downloadReport from '@/modules/investigation/composable/archive';
 import { AppButton, AppDivider, AppSvgIcon } from '../../../components/app';
 
 const devicesStore = useDevices();
@@ -615,7 +616,9 @@ async function handleVideoArchive() {
 }
 
 async function onAddVideoArchive() {
-  console.log(selectedResults.value);
+  // console.log(selectedTask.value);
+  // return;
+  downloadReport(pdfForm.value, selectedTask.value.task_name, selectedResults, selectedTask.value.target.timestamp, selectedTask.value.target_face_image, selectedTask.value.search_start_time, selectedTask.value.search_end_time);
 }
 
 async function onSnapshot() {
