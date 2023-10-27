@@ -143,7 +143,7 @@
   "Delete": "削除",
   "DeletePhoto": "削除",
   "Department": "部署",
-  "Description": "コメント",
+  "Comment": "コメント",
   "Deselect": "選択解除",
   "Detail": "ビュー",
   "Devices": "デバイス",
@@ -493,7 +493,7 @@
   "TimeRange": "時間範囲",
   "TimeSettings": "時間設定",
   "TimeStamp": "入室時間",
-  "TimeTitle": "時間：",
+  "TimeTitle": "時間",
   "Timezone": "タイムゾーン",
   "Title": "タイトル",
   "Today": "今日",
@@ -561,5 +561,12 @@
   "SingleFileTime": "シングルファイル時間（分）",
   "RetentionDay": "顔図保持日",
   "MergeScore": "フェイスマージスコア",
-  "EditUser": "ユーザーを編集します"
+  "EditUser": "ユーザーを編集します",
+  "CaseName": "ケース名",
+  "Description": "説明",
+  "ByUser": "ユーザーによって",
+  "CaseDescription": "ケースの説明",
+  "Camera": "カメラ",
+  "Summary": "まとめ",
+  "IncidentInformation": "インシデント情報"
 }

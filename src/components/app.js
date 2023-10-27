@@ -10,6 +10,7 @@ import AppSuccess from './AppSuccess/AppSuccess.vue';
 import AppModal from './AppModal/AppModal.vue';
 import AppDivider from './AppDivider.vue';
 import AppToggle from './AppToggle.vue';
+import AppSwitch from './AppSwitch.vue';
 
 export {
   AppButton,
@@ -23,5 +24,6 @@ export {
   AppSuccess,
   AppModal,
   AppDivider,
-  AppToggle
+  AppToggle,
+  AppSwitch
 };

@@ -1,12 +1,12 @@
 <template>
-  <div class="w-full px-4" ref="panel">
-    <div class="flex justify-center h-19">
-      <div class="flex items-center justify-end gap-4 py-4 px-2 mr-40 w-5/12">
+  <div class="w-full max-w-screen-xl mx-auto" ref="panel">
+    <div class="flex justify-center h-18">
+      <div class="flex items-center justify-center gap-4 py-4 px-2 w-2/5">
         <div class="text-white text-xl">{{ $t('Search') }}</div>
         <AppInput v-model:modelInput="searchText" class="w-1/2" :rule="''" :dark="true" />
       </div>
-      <div class="flex items-center gap-4 py-4 px-2 w-5/12">
-        <AppMultiSwitch :value="selectedType" :list="typeList" @select="onSelect"></AppMultiSwitch>
+      <div class="flex items-center gap-4 py-4 px-2 w-3/5">
+        <AppSwitch :value="selectedType" :list="typeList" @select="onSelect"></AppSwitch>
         <AppDatePicker v-model:modelSelected="selectedDate" :dark="true" :range="true" v-if="selectedType === 'c'">
         </AppDatePicker>
       </div>

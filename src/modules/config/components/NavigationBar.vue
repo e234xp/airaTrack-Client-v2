@@ -5,7 +5,7 @@
       {{ item.text }}
     </AppButton>
 
-    <div class="absolute right-6 text-base text-default h-full flex flex-col justify-center">
+    <div class="absolute right-4 text-sm text-default h-full flex flex-col justify-center">
       <div class="text-right">{{ $t('Version') }}: {{ spiderman.system.version }}</div>
       <div class="text-right">{{ $t('EngVersion') }}: {{ devVersion }}</div>
     </div>

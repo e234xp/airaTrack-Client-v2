@@ -17,67 +17,37 @@
         >
           <div
             v-show="hourFaces[faceKey].length > 0"
-            class="flex justify-center pl-5 pr-2"
+            class="flex justify-center"
           >
             <div class="w-full" ref="container">
-              <div class="pl-6 pr-2 flex justify-start">
+              <div class="pl-6 flex gap-4">
                 <div class="flex">
                   <div class="grid content-center text-white text-2xl leading-4">
                     {{ spiderman.dayjs(Number(faceKey)).format('HH:mm') }}
                   </div>
                 </div>
-                <div class="flex items-center">
-                  <AppButton
-                    type="transparent"
-                    class="px-4 text-2xl leading-5"
-                    @click="handleToDetail(faceKey)"
-                  >
-                    <div class="flex gap-0 hover:gap-2 transition-all">
-                      <div class="mr-1 flex items-center text-default text-base">
-                        {{ $t('Extend') }}
-                      </div>
-                      <div class="flex items-center text-white">
-                        <AppSvgIcon
-                          name="icon-chevron-right"
-                          class="w-3 h-3"
-                        />
-                      </div>
-                    </div>
-                  </AppButton>
-                </div>
-                <div class="flex-grow flex items-center w-full">
+                <div class="flex items-center" style="width: calc(100% - 9rem)">
                   <AppDivider />
                 </div>
-              </div>
-
-              <div class="mt-4 mb-8 ml-6 flex justify-between">
                 <div
-                  class="min-h-2row w-14 rounded-lg bg-transparent
-                  mr-5 flex justify-center items-center text-default
-                  cursor-pointer hover:bg-secondary transition"
+                  class="w-6 rounded-lg flex justify-center items-center text-default
+                  cursor-pointer hover:text-primary-hover transition"
                   :class="{
-                    'pointer-events-none opacity-0': hourFacePaginations[faceKey]
-                      .currentPage === 1,
+                    'pointer-events-none opacity-40': hourFacePaginations[faceKey].currentPage === 1
                   }"
                   @click="hourFacePaginations[faceKey]
                     .onTurnPage(hourFacePaginations[faceKey].currentPage - 1)"
                 >
                   <AppSvgIcon
                     name="icon-chevron-left"
-                    class="w-5 h-5"
+                    class="w-4 h-4"
                   />
                 </div>
-                <FaceList
-                  :faces="hourFaces[faceKey]"
-                  type="list"
-                  class="flex-grow"
-                />
                 <div
-                  class="min-h-2row w-14 rounded-lg bg-transparent
-                        mx-3 flex justify-center items-center text-default
-                        cursor-pointer hover:bg-secondary transition"
+                  class="w-6 rounded-lg flex justify-center items-center text-default
+                        cursor-pointer hover:text-primary-hover transition"
                   :class="{
-                    'pointer-events-none opacity-0': hourFacePaginations[faceKey]
+                    'pointer-events-none opacity-40': hourFacePaginations[faceKey]
                       .currentPage === helpers.getTotalPages({
                         totalItems: hourFacePaginations[faceKey].totalItems,
                         numberPerPage: hourFacePerPage,
@@ -88,9 +58,34 @@
                 >
                   <AppSvgIcon
                     name="icon-chevron-right"
-                    class="w-5 h-5"
+                    class="w-4 h-4"
                   />
                 </div>
+                <div class="flex items-center w-24">
+                  <AppButton
+                    type="transparent"
+                    class="text-2xl leading-5 !py-0"
+                    @click="handleToDetail(faceKey)"
+                  >
+                    <div class="flex">
+                      <div class="flex items-center text-default text-base">
+                        {{ $t('Extend') }}
+                      </div>
+                      <span class="more" >
+                        <span class="hz" ></span>
+                        <span class="vt" ></span>
+                      </span>
+                    </div>
+                  </AppButton>
+                </div>
+              </div>
+
+              <div class="mt-3 mb-4 ml-6 mr-5 flex justify-center">
+                <FaceList
+                  :faces="hourFaces[faceKey]"
+                  type="list"
+                  class="flex-grow"
+                />
               </div>
             </div>
           </div>
@@ -104,7 +99,7 @@
 
 <script setup>
 import {
-  onUnmounted, ref, watch,
+  onUnmounted, ref, watch, onMounted, onBeforeMount
 } from 'vue';
 import { storeToRefs } from 'pinia';
 import spiderman from '@/spiderman';
@@ -119,13 +114,12 @@ import useDevices from '@/stores/devices';
 
 import useStore from '@/modules/target/stores/index';
 import helpers from '@/modules/target/helpers';
-import { AppDivider } from '../../../components/app';
 
 const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
 const devicesStore = useDevices();
 const { livedevices } = storeToRefs(devicesStore);
-const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
+// const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
 
 const selectedDate = ref(spiderman.dayjs().format('YYYY-MM-DD'));
 const selectedHour = ref(parseInt(spiderman.dayjs().format('HH'), 10));
@@ -138,13 +132,26 @@ const hourFacePerPage = ref(24);
 const container = ref(null);
 
 const store = useStore();
-const {
-  setPage, setSelectedFaceKey,
-} = store;
+const { setPage, setSelectedFaceKey } = store;
+const { selectedCamera } = storeToRefs(store);
 
 watch([selectedDate, selectedHour], ([date, hour]) => {
   getLiveFaceHourly({ date, hour });
 }, { immediate: true });
+
+watch(selectedCamera, async () => {
+  const currentKey = helpers.getCurrentKey();
+  
+  await Promise.allSettled(hourFaceKeys.value.map(async (key) => {
+    const result = await hourFacePaginations.value[key].onTurnPage(
+      hourFacePaginations.value[key].currentPage,
+    );
+    if (key !== currentKey) return { result };
+
+    performAnimation(hourFaces.value[key]);
+    return { result };
+  }));
+});
 
 const performAnimation = helpers.getPerformAnimationFn('list');
 
@@ -184,7 +191,7 @@ async function getLiveFaceHourly({ date, hour }) {
           endTime,
           page: pageNumber,
           perPage: hourFacePerPage.value,
-          cameraList,
+          cameraList: selectedCamera.value,
           sessionId: sessionId.value,
         });
 
@@ -230,7 +237,7 @@ function handleToDetail(faceKey) {
 }
 </script>
 
-<style>
+<style lang="scss">
 /* 定義動畫 */
 @keyframes colorTransition {
   0%, 100% {
@@ -247,11 +254,11 @@ function handleToDetail(faceKey) {
     opacity: 1;
   }
   60% {
-    transform: scale(1.7);
+    transform: scale(2.3);
     opacity: 0.4;
   }
   100% {
-    transform: scale(1.8);
+    transform: scale(2.4);
     opacity: 0;
   }
 }
@@ -269,8 +276,83 @@ function handleToDetail(faceKey) {
   left: 0;
   right: 0;
   bottom: 0;
-  animation: pulse 1.5s ease;
+  animation: pulse 1.2s ease;
   border-radius: 1rem;
   border: 4px double #3cb2fe;
+}
+
+.more {
+
+  $size : 28px;
+  $cross: 2px;
+  $timing: 0.1s;
+  $ease: ease-in;
+
+  position: relative;
+  display: block;
+  cursor: pointer;
+  transition: $timing;
+  transition-timing-function: $ease;
+
+  width: $size;
+  height: $size;
+  border-radius: 0.2em;
+  background: transparent;
+
+  .hz, .vt {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transition: $timing;
+    transition-timing-function: $ease;
+    transform: translate(-50%, -50%);
+  }
+
+  .hz {
+    border-top: $cross solid rgb(181 190 192);
+    width: 40%;
+  }
+
+  .vt {
+    height: 40%;
+    &:before {
+      content: " ";
+      display:block;
+      height: 50%;
+      border-right: $cross solid rgb(181 190 192);
+    }
+    &:after {
+      content: " ";
+      display:block;
+      top: 50%;
+      height: 50%;
+      border-right: $cross solid rgb(181 190 192);
+    }
+    &:before, &:after {
+      transition: $timing;
+      transition-timing-function: $ease;
+      transform: rotate(0deg);
+    }
+  }
+
+  &:hover {
+    .hz {
+      transform: translate(-50%, -50%);
+      width: 50%;
+      border-color: rgb(60 178 254);
+    }
+    
+    .vt {
+      transform: translate(140%, -50%);
+    }
+    .vt:before {
+      transform: rotate(-45deg);
+      border-color: rgb(60 178 254);
+    }
+    .vt:after {
+      transform: rotate(45deg);
+      border-color: rgb(60 178 254);
+    }
+  }
 }
 </style>

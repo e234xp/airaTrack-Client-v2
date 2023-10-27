@@ -199,13 +199,14 @@ import useStore from '@/modules/investigation/stores/index';
 import { AppDivider } from '../../../components/app';
 
 const store = useStore();
-const { dataType } = storeToRefs(store);
+const { dataType, page } = storeToRefs(store);
 const { setPage, setSelectedTask, getTaskListWithoutResult, startTask, removeTask, getTask, modifyTask, stopTask } = store;
 
 const isProgress = ref(false);
 
 const list = ref([]);
 async function refreshList() {
+  if (page.value !== 'list') return;
   const { task_list: taskList } = await getTaskListWithoutResult();
   list.value = taskList.reverse();
 }

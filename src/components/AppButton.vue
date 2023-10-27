@@ -1,10 +1,10 @@
 <template>
   <div
-    class="flex justify-center items-center cursor-pointer transition text-sm py-2"
+    class="flex justify-center items-center cursor-pointer transition text-base py-2"
     :class="[{
-      'bg-primary hover:bg-primary-hover hover:border-primary-hover border border-transparent rounded leading-4': type === 'primary',
-      'bg-secondary hover:bg-primary-hover hover:border-primary-hover border rounded leading-4': type === 'secondary',
-      'bg-danger hover:bg-danger-hover hover:border-danger-hover border border-transparent rounded': type === 'danger',
+      'bg-btn-primary hover:border-white border rounded leading-4': type === 'primary',
+      'bg-secondary hover:bg-btn-primary border-gray-600 hover:border-btn-secondary-hover border rounded leading-4': type === 'secondary',
+      'bg-danger hover:bg-danger-hover hover:border-danger-hover border border-transparent rounded leading-4': type === 'danger',
       'hover:text-primary-hover': type === 'transparent',
 
       'text-default font-normal': !isActive,
@@ -50,10 +50,10 @@ const classParse = computed({
   get: () => {
     switch (props.type) {
       case 'secondary':
-        return props.isEnable ? 'border-gray-500 text-white shadow-md' : 'border-transparent text-gray-600';
+        return props.isEnable ? 'text-white shadow-md' : 'text-gray-600';
       case 'primary':
       case 'danger':
-      return props.isEnable ? 'text-white shadow-md' : 'text-gray-400';
+      return props.isEnable ? 'text-white shadow-md border-btn-primary-border' : 'text-gray-400 border-transparent';
       default:
         return '';
     }

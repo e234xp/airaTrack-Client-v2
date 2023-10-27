@@ -4,14 +4,15 @@ import useUserStore from '@/stores/user';
 // =============================================
 // POST
 // =============================================
-export async function getLiveFaceHourlyCount(date, cameraList) {
+export async function getLiveFaceHourlyCount(start, end, cameraList) {
   const userStore = useUserStore();
   const result = await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/livefacehourlycount`,
     method: 'post',
     headers: { sessionId: userStore.sessionId },
     data: {
-      report_date: date,
+      start_time: start * 1000,
+      end_time: end * 1000,
       camera_list: cameraList,
     },
   });

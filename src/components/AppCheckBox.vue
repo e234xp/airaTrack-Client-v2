@@ -1,10 +1,9 @@
 <template>
   <div class="flex justify-between">
-    <label class="truncate">
+    <label class="truncate select-none">
       <input
         type="checkbox"
-        class="w-4 h-4 mr-2
-        accent-gray-900"
+        class="w-4 h-4 mr-2 accent-primary hover:accent-primary-hover"
         v-model="input"
         :value="value"
         @change="$emit('onChange')"
@@ -31,7 +30,7 @@ import { useI18n } from 'vue-i18n';
 
 const props = defineProps({
   modelInput: {
-    type: Array,
+    type: [Array, Boolean],
     default() {
       return [];
     },

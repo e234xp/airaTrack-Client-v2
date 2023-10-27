@@ -1,50 +1,91 @@
 <template>
   <ProgressBarLayout>
     <FullLayout>
-      <template #header>
+      <!-- <template #header>
         <NavigationBar />
-      </template>
+      </template> -->
 
       <template #grow>
         <div class="flex h-full font-thin">
-          <div class="w-144 border-r border-gray-600">
+          <div class="w-160 border-r border-gray-600">
             <FullLayout>
               <template #header>
-                <div class="p-4 text-white text-xl">
-                  <div class="mb-2">
-                    {{ $t("Target") }}
-                  </div>
+                <AppButton
+                  type="transparent"
+                  class="!text-xl w-20 !justify-start pl-4"
+                  @click="
+                    setPage('list');
+                    setDataType(dataType);
+                  "
+                >
+                  {{ $t('Back') }}
+                </AppButton>
+                <div class="px-4 pb-4 text-white text-xl">
                   <div class="flex">
                     <img
                       class="w-24 h-24 mr-4"
                       :src="spiderman.base64Image.getSrc(selectedTask.target_face_image)"
                       alt=""
                     >
-                    <div class="flex-grow text-base truncate">
-                      <div class="truncate">
-                        {{ targetDevice.name }}
+                    <div class="w-full flex flex-col justify-between">
+                      <div class="flex">
+                        <div class="flex-grow text-base truncate">
+                          <div class="truncate">
+                            {{ targetDevice.name }}
+                          </div>
+                          <div class="truncate">
+                            {{ spiderman.dayjs(selectedTask.target.timestamp)
+                              .format('YYYY/MM/DD HH:mm:ss') }}
+                          </div>
+                        </div>
+                        <AppButton type="secondary"
+                          @click="addTaskToAlbum"
+                          class="w-8 h-8 ml-auto !p-0">
+                          <AppSvgIcon name="icon-add-to-album" class="text-white w-8 h-8" />
+                        </AppButton>
                       </div>
-                      <div class="truncate">
-                        {{ spiderman.dayjs(selectedTask.target.timestamp)
-                          .format('YYYY/MM/DD HH:mm:ss') }}
+                      <div class="flex w-full">
+                        <div class="flex items-center text-base">
+                          {{ $t("TargetScore") }}：
+                        </div>
+                        <template v-if="!fromCase">
+                          <div class="text-base">
+                            0.5
+                          </div>
+                          <div class="mx-3 flex-grow flex items-center">
+                            <input
+                              type="range"
+                              class="w-full h-1
+                                    rounded-full appearance-none cursor-pointer
+                                    bg-progress-bar accent-gray-300"
+                              v-model="targetScore"
+                              :min="0.5"
+                              :max="1"
+                              :step="0.05"
+                            >
+                          </div>
+                          <div class="text-base">
+                            1.0
+                          </div>
+                        </template>
+                        <template v-else>
+                          <div class="text-base">
+                            {{ selectedTask.target_score }}
+                          </div>
+                        </template>
                       </div>
                     </div>
-                    <AppSvgIcon
-                      name="icon-add-to-album"
-                      class="w-10 h-10 cursor-pointer"
-                      @click="addTaskToAlbum"
-                    />
                   </div>
                 </div>
 
-                <AppDivider />
+                <!-- <AppDivider /> -->
 
-                <div class="border-gray-500 py-4 px-4 text-white">
-                  <div class="mb-2 text-xl">
+                <!-- <div class="border-gray-500 py-4 px-4 text-white"> -->
+                  <!-- <div class="mb-2 text-xl">
                     {{ $t('IncidentList') }}
-                  </div>
+                  </div> -->
 
-                  <div class="flex">
+                  <!-- <div class="flex">
                     <div class="w-32 px-2 flex items-center justify-end text-base">
                       {{ $t("TargetScore") }}：
                     </div>
@@ -73,14 +114,13 @@
                         {{ selectedTask.target_score }}
                       </div>
                     </template>
-                  </div>
-                </div>
+                  </div> -->
+                <!-- </div> -->
 
                 <AppDivider />
 
-                <div class="flex my-4 px-4 text-white text-xl">
+                <div class="flex gap-2 mt-4 mb-2 px-4 text-white text-base">
                   <AppCheckBox
-                    class="mr-4"
                     :placeholder="$t('SelectAll')"
                     :checked="selectedResultIndexes.length === taskResults.length"
                     @on-change="handleSelectAll"
@@ -98,14 +138,14 @@
                   class="flex px-4"
                 >
                   <AppCheckBox
-                    class="mt-10 mr-2"
+                    class="mt-4 mr-2"
                     v-model:modelInput="selectedResultIndexes"
                     :value="index"
                   />
                   <div
                     class="relative
-                    flex-grow border-l-4 border-progress-bar
-                    pb-4
+                    flex-grow border-l-4 border-general
+                    pb-2 pt-2
                     text-white text-xl cursor-pointer"
                     @click="setVideoResultIndex({
                       index,
@@ -114,11 +154,6 @@
                     })"
                     :id="`result-${index}`"
                   >
-                    <div class="mb-2 ml-8 truncate text-base">
-                      {{ spiderman.dayjs(result.highest.timestamp)
-                        .format('YYYY/MM/DD HH:mm:ss') }}
-                    </div>
-
                     <div
                       class="absolute -left-2.5 w-4 h-4 mt-2 rounded-full border-2 border-transparent"
                       :class="{
@@ -130,32 +165,40 @@
 
                     <div
                       class="rounded-full
-                      flex mb-4 ml-4 py-1 px-4
-                      text-sm text-white border-2 border-transparent"
+                      mb-2 ml-4 py-1 px-4
+                      text-sm text-white border-2"
                       :class="{
-                        'border-2 border-white':index === videoResultIndex,
-                        'bg-live-channel': result.resultFrom === 'LIVE',
-                        'bg-archive-channel': result.resultFrom === 'PLAYBACK',
+                        'border-live-channel': result.resultFrom === 'LIVE',
+                        'border-archive-channel': result.resultFrom === 'PLAYBACK',
+                        'border-2 border-white':index === videoResultIndex
                       }"
                     >
-                      <div>
-                        {{ findDevice(result.highest.cid).name }}
-                      </div>
+                      <span class="mr-2">{{ spiderman.dayjs(result.highest.timestamp).format('YYYY/MM/DD HH:mm:ss') }} </span> 
+                      {{ findDevice(result.highest.cid).name }}
                     </div>
 
                     <div
-                      class="flex justify-between"
+                      class="flex gap-4"
                     >
                       <img
                         class="w-24 h-24 ml-8"
                         :src="spiderman.base64Image.getSrc(result.highest.face_image)"
                         alt=""
                       >
-                      <AppSvgIcon
-                        name="icon-add-to-album"
-                        class="w-10 h-10 mr-4"
+                      <!-- <div class="truncate text-base">
+                        {{ spiderman.dayjs(result.highest.timestamp)
+                          .format('YYYY/MM/DD HH:mm:ss') }}
+                      </div> -->
+                      <AppButton type="secondary"
                         @click="addTargetToAlbum(result)"
-                      />
+                        class="w-8 h-8 mr-2 ml-auto !p-0">
+                        <AppSvgIcon name="icon-add-to-album" class="text-white w-8 h-8" />
+                      </AppButton>
+                      <!-- <AppSvgIcon
+                        name="icon-add-to-album"
+                        class="w-10 h-10 mr-2 ml-auto hover:bg-primary-hover"
+                        @click="addTargetToAlbum(result)"
+                      /> -->
                     </div>
                   </div>
                 </div>
@@ -164,7 +207,7 @@
               <template #footer>
                 <AppDivider class="mt-4" />
 
-                <div class="aira-row-auto-2 p-4 gap-4">
+                <div class="grid grid-cols-2 grid-rows-2 p-4 gap-2">
                   <AppButton
                     @click="handlePdfExport"
                     type="secondary"
@@ -187,6 +230,7 @@
                     {{ $t("VmsBookmark") }}
                   </AppButton>
                   <AppButton
+                    @click="handleVideoArchive"
                     type="secondary"
                     :is-enable="selectedResultIndexes.length > 0"
                   >
@@ -199,7 +243,7 @@
 
           <FullLayout>
             <template #header>
-              <div class="m-4 flex justify-between text-white text-xl">
+              <div class="mx-4 my-2 flex justify-between text-white text-xl">
                 <div>
                   {{
                     videoResult
@@ -224,6 +268,7 @@
                 :duration="videoDuration"
                 @on-prev="prevVideo"
                 @on-next="nextVideo"
+                ref="video"
               >
                 <template
                   #select-video-bar
@@ -269,6 +314,19 @@
                       </div>
                     </div>
                   </div>
+                </template>
+
+                <template #video-bar-download>
+                  <AppButton type="secondary"
+                    @click="onSnapshot"
+                    class="w-8 h-8 !p-0">
+                    <AppSvgIcon name="icon-snap" class="text-white w-8 h-8" />
+                  </AppButton>
+                  <AppButton type="secondary"
+                    @click="onVideoArchive"
+                    class="w-8 h-8 !p-0">
+                    <AppSvgIcon name="icon-download" class="text-white w-8 h-8" />
+                  </AppButton>
                 </template>
 
                 <template #video-bar-turn-page>
@@ -342,6 +400,7 @@
   </ProgressBarLayout>
 
   <PrintPdf
+    ref="printPdf"
     :form="pdfForm"
     :task="selectedTask"
     :results="selectedResults"
@@ -358,6 +417,8 @@
   />
 
   <ModalAddCase @add="onAddCase" />
+
+  <ModalVideoArchiveForm @add="onAddVideoArchive" />
 </template>
 
 <script setup>
@@ -366,29 +427,29 @@ import {
 } from 'vue';
 import { storeToRefs } from 'pinia';
 import spiderman from '@/spiderman';
-
 import useDevices from '@/stores/devices';
 import successStore from '@/components/AppSuccess/success';
 
-import NavigationBar from '@/modules/investigation/components/NavigationBar.vue';
 import ResultVideo from '@/modules/investigation/components/ResultVideo.vue';
 import PrintPdf from '@/modules/investigation/components/PrintPdf.vue';
 import ModalPdfForm from '@/modules/investigation/components/ModalPdfForm.vue';
 import ModalBookmarkForm from '@/modules/investigation/components/ModalBookmarkForm.vue';
+import ModalVideoArchiveForm from '@/modules/investigation/components/ModalVideoArchiveForm.vue';
+import ModalAddCase from '@/modules/investigation/components/ModalAddCase.vue';
+import ModalSaveToAlbum from '@/modules/investigation/components/ModalSaveToAlbum.vue';
 
 import useStore from '@/modules/investigation/stores/index';
 import useTarget from '@/modules/target/stores/index';
 import useVideo from '@/modules/investigation/composable/video';
-import ModalSaveToAlbum from '@/modules/investigation/components/ModalSaveToAlbum.vue';
-import ModalAddCase from '@/modules/investigation/components/ModalAddCase.vue';
 import { AppButton, AppDivider, AppSvgIcon } from '../../../components/app';
 
 const devicesStore = useDevices();
 const { findDevice } = devicesStore;
 
 const store = useStore();
-const { selectedTask, pdfForm, bookmarkForm, fromCase } = storeToRefs(store);
+const { selectedTask, pdfForm, bookmarkForm, fromCase, dataType } = storeToRefs(store);
 const { setModal, setBookmarkForm, getTaskResultAll, addBookmark, addCase, putCase } = store;
+const { setPage, setDataType } = store;
 
 const targetStore = useTarget();
 const { addPhotoFeature } = targetStore;
@@ -406,7 +467,13 @@ const {
   videoProgressBarTimeSlot,
   videoTimeSlotsPersentage,
   turnPage,
+
+  getSnapshotUrl
 } = useVideo();
+
+const video = ref(null);
+const printPdf = ref(null);
+
 const rangeList = new Map()
   .set('10 m', 10 * 60 * 1000)
   .set('30 m', 30 * 60 * 1000)
@@ -511,7 +578,7 @@ function addTaskToAlbum() {
 function addTargetToAlbum(data) {
   setModal('save-to-album');
   albumData.faceImage = data.highest.face_image;
-  albumData.feature = '';
+  albumData.feature = data.highest.feature;
 }
 
 async function handleAddToAlbum(form) {
@@ -541,5 +608,34 @@ async function onAddCase(param) {
     setModal('');
     successStore.show();
   }
+}
+
+async function handleVideoArchive() {
+  setModal('archive');
+}
+
+async function onAddVideoArchive() {
+  console.log(selectedResults.value);
+}
+
+async function onSnapshot() {
+  const videoTime = video.value.getCurrentTime();
+  const time = Math.floor(videoResult.value.starttime + (videoTime * 1000)) - 500;
+  const imageUrl = getSnapshotUrl({ cameraId: selectedTask.value.target.camera_id, time });
+  const link = document.createElement('a');
+  const response = await fetch(imageUrl);
+  const file = await response.blob();
+  link.href = URL.createObjectURL(file);
+  link.download = `${selectedTask.value.task_name}_${targetDevice.value.name}_${spiderman.dayjs(time).format('YYYYMMDDHHmmss')}.png`;
+  link.click();
+}
+
+async function onVideoArchive() {
+  const response = await fetch(videoUrl.value);
+  const file = await response.blob();
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(file);
+  link.download = `${selectedTask.value.task_name}_${spiderman.dayjs().format('YYYY-MM-DD')}`; //or any other extension
+  link.click();
 }
 </script>

@@ -13,13 +13,14 @@ body {
 
 .dp__theme_dark {
   --dp-primary-color: #3cb2fe !important;
-  --dp-background-color: #22292a !important;
+  --dp-background-color: theme(colors.third) !important;
+  --dp-border-color: theme(colors.general) !important;
 }
 
 .table {
   --tw-bg-opacity: 1;
-  background-color: rgba(108,117,125,var(--tw-bg-opacity));
-  --tw-bg-opacity: 0.2;
+  background-color: rgba(18, 18, 18,var(--tw-bg-opacity));
+  --tw-bg-opacity: 0.3;
   border-collapse: collapse;
   max-width: 100%
 }
@@ -31,7 +32,7 @@ body {
   --tw-gradient-to: #26678a;
   --tw-border-opacity: 1;
   border-color: rgba(125,135,143,var(--tw-border-opacity));
-  font-size: 1.2rem;
+  font-size: 1rem;
   position: -webkit-sticky;
   position: sticky;
   top: 0;

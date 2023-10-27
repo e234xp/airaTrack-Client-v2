@@ -1,7 +1,7 @@
 <template>
   <div class="text-base">
     <label
-      class="block text-xl font"
+      class="block text-base font text-label"
       :class="`text-${textColor}`"
     >
       {{ label }}
@@ -22,7 +22,7 @@ defineProps({
   },
   textColor: {
     type: String,
-    default: 'white',
+    default: 'general',
   },
 });
 </script>

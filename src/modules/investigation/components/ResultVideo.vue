@@ -1,20 +1,26 @@
 <template>
-  <div class="h-full pb-16 flex flex-col">
+  <div class="h-full pb-4 flex flex-col px-4">
     <div
-      class="flex-grow flex justify-center"
+      class="w-full bg-black flex justify-center"
+      style="height: calc(100% - 8rem);"
+      ref="panelRef"
     >
-      <video
-        ref="videoRef"
-        :key="videoUrl"
-        autoplay
-        @timeupdate="handleTimeUpdate"
-        @ended="handleVideoEnded"
-        @playing="handleVideoStarted"
-      >
-        <source
-          :src="videoUrl"
+      <div class="relative" :style="{ width: `${width}px`, height: `${height}px` }">
+        <video
+          ref="videoRef"
+          :key="videoUrl"
+          autoplay
+          @timeupdate="handleTimeUpdate"
+          @ended="handleVideoEnded"
+          @playing="handleVideoStarted"
+          class="absolute w-full h-full"
+          style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
         >
-      </video>
+          <source
+            :src="videoUrl"
+          >
+        </video>
+      </div>
     </div>
 
     <div class="px-4">
@@ -33,8 +39,8 @@
     <slot name="select-video-bar" />
 
     <div class="mx-4 flex">
-      <div class="flex-1 invisible">
-        dummy
+      <div class="flex-1 flex gap-2 items-center">
+        <slot name="video-bar-download" />
       </div>
       <div class="flex-1 flex justify-center">
         <img
@@ -68,7 +74,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount, defineExpose } from 'vue';
 
 defineProps({
   videoUrl: {
@@ -81,10 +87,14 @@ defineProps({
   },
 });
 const emit = defineEmits([
-  'onEnded', 'onPrev', 'onNext',
+  'onEnd', 'onPrev', 'onNext',
 ]);
 
+const width = ref(0);
+const height = ref(0);
+
 const videoRef = ref(null);
+const panelRef = ref(null);
 
 // 處理開始暫停
 const isPlaying = ref(true);
@@ -103,24 +113,63 @@ function pause() {
 const currentTime = ref(0);
 function handleTimeUpdate() {
   if (!videoRef.value) return;
-  // todo 刪除
-  // console.log(videoRef.value.currentTime);
   currentTime.value = videoRef.value.currentTime;
 }
 
 function handleSliderInput() {
-  // todo 刪除
-  // console.log('set', typeof currentTime.value, currentTime.value);
   videoRef.value.currentTime = currentTime.value;
 }
 
 // 處理結束的時候
 function handleVideoEnded() {
   isPlaying.value = false;
-  emit('onEnded');
+  currentTime.value = 0;
+  emit('onNext');
 }
 
 function handleVideoStarted() {
   isPlaying.value = true;
 }
+
+function sizeAdjust() {
+  const tempH = panelRef.value.clientHeight;
+  const tempW = panelRef.value.clientWidth;
+  const ratio = tempH / tempW;
+  if (ratio < 0.56) {
+    height.value = tempH;
+    width.value = tempH / 0.56;
+  } else {
+    width.value = tempW;
+    height.value = tempW * 0.56;
+  }
+}
+defineExpose({
+  getCurrentTime,
+  getSize,
+  getContent
+})
+
+function getCurrentTime() {
+  return videoRef.value.currentTime;
+}
+
+function getSize() {
+  return { width: videoRef.value.clientWidth, height: videoRef.value.clientHeight };
+}
+
+function getContent() {
+  return videoRef.value;
+}
+
+const containerObserver = new ResizeObserver(() => {
+  sizeAdjust();
+})
+
+onMounted(async () => {
+  containerObserver.observe(panelRef.value);
+})
+
+onBeforeUnmount(() => {
+  containerObserver.unobserve(panelRef.value);
+})
 </script>

@@ -3,11 +3,11 @@
     <div class="flex justify-between">
       <div
         v-if="svgIcon"
-        class="border-l border-t border-b border-gray-500 bg-gray-700 rounded grid content-center"
+        class="border-l border-t border-b border-general bg-third w-12 rounded flex justify-center items-center"
       >
         <AppSvgIcon
           :name="svgIcon"
-          class="text-gray-500 w-12 h-8"
+          class="text-general w-6 h-6"
         />
       </div>
       <div
@@ -16,12 +16,12 @@
       >
         <select
           v-model="input"
-          class="shadow appearance-none border-gray-500 border
-          rounded w-full h-11 px-4 text-gray-700
+          class="shadow appearance-none border-general border
+          rounded w-full h-10 px-4 text-gray-700
           focus:border-primary focus:shadow-outline focus:outline-none"
           :class="{ 
             'border-red-500': isShowError,
-            'bg-gray-700': dark,
+            'bg-third': dark,
             'text-white': dark
           }"
         >
@@ -57,13 +57,13 @@
       <input
         v-else
         class="shadow appearance-none rounded
-        w-full h-11 px-4 text-gray-700 leading-tight border
+        w-full h-10 px-4 text-gray-700 leading-tight border
         focus:border-primary focus:shadow-outline focus:outline-none"
         :class="{
           'border-red-500 focus:border-red-500': isShowError,
-          'bg-gray-700': dark,
+          'bg-third': dark,
           'text-white': dark,
-          'border-gray-500': dark
+          'border-general': dark
         }"
         :type="type"
         :placeholder="placeholder"

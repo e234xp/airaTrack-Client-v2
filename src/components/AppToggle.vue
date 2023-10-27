@@ -7,7 +7,7 @@
 
 <script setup>
 import {
-  computed, defineProps, defineEmits, ref,
+  computed
 } from 'vue';
 
 const props = defineProps({
@@ -70,7 +70,7 @@ const input = computed({
 }
 
 input:checked+.slider {
-  background-color: theme('colors.primary');
+  background-color: theme('colors.btn-primary');
 }
 
 input:checked+.slider:before {

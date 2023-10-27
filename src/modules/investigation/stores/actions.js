@@ -147,3 +147,28 @@ export async function getTaskResultAll(taskId, score) {
   });
   return result;
 }
+
+export async function getVideoUrl(payload) {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/media`,
+    method: 'post',
+    headers: { sessionId: userStore.sessionId },
+    data: {
+      format: 'mpegts',
+      ...payload
+    },
+  });
+}
+
+export async function getSnapshotUrl(payload) {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/snapshot`,
+    method: 'post',
+    headers: { sessionId: userStore.sessionId },
+    data: {
+      ...payload
+    },
+  });
+}

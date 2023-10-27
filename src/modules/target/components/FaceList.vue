@@ -1,15 +1,15 @@
 <template>
-  <div class="aira-row-auto-1 content-start gap-4">
+  <div class="content-start gap-4 list-container">
     <div
       v-for="face in faces"
       :key="face.data.id"
-      class="select-none relative cursor-pointer w-full h-24"
+      class="select-none relative cursor-pointer w-full min-h-24"
       :class="{ 'pointer-events-none': face.data.id === '' }"
       @click="handleToggleFace(face)"
     >
       <template v-if="face.data.face_image">
         <img
-          class="w-full h-full object-cover"
+          class="w-full h-full object-cover rounded"
           :src="spiderman.base64Image.getSrc(face.data.face_image)"
           alt=""
         >
@@ -142,3 +142,13 @@ function chunkArray(array, chunkSize) {
   return result;
 }
 </script>
+
+<style lang="scss">
+.list-container {
+  display: grid;
+  grid-auto-flow: dense;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+</style>

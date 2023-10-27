@@ -143,7 +143,7 @@ DefinedClockOutTime,Scheduled Clock-out Time,予定退勤時間,表定下班時�
 Delete,Delete,削除,刪除
 DeletePhoto,Delete Photo,削除,刪除照片
 Department,Department,部署,部門
-Description,Comment,コメント,說明
+Comment,Comment,コメント,說明
 Deselect,Deselect,選択解除,移除選擇
 Detail,View,ビュー,檢視
 Devices,Device,デバイス,設備
@@ -493,7 +493,7 @@ Time,TIME,時間,時間
 TimeRange,Time range,時間範囲,搜尋時段
 TimeSettings,Time Settings,時間設定,時間設置
 TimeStamp,Entered Time,入室時間,進入時間
-TimeTitle,Time:,時間：,時間：
+TimeTitle,Time,時間,時間
 Timezone,Time Zone,タイムゾーン,時區
 Title,Title,タイトル,標題
 Today,Today,今日,今日
@@ -564,3 +564,10 @@ SingleFileTime,Single file time (minutes),シングルファイル時間（分�
 RetentionDay,Face picture retention days,顔図保持日,臉部保留日
 MergeScore,Face merge score,フェイスマージスコア,面部合併得分
 EditUser,Edit User,ユーザーを編集します,編輯用戶
+CaseName,Case Name,ケース名,案例名稱
+Description,Description,説明,描述
+ByUser,By User,ユーザーによって,由用戶
+CaseDescription,Case Description,ケースの説明,案例描述
+Camera,Camera,カメラ,相機
+Summary,Summary,まとめ,概括
+IncidentInformation,Incident Information,インシデント情報,事件信息

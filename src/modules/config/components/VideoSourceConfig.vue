@@ -16,7 +16,7 @@
       <AppInput :dark="true" type="password" class="w-1/3" v-model:modelInput="login.password" />
     </AppLabel>
   </div>
-  <div class="w-1/3 mt-4">
+  <div class="w-1/3 mt-6">
     <AppButton type="primary" :isEnable="isValid" class="mx-20 px-6" @click="onClick">
       {{ $t('Apply') }}</AppButton>
   </div>
@@ -31,13 +31,13 @@ const store = useStore();
 const { getNxConfig, postNxConfig } = store;
 
 const vmOptions = ref({
-  'Network Optix 5.0 or later': 'nx5',
-  'Network Optix 4 or earlier': 'nx4',
+  'Network Optix 5.0 or later': 'bearer',
+  'Network Optix 4 or earlier': 'basic',
   // 'Lilin Navigator': 'lilin',
   // 'Milstone XProtect': 'milestone',
   // 'Genetec Omnicast': 'genetec'
 })
-const selectedVms = ref('nx5');
+const selectedVms = ref('');
 const connect = reactive({
   ip: '',
   port: ''
@@ -56,11 +56,11 @@ const isValid = computed({
 async function onClick() {
   const result = await postNxConfig({
     host: connect.ip,
-    post: +connect.port,
     port: connect.port,
     username: login.username,
     password: login.password,
-    server_id: serverId.value
+    server_id: serverId.value,
+    authorization: selectedVms.value
   });
   if (result) successStore.show();
 }
@@ -70,7 +70,7 @@ function onValid(val, idx) {
 }
 
 onMounted(async () => {
-  ({ host: connect.ip, password: login.password, port: connect.port, username: login.username, server_id: serverId.value } = await getNxConfig())
+  ({ host: connect.ip, password: login.password, port: connect.port, username: login.username, server_id: serverId.value, authorization: selectedVms.value } = await getNxConfig())
 })
 
 </script>

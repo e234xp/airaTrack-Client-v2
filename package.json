@@ -28,7 +28,9 @@
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.2",
     "vue3-print-nb": "^0.1.4",
-    "csvtojson": "2.0.10"
+    "csvtojson": "2.0.10",
+    "jszip": "3.10.1",
+    "fetch-timeout": "0.0.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",

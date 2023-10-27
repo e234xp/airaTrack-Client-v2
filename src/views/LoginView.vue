@@ -12,7 +12,7 @@
         {{ $t('Version') }}: {{ spiderman.system.version }}
       </div>
     </div>
-    <div class="sm:w-full md:w-112 bg-secondary shadow-md rounded mb-4 py-8 px-6">
+    <div class="sm:w-full md:w-112 bg-panel shadow-md rounded mb-4 py-8 px-6">
       <div class="text-center mb-4 text-white font-bold text-3xl">
         {{ $t("LoginTitle") }}
       </div>

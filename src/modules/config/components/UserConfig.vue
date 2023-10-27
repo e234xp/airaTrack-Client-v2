@@ -47,15 +47,15 @@
 
   <ModalLayout :is-open="modal === 'delete'" @close="setModal('')">
     <template #header>
-      Delete User
+      {{ $t('DeleteUser') }}
     </template>
 
     <template #default>
       <div class="mb-2 text-xl">
-        Username : {{ selected.username }}
+        {{ $t('LoginUsername') }} : {{ selected.username }}
       </div>
       <div class="mb-2 text-xl">
-        Email : {{ selected.email }}
+        {{ $t('EmailAddress') }} : {{ selected.email }}
       </div>
     </template>
 
@@ -168,6 +168,12 @@ async function onSaveEdit() {
   const result = await putUsers({
     ...selected.value
   })
+  if (result) {
+    setModal('');
+    successStore.show();
+    const idx = pageData.value.findIndex((item) => item.id === selected.value.id);
+    pageData.value[idx] = selected.value;
+  }
 }
 
 async function onSaveDelete() { 

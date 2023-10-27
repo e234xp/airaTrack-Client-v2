@@ -121,11 +121,13 @@ export async function putUsers(payload) {
 // =============================================
 export async function getNxConfig() {
   const userStore = useUserStore();
-  return await spiderman.apiService({
+  const result = await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/Configs/nx`,
     method: 'get',
     headers: { sessionId: userStore.sessionId }
   })
+  console.log(result)
+  return result;
 }
 
 export async function getTrackConfig() {

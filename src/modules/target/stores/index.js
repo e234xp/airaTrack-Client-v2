@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import useDevices from '@/stores/devices';
 
 import * as actions from './actions';
 
@@ -10,9 +11,15 @@ export default defineStore('module-target', () => {
     confirmingFaces: [],
     confirmedFace: null,
     selectedAlbum: null,
+    selectedCamera: [],
     page: 'list',
     modal: '',
   };
+
+  const selectedCamera = ref(initialState.selectedCamera);
+  function setSelectedCamera(data) {
+    selectedCamera.value = data;
+  }
 
   const selectedFace = ref(initialState.selectedFace);
   function setSelectedFace(data) {
@@ -58,6 +65,9 @@ export default defineStore('module-target', () => {
     setConfirmingFaces(initialState.confirmingFaces);
     setConfirmedFace(initialState.confirmedFace);
     setSelectedAlbum(initialState.selectedAlbum);
+
+    const deviceStore = useDevices();
+    setSelectedCamera(deviceStore.livedevices.map(({ camera_id: cameraId }) => cameraId));
   }
 
   return {
@@ -86,5 +96,7 @@ export default defineStore('module-target', () => {
     selectedAlbum,
     setSelectedAlbum,
 
+    selectedCamera,
+    setSelectedCamera,
   };
 });

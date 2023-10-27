@@ -54,6 +54,16 @@ export default () => {
     return `${spiderman.system.apiBaseUrl}/airaTracker/viewmedia?sessionId=${sessionId.value}&camera_id=${cameraId}&start_time=${startTime}&end_time=${endTime}`;
   }
 
+  function getSnapshotUrl(result) {
+    if (!result) return '';
+
+    const {
+      time,
+      cameraId,
+    } = result;
+    return `${spiderman.system.apiBaseUrl}/airaTracker/viewsnapshot?sessionId=${sessionId.value}&camera_id=${cameraId}&time=${time}`;
+  }
+
   function prevVideo() {
     if (videoResultIndex.value === 0) {
       setVideoResultIndex({ index: taskResults.length - 1, results: taskResults });
@@ -184,5 +194,7 @@ export default () => {
     videoTimeSlotsPersentage,
     setProgressBarInfo,
     turnPage,
+
+    getSnapshotUrl
   };
 };

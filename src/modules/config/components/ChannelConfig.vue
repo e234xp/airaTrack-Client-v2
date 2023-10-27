@@ -1,13 +1,13 @@
 <template>
   <div class="w-full" style="height: calc(100% - 4rem)">
-    <AppDataTable :rowHeight="80" :columns="column" :dataList="pageData">
+    <AppDataTable :rowHeight="80" :columns="column" :dataList="pageData" :margin="100">
       <template #open="props">
         <div class="flex justify-center">
           <AppToggle :value="props.data.live" @change="onChangeLive(props.data.cameraId)"></AppToggle>
         </div>
       </template>
       <template #camera="props">
-        <div class="text-xl">{{ props.data.name }}</div>
+        <div class="text-base">{{ props.data.name }}</div>
         <div class="text-gray-400">{{ props.data.cameraId }}</div>
       </template>
       <template #decode="props">

@@ -14,7 +14,7 @@
       <AppInput :dark="true" class="w-1/3" v-model:modelInput="mergeScoreParse" />
     </AppLabel>
   </div>
-  <div class="w-1/3 mt-4">
+  <div class="w-1/3 mt-6">
     <AppButton type="primary" class="mx-20 px-6 py-2" @click="onApply">
       Apply</AppButton>
   </div>

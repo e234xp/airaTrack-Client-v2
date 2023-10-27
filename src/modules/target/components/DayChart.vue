@@ -2,9 +2,10 @@
   <div class="flex py-4">
     <div
       @click="handlePrevDate()"
-      class="w-20 rounded-lg border border-gray-500 bg-secondary
+      class="rounded-lg border border-panel-border bg-panel
         ml-6 mr-4 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
+      style="width: 5.75rem"
     >
       <div class="invisible">
         dummy
@@ -21,11 +22,11 @@
         {{ spiderman.dayjs(selectedDate).subtract(1,'day').format('DD, MMM') }}
       </div>
     </div>
-    <div class="flex-grow rounded-lg bg-day-chart/40 p-4 cursor-pointer">
+    <div class="flex-grow rounded-lg bg-panel p-4 cursor-pointer">
       <div
         class="flex text-white gap-4"
       >
-        <div class="flex items-center gap-2" style="width: 27%">
+        <div class="flex items-center gap-2" style="width: 30%">
           <div>{{ $t('TimeTitle') }}</div>
           <AppSwitch :value="selectedTimeType" :list="timeTypeList" @select="onSelectTimeType"></AppSwitch>
           <AppDatePicker
@@ -40,9 +41,13 @@
           <AppSwitch :value="selectedCameraType" :list="cameraTypeList" @select="onSelectCameraType"></AppSwitch>
           <BadgeList
             :list="cameraList"
-            :limit="3"
+            :selected="selectedCamera"
+            @update:unSelectCamera="onUnSelect"
             v-if="selectedCameraType === 'select'"
-          />
+          >
+            <CameraList :list="cameraList" :selected="selectedCamera" 
+              @update:unSelectCamera="onUnSelect" @update:selectCamera="onSelect"></CameraList>
+          </BadgeList>
         </div>
       </div>
       <AppDivider class="my-2" />
@@ -58,12 +63,11 @@
       </div>
     </div>
     <div
-      @click="
-        handleNextDate()
-      "
-      class="w-20 rounded-lg border border-gray-500 bg-secondary
+      @click="handleNextDate()"
+      class="rounded-lg border border-panel-border bg-panel
         mr-6 ml-4 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
+      style="width: 5.75rem"
     >
       <div class="invisible">
         dummy
@@ -94,18 +98,19 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 
 import spiderman from '@/spiderman';
 import errorStore from '@/components/AppError/error';
-import AppSwitch from '@/components/AppSwitch.vue';
 
 import useDevices from '@/stores/devices';
 import useStore from '@/modules/target/stores/index';
 
 import BadgeList from './BadgeList.vue';
+import CameraList from './CameraList.vue';
 
 const devicesStore = useDevices();
 const { livedevices } = storeToRefs(devicesStore);
 
 const store = useStore();
-const { getLiveFaceHourlyCount } = store;
+const { getLiveFaceHourlyCount, setSelectedCamera } = store;
+const { selectedCamera } = storeToRefs(store);
 
 const i18n = useI18n();
 
@@ -144,7 +149,7 @@ const selectedTimeType = ref('now');
 const timeTypeList = ref([
   {
     value: 'now',
-    text: 'Now'
+    text: i18n.t('Today')
   }, {
     value: 'custom',
     icon: 'icon-calendar'
@@ -152,6 +157,9 @@ const timeTypeList = ref([
 ]);
 function onSelectTimeType(val) {
   selectedTimeType.value = val;
+  if (val === 'now') {
+    emit('update:modelSelectedDate', spiderman.dayjs().format('YYYY-MM-DD'))
+  }
 }
 
 const selectedCameraType = ref('all');
@@ -166,11 +174,14 @@ const cameraTypeList = ref([
 ]);
 function onSelectCameraType(val) {
   selectedCameraType.value = val;
+  if (val === 'all') {
+    setSelectedCamera(livedevices.value.map(({ camera_id: cameraId }) => cameraId));
+  }
 }
 
 const cameraList = computed({
   get: () => {
-    return livedevices.value.map(({ camera_id: cameraId, name }) => ({ value: cameraId, text: name }));
+    return livedevices.value.map(({ camera_id: cameraId, name }) => ({ id: cameraId, name }));
   }
 })
 
@@ -195,6 +206,20 @@ function handleNextDate() {
   setDate(spiderman.dayjs(selectedDate.value).add(1, 'day'));
 }
 
+function onUnSelect(id) {
+  const temp = selectedCamera.value.map((id) => id);
+  const idx = temp.indexOf(id);
+  if (idx >= 0) temp.splice(idx, 1);
+  setSelectedCamera(temp);
+}
+
+function onSelect(id) {
+  const temp = selectedCamera.value.map((id) => id);
+  const idx = temp.indexOf(id);
+  if (idx < 0) temp.push(id);
+  setSelectedCamera(temp);
+}
+
 // 以下處理 chart
 Chart.register(annotationPlugin);
 
@@ -211,14 +236,14 @@ onMounted(() => {
         {
           label: '# of Faces',
           data: [],
-          backgroundColor: 'rgba(142, 157, 164, 0.8)',
+          backgroundColor: 'rgba(67, 160, 209, 0.4)'
         },
       ],
     },
     options: {
       layout: {
         padding: {
-          bottom: 8
+          bottom: 2
         }
       },
       scales: {
@@ -286,6 +311,7 @@ onMounted(() => {
           display: false,
         },
         annotation: {
+          clip: false,
           annotations: {
             box: {
               type: 'box',
@@ -295,17 +321,8 @@ onMounted(() => {
               yMax: 25,
               backgroundColor: 'rgba(255, 99, 132, 0)',
               borderWidth: 4,
-              borderColor: 'rgba(60,178,254,255)',
+              borderColor: 'white',
               borderRadius: 4,
-            },
-            box1: {
-              type: 'box',
-              xMin: selectedHour.value - 0.45,
-              xMax: selectedHour.value + 0.45,
-              yMin: 0,
-              yMax: 25,
-              backgroundColor: 'rgba(60, 178, 254, 0.2)',
-              borderWidth: 0
             },
           },
         },
@@ -357,13 +374,18 @@ watch(selectedDate, (date) => {
   renderHourAnnotation(now.hour());
 });
 
+watch(selectedCamera, () => renderByDate(selectedDate.value));
+
 onUnmounted(() => {
   clearInterval(renderInterval);
 });
 
 async function renderByDate(date) {
-  const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
-  const dataOfDate = await getLiveFaceHourlyCount(date, cameraList);
+  // const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
+  const today = spiderman.dayjs().format('YYYY-MM-DD');
+  const start = spiderman.dayjs(`${date} 00:00:00`).unix();
+  const end = today === date ? spiderman.dayjs().unix() : spiderman.dayjs(`${date} 23:59:59`).unix();
+  const dataOfDate = await getLiveFaceHourlyCount(start, end, selectedCamera.value);
   const maxOfData = Math.max(...dataOfDate);
 
   // 設定 data
@@ -379,9 +401,11 @@ async function renderByDate(date) {
   chart.options.scales.y.max = maxY;
 
   // 設定 box 最大高度, 讓 box 回到 index = 0
-  const maxAnnotationY = (() => chart.options.scales.y.max - 1)();
+  const maxAnnotationY = (() => chart.options.scales.y.max - 0.5)();
   chart.options.plugins.annotation.annotations.box.yMax = maxAnnotationY;
-  chart.options.plugins.annotation.annotations.box1.yMax = maxAnnotationY;
+  // chart.options.plugins.annotation.annotations.box1.yMax = maxAnnotationY;
+
+  updateBarColor();
 
   chart.update();
 }
@@ -390,10 +414,18 @@ function renderHourAnnotation(hour) {
   chart.options.plugins.annotation.annotations.box.xMin = hour - 0.45;
   chart.options.plugins.annotation.annotations.box.xMax = hour + 0.45;
 
-  chart.options.plugins.annotation.annotations.box1.xMin = hour - 0.45;
-  chart.options.plugins.annotation.annotations.box1.xMax = hour + 0.45;
+  // chart.options.plugins.annotation.annotations.box1.xMin = hour - 0.45;
+  // chart.options.plugins.annotation.annotations.box1.xMax = hour + 0.45;
+
+  updateBarColor(hour);
 
   chart.update();
+}
+
+function updateBarColor(hour = selectedHour.value) {
+  const temp = new Array(24).fill('rgba(67, 160, 209, 0.5)');
+  temp[hour] = 'rgba(67, 160, 209, 1)';
+  chart.data.datasets[0].backgroundColor = temp;
 }
 
 </script>

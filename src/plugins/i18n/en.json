@@ -143,7 +143,7 @@
   "Delete": "Delete",
   "DeletePhoto": "Delete Photo",
   "Department": "Department",
-  "Description": "Comment",
+  "Comment": "Comment",
   "Deselect": "Deselect",
   "Detail": "View",
   "Devices": "Device",
@@ -493,7 +493,7 @@
   "TimeRange": "Time range",
   "TimeSettings": "Time Settings",
   "TimeStamp": "Entered Time",
-  "TimeTitle": "Time:",
+  "TimeTitle": "Time",
   "Timezone": "Time Zone",
   "Title": "Title",
   "Today": "Today",
@@ -561,5 +561,12 @@
   "SingleFileTime": "Single file time (minutes)",
   "RetentionDay": "Face picture retention days",
   "MergeScore": "Face merge score",
-  "EditUser": "Edit User"
+  "EditUser": "Edit User",
+  "CaseName": "Case Name",
+  "Description": "Description",
+  "ByUser": "By User",
+  "CaseDescription": "Case Description",
+  "Camera": "Camera",
+  "Summary": "Summary",
+  "IncidentInformation": "Incident Information"
 }

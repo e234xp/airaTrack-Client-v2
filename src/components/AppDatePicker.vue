@@ -1,7 +1,7 @@
 <template>
   <VueDatePicker
     :dark="dark"
-    input-class-name="!border-gray-500 !border !text-sm !py-2 !leading-4"
+    input-class-name="!border-gray-500 !border !text-base !py-1.5 !leading-4"
     :clearable="false"
     v-model="selected"
     :enable-time-picker="enableTimePicker"

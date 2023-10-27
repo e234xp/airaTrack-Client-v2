@@ -1,7 +1,7 @@
 <template>
   <div class="h-full flex flex-col">
     <div>
-      <div class="bg-secondary/40 py-1 flex justify-between">
+      <div class="bg-header py-1 flex justify-between">
         <div class="flex items-center">
           <img src="@/assets/images/logo-track.png" alt="" class="h-6 px-5">
         </div>
@@ -21,11 +21,21 @@
         </div>
         <div class="w-80 grid grid-flow-col content-center justify-end divide-x-2 divide-gray-500
        text-default">
-          <div class="grid content-center px-5 text-xl cursor-pointer" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
-            <template v-if="hover">
-              <AppSvgIcon name="icon-logout" @click="onLogout" class="text-gray-300 w-8 h-8" />
-            </template>
-            <template v-else>{{ user.username }}</template>
+          <div class="relative grid content-center px-5 text-xl cursor-pointer" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+            {{ user.username }}
+            <div class="absolute w-32 z-10 h-12 dialog-hint text-center"
+              style="top: 100%; left: 50%; transform: translate(-50%, 0);"
+              @click="onLogout"
+              v-if="hover">
+              {{ $t("Logout") }}
+            </div>
+            <!-- <AppButton type="secondary"
+              class="absolute w-32 z-10 h-12 dialog-hint"
+              style="top: 100%; left: 50%; transform: translate(-50%, 0);"
+              @click="onLogout"
+              v-if="hover">
+              {{ $t("Logout") }}
+            </AppButton> -->
           </div>
           <div class="flex">
             <div class="flex flex-col justify-center items-end px-4 text-xs">
@@ -104,3 +114,22 @@ onUnmounted(() => {
   clearInterval(timer);
 });
 </script>
+
+<style>
+.dialog-hint::after {
+  border-color: transparent transparent theme('colors.general') transparent;
+  border-style: solid solid solid solid;
+
+  /* 設定邊框大小可拼湊出任意形狀的三角形 */
+  border-width: 10px 6px;
+
+  top: calc(-1.5rem + 4px);
+  left: 50%;
+  transform: translate(-50%, 0);
+
+  content: "";
+  height: 0px;
+  position: absolute;
+  width: 0px;
+}
+</style>

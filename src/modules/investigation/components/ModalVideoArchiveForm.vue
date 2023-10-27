@@ -1,10 +1,10 @@
 <template>
   <ModalLayout
-    :is-open="modal==='pdf'"
+    :is-open="modal==='archive'"
     @close="setModal('')"
   >
     <template #header>
-      {{ $t('GeneratePdfReport') }}
+      {{ $t('VideoArchiveTitle') }}
     </template>
 
     <template #default>
@@ -51,12 +51,8 @@
         <AppButton
           type="primary"
           class="px-6"
-          v-print="{
-            id: 'printPdf',
-            popTitle: 'airaTrack Investigation Report'
-          }"
           @click="
-            setModal('');
+            emit('add');
           "
         >
           {{ $t('Yes') }}
@@ -74,4 +70,6 @@ import useStore from '@/modules/investigation/stores/index';
 const store = useStore();
 const { modal, pdfForm } = storeToRefs(store);
 const { setModal } = store;
+
+const emit = defineEmits(['add']);
 </script>

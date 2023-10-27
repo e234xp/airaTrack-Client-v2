@@ -143,7 +143,7 @@
   "Delete": "刪除",
   "DeletePhoto": "刪除照片",
   "Department": "部門",
-  "Description": "說明",
+  "Comment": "說明",
   "Deselect": "移除選擇",
   "Detail": "檢視",
   "Devices": "設備",
@@ -493,7 +493,7 @@
   "TimeRange": "搜尋時段",
   "TimeSettings": "時間設置",
   "TimeStamp": "進入時間",
-  "TimeTitle": "時間：",
+  "TimeTitle": "時間",
   "Timezone": "時區",
   "Title": "標題",
   "Today": "今日",
@@ -561,5 +561,12 @@
   "SingleFileTime": "單文件時間（分鐘）",
   "RetentionDay": "臉部保留日",
   "MergeScore": "面部合併得分",
-  "EditUser": "編輯用戶"
+  "EditUser": "編輯用戶",
+  "CaseName": "案例名稱",
+  "Description": "描述",
+  "ByUser": "由用戶",
+  "CaseDescription": "案例描述",
+  "Camera": "相機",
+  "Summary": "概括",
+  "IncidentInformation": "事件信息"
 }

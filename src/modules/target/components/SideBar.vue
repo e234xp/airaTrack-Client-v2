@@ -1,5 +1,5 @@
 <template>
-  <div class="w-80 bg-side-bar/40">
+  <div class="w-80 bg-side-bar">
     <FullLayout>
       <template #header>
         <div
