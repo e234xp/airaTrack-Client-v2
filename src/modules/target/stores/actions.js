@@ -61,14 +61,15 @@ export async function addPhotoFeature(data) {
   });
 }
 
-export async function uploadPhoto(image) {
+export async function uploadPhoto(image, albumId) {
   const userStore = useUserStore();
   return await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/albums/uploadPhoto`,
     method: 'post',
     headers: { sessionId: userStore.sessionId },
     data: {
-      face_image: image
+      face_image: image,
+      albumId
     },
   });
 }

@@ -10,10 +10,10 @@
       >
         <div class="flex justify-start">
           <div class="whitespace-nowrap font-bold mr-4">
-            {{ $t(title) }}
+            {{ title }}
           </div>
           <div class="mr-6">
-            {{ $t(body) }}
+            {{ body }}
           </div>
         </div>
         <span class="absolute top-0 right-0 px-4 py-3">

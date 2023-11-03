@@ -7,6 +7,10 @@
       {{ $t('VideoArchiveTitle') }}
     </template>
 
+    <template #description>
+      {{ $t('VideoArchiveDialog') }}
+    </template>
+
     <template #default>
       <div class="text-xl">
         {{ $t('Title') }}

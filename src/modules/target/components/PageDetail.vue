@@ -11,7 +11,8 @@
             {{ $t('Return') }}
           </AppButton>
           <div class="flex items-center text-white text-2xl">
-            {{ spiderman.dayjs(selectedFaceKey).format('DD MMM, YYYY HH:mm') }}
+            {{ spiderman.formatDate.parseStr(selectedFaceKey) }}
+            {{ spiderman.dayjs(selectedFaceKey).format('HH:mm') }}
           </div>
           <div />
         </div>

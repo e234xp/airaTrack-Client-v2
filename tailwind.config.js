@@ -7,15 +7,13 @@ module.exports = {
     colors: {
       primary: '#6CBBFF',
       'primary-hover': '#2c77a0',
-      'btn-primary': '#2475A0',
-      'btn-primary-border': '#80D3FF',
-      'btn-secondary-hover': '#43A0D1',
+      'primary-border': '#80D3FF',
       secondary: '#1A1A1A',
+      'secondary-hover': '#43A0D1',
       third: '#313131',
       danger: '#dc3545',
       'danger-hover': '#a71d31',
-      panel: 'rgba(0, 0, 0, 0.20)',
-      'panel-border': 'rgba(255, 255, 255, 0.40)',
+      panel: '#282828',
       header: '#1E1E1E',
       white: '#f2f2f2',
       black: colors.black,
@@ -24,7 +22,7 @@ module.exports = {
       gray: colors.gray,
       orange: colors.orange,
       'side-bar': '#2C2C2C',
-      modal: '#3F4849',
+      modal: 'rgba(40, 40, 40, 1)',
       'day-chart': '#242928',
       'video-bar': '#131617',
       'progress-bar': '#646f71',
@@ -32,14 +30,39 @@ module.exports = {
       'archive-channel': '#77a17a',
       transparent: colors.transparent,
       general: 'rgba(100, 100, 100, 1)',
-      label: 'rgba(180, 180, 180, 1)'
+      label: 'rgba(180, 180, 180, 1)',
+      'album-none': '#027CBC',
+      'album-1': '#ED6060',
+      'album-2': '#EDB45E',
+      'album-3': '#63CF6D',
+      'album-4': '#8482FF',
+      'album-5': '#E17BF1',
+      'ctrl-primary-hover-bg': '#2475A0'
     },
     extend: {
       textColor: {
         default: '#b5bec0',
       },
       backgroundColor: {
+        'ctrl-switch': '#576264',
         default: '#485454',
+      },
+      boxShadow: {
+        'cus': '0px 4px 12px 0px rgba(0, 0, 0, 0.25)',
+        'btn': '0px 4px 4px 0px rgba(0, 0, 0, 0.10)',
+        'tog': '0px 1px 0px 0px rgba(255, 255, 255, 0.20) inset;'
+      },
+      borderColor: {
+        modal: '#696969',
+        panel: '#696969'
+      },
+      backgroundImage: {
+        'ctrl-primary': 'linear-gradient(180deg, #4FADDF 0%, #3186B4 44.79%, #2475A0 47.4%, #3186B4 100%)',
+        'ctrl-primary-hover': 'radial-gradient(50% 31.25% at 50% 100%, rgba(255, 255, 255, 0.50) 0%, rgba(255, 255, 255, 0.00) 100%), linear-gradient(180deg, #4FADDF 0%, #3186B4 44.79%, #2475A0 47.4%, #3186B4 100%)',
+        'ctrl-secondary': 'linear-gradient(180deg, #404040 0%, #232323 44.79%, #000 47.4%, #232323 100%)',
+        'ctrl-secondary-hover': 'radial-gradient(50% 31.25% at 50% 100%, #67CAFF 0%, rgba(103, 202, 255, 0.00) 100%), linear-gradient(180deg, #404040 0%, #232323 44.79%, #000 47.4%, #232323 100%)',
+        'ctrl-danger': 'linear-gradient(180deg, #B0342C 0%, #97231A 44.79%, #7D1810 47.4%, #96221A 100%)',
+        'ctrl-danger-hover': 'radial-gradient(50% 31.25% at 50% 100%, rgba(255, 255, 255, 0.50) 0%, rgba(255, 255, 255, 0.00) 100%), linear-gradient(180deg, #B0342C 0%, #97231A 44.79%, #7D1810 47.4%, #96221A 100%)',
       },
       fontFamily: {
         custom: ['Helvetica', 'sans'],
@@ -72,6 +95,7 @@ module.exports = {
       80: '.80',
       50: '.50',
       40: '.40',
+      30: '.30',
       20: '.20',
       0: '.0',
     },

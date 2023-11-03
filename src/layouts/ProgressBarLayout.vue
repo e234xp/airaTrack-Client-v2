@@ -21,13 +21,14 @@
         </div>
         <div class="w-80 grid grid-flow-col content-center justify-end divide-x-2 divide-gray-500
        text-default">
-          <div class="relative grid content-center px-5 text-xl cursor-pointer" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+          <div class="relative flex items-center gap-1 pr-6 text-xl cursor-pointer" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+            <AppSvgIcon name="icon-user" :color="'#b5bec0'" class="w-8 h-8" />
             {{ user.username }}
-            <div class="absolute w-32 z-10 h-12 dialog-hint text-center"
+            <div class="absolute w-32 z-10 h-12 dialog-hint text-center bg-black py-3 rounded"
               style="top: 100%; left: 50%; transform: translate(-50%, 0);"
               @click="onLogout"
               v-if="hover">
-              {{ $t("Logout") }}
+              <div class="hover:text-primary">{{ $t("Logout") }}</div>
             </div>
             <!-- <AppButton type="secondary"
               class="absolute w-32 z-10 h-12 dialog-hint"
@@ -38,7 +39,7 @@
             </AppButton> -->
           </div>
           <div class="flex">
-            <div class="flex flex-col justify-center items-end px-4 text-xs">
+            <div class="flex flex-col justify-center items-end pr-6 pl-6 text-xs">
               <div>
                 {{ current.date }}
               </div>
@@ -82,14 +83,13 @@ const { user, logout } = userStore;
 
 // 定義目前時間
 const current = ref({
-  date: spiderman.dayjs().format('MMM. DD, YYYY'),
+  date: spiderman.formatDate.today(),
   time: spiderman.dayjs().format('HH:mm:ss'),
 });
 
 const timer = setInterval(() => {
-  current.value.date = spiderman.dayjs().format('MMM. DD, YYYY');
+  current.value.date = spiderman.formatDate.today();
   current.value.time = spiderman.dayjs().format('HH:mm:ss');
-  // console.log('refresh timer');
 }, 1000);
 
 const hover = ref(false);
@@ -117,11 +117,11 @@ onUnmounted(() => {
 
 <style>
 .dialog-hint::after {
-  border-color: transparent transparent theme('colors.general') transparent;
+  border-color: transparent transparent theme('colors.black') transparent;
   border-style: solid solid solid solid;
 
   /* 設定邊框大小可拼湊出任意形狀的三角形 */
-  border-width: 10px 6px;
+  border-width: 10px 14px;
 
   top: calc(-1.5rem + 4px);
   left: 50%;

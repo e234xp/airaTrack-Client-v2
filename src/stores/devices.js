@@ -11,6 +11,7 @@ export default defineStore('device', () => {
       method: 'get',
       headers: { sessionId },
     });
+    console.log(data);
 
     return data;
   }
@@ -27,6 +28,7 @@ export default defineStore('device', () => {
       method: 'get',
       headers: { sessionId },
     });
+    console.log(data);
 
     return data;
   }

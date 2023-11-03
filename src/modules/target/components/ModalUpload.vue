@@ -4,8 +4,12 @@
       {{ $t('UploadFile') }}
     </template>
 
+    <template #description>
+      {{ $t('UploadDialog') }}
+    </template>
+
     <template #default>
-      <div class="flex justify-center cursor-pointer w-full h-80" @click="onUploadImage">
+      <div class="flex justify-center cursor-pointer w-full h-80 mb-4" @click="onUploadImage">
         <AppSvgIcon
           name="icon-image"
           class="text-gray-600"
@@ -14,6 +18,15 @@
         <input type="file" ref="file" accept="image/*" @change="fileOnChange" style="display: none;" />
         <img :src="image">
       </div>
+      <AppLabel :label="$t('Album')">
+        <AppInput
+          dark
+          type="select"
+          :options="options"
+          class="mb-6"
+          v-model:modelInput="form.albumId"
+        />
+      </AppLabel>
     </template>
 
     <template #footer>
@@ -29,7 +42,7 @@
         <AppButton
           type="primary"
           class="px-6"
-          :disabled="image === ''"
+          :isEnable="image !== ''"
           @click="handleUpload"
         >
           {{ $t('Upload') }}
@@ -40,7 +53,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import useStore from '@/modules/target/stores/index';
@@ -50,8 +63,19 @@ const store = useStore();
 const { modal } = storeToRefs(store);
 const { setModal, uploadPhoto } = store;
 
+const props = defineProps({
+  list: {
+    type: Array,
+    default: []
+  },
+})
+
 const image = ref('');
 const file = ref(null);
+const options = ref(null);
+const form = ref({
+  albumId: ''
+});
 
 function onClose() {
   image.value = '';
@@ -63,7 +87,7 @@ function onUploadImage() {
 }
 
 async function handleUpload() {
-  const result = await uploadPhoto(image.value);
+  const result = await uploadPhoto(image.value, form.value.albumId);
   if (result) {
     successStore.show();
     onClose();
@@ -74,10 +98,48 @@ function fileOnChange(e) {
   const file = e.target.files[0];
   const reader = new FileReader();
   reader.readAsDataURL(file, 'UTF-8');
+  const maxWidth = 200;
+  const maxHeight = 200;
   reader.onload = async (readerEvent) => {
-    image.value = readerEvent.target.result;
-    const img = document.createElement('img');
+    const img = new Image();
     img.src = readerEvent.target.result;
+    img.onload = () => {
+      if (file.size > maxWidth * maxHeight) {
+        let width = img.width;
+        let height = img.height;
+        if (width / maxWidth > height / maxHeight) {
+            width = maxWidth;
+            height = (img.height * maxWidth) / img.width;
+        } else {
+            height = maxHeight;
+            width = (img.width * maxHeight) / img.height;
+        }
+        
+        // 创建一个新 Canvas 元素来绘制调整大小后的图片
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // 将 Canvas 上的图像转换为 Base64 数据URL
+        const resizedImageDataUrl = canvas.toDataURL('image/jpeg');
+
+        // 在预览中显示调整大小后的图片
+        image.value = resizedImageDataUrl;
+      } else image.value = readerEvent.target.result;
+    }
   };
 }
+
+onMounted(() => {
+  options.value = props.list.reduce((obj, album) => {
+    const tmp = obj;
+
+    tmp[album.albumName] = album.albumId;
+    return tmp;
+  }, {});
+
+  form.value.albumId = props.list[0].albumId;
+})
 </script>

@@ -1,16 +1,18 @@
 <template>
-  <div class="flex justify-between">
-    <label class="truncate select-none">
+  <div class="flex justify-between w-full">
+    <label class="flex items-center select-none truncate">
       <input
         type="checkbox"
-        class="w-4 h-4 mr-2 accent-primary hover:accent-primary-hover"
+        class="w-4 h-4 accent-primary hover:accent-primary-hover"
         v-model="input"
         :value="value"
         @change="$emit('onChange')"
         :disabled="disabled"
         :checked="checked"
       >
-      {{ placeholder }}
+      <div class="pl-2" style="width: calc(100% - 1rem)">
+        <slot />
+      </div>
     </label>
 
     <div

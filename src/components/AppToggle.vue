@@ -70,7 +70,7 @@ const input = computed({
 }
 
 input:checked+.slider {
-  background-color: theme('colors.btn-primary');
+  background-color: theme('colors.album-none');
 }
 
 input:checked+.slider:before {

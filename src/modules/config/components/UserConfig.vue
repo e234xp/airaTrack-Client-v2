@@ -22,6 +22,10 @@
       {{ $t('EditUser') }}
     </template>
 
+    <template #description>
+      {{ $t('EditUserDialog') }}
+    </template>
+
     <template #default>
       <AppLabel :label="$t('LoginUsername')">
         <AppInput v-model:modelInput="selected.username" class="mb-4" dark />
@@ -50,6 +54,10 @@
       {{ $t('DeleteUser') }}
     </template>
 
+    <template #description>
+      {{ $t('DeleteUserDialog') }}
+    </template>
+
     <template #default>
       <div class="mb-2 text-xl">
         {{ $t('LoginUsername') }} : {{ selected.username }}
@@ -75,6 +83,10 @@
   <ModalLayout :is-open="modal === 'add'" @close="setModal('')">
     <template #header>
       {{ $t('AddUser') }}
+    </template>
+
+    <template #description>
+      {{ $t('NewUserDialog') }}
     </template>
 
     <template #default>

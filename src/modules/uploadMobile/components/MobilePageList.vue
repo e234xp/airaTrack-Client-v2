@@ -19,6 +19,15 @@
           <span class="grid justify-center content-center text-red-600">{{ flag_faceDetectedFail }}</span>
         </div>
 
+        <AppLabel class="mx-6" :label="$t('Album')">
+          <AppInput
+            dark
+            type="select"
+            :options="options"
+            v-model:modelInput="form.albumId"
+          />
+        </AppLabel>
+
         <div class="grid content-start text-white text-xl mx-6 mt-5">
           {{ $t('MobileUploadStep2') }}
           <span class="grid justify-center content-center text-green-600">{{ flag_faceUploadSuccess }}</span>
@@ -33,17 +42,23 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
+  import { storeToRefs } from 'pinia';
   import spiderman from '@/spiderman';
   // import useDevices from '@/stores/devices';
 
+  import useAlbums from '@/stores/albums';
   import useStore from '@/modules/uploadMobile/stores/index';
 
   import * as faceapi from 'face-api.js';
+
   faceapi.nets.tinyFaceDetector.loadFromUri('/models');
 
   const store = useStore();
   const { uploadPhoto } = store;
+
+  const albumsStore = useAlbums();
+  const { albums } = storeToRefs(albumsStore);
 
   let value_imageB64 = ref('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACXBIWXMAAAsSAAALEgHS3X78AAAADUlEQVR4nGP4//8/AwAI/AL+p5qgoAAAAABJRU5ErkJggg==');
   let flag_faceDetected = ref(false);
@@ -51,6 +66,23 @@
   let flag_faceUploadSuccess= ref('');
 
   let flag_aaa = ref('');
+
+  const options = ref(null);
+  const form = ref({
+    albumId: ''
+  });
+
+  onMounted(async () => {
+    options.value = albums.value.reduce((obj, album) => {
+      const tmp = obj;
+
+      tmp[album.albumName] = album.albumId;
+      return tmp;
+    }, {});
+
+    form.value.albumId = albums.value[0].albumId;
+  });
+
 
 
   function clickOnPickUploadPhoto() {
@@ -133,12 +165,40 @@
     const file = e.target.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(file, "UTF-8");
+    const maxWidth = 200;
+    const maxHeight = 200;
     reader.onload = async (readerEvent) => {
-      value_imageB64.value = readerEvent.target.result;
-      const img = document.createElement("img");
+      // value_imageB64.value = readerEvent.target.result;
+      // const img = document.createElement("img");
+      const img = new Image();
       img.src = readerEvent.target.result;
+      img.onload = () => {
+        if (file.size > maxWidth * maxHeight) {
+          let width = img.width;
+          let height = img.height;
+          if (width / maxWidth > height / maxHeight) {
+            width = maxWidth;
+            height = (img.height * maxWidth) / img.width;
+          } else {
+            height = maxHeight;
+            width = (img.width * maxHeight) / img.height;
+          }
+          
+          // 创建一个新 Canvas 元素来绘制调整大小后的图片
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
 
-      faceDetectionOnPhoto(img);
+          // 将 Canvas 上的图像转换为 Base64 数据URL
+          const resizedImageDataUrl = canvas.toDataURL('image/jpeg');
+
+          // 在预览中显示调整大小后的图片
+          value_imageB64.value = resizedImageDataUrl;
+        } else value_imageB64.value = readerEvent.target.result;
+        faceDetectionOnPhoto(img);
+      }
     };
   }
 
@@ -214,7 +274,7 @@
 
   async function clickOnPhotoUpload() {
 
-    const result = await uploadPhoto(value_imageB64.value);
+    const result = await uploadPhoto(value_imageB64.value, form.value.albumId);
 
     flag_faceUploadSuccess.value = 'upload successfully!';
 

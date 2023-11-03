@@ -29,5 +29,4 @@ app
   .use(router)
   .use(i18n)
   .use(print)
-
   .mount('#app');

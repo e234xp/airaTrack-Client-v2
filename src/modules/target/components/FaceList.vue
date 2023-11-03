@@ -1,15 +1,18 @@
 <template>
-  <div class="content-start gap-4 list-container">
+  <div class="content-start gap-3 list-container">
     <div
       v-for="face in faces"
       :key="face.data.id"
-      class="select-none relative cursor-pointer w-full min-h-24"
+      class="select-none relative cursor-pointer w-full rounded border-4"
       :class="{ 'pointer-events-none': face.data.id === '' }"
+      style="padding-top: 100%;"
+      :style="{ 'border-color': getAlbumBorder(face.highest) }"
       @click="handleToggleFace(face)"
     >
       <template v-if="face.data.face_image">
         <img
-          class="w-full h-full object-cover rounded"
+          class="absolute top-0 left-0 w-full h-full object-cover"
+          :class="[ getAlbumBorder(face.highest) === 'transparent' ? 'rounded' : '' ]"
           :src="spiderman.base64Image.getSrc(face.data.face_image)"
           alt=""
         >
@@ -19,9 +22,13 @@
         >
           <div
             class="relative h-6 flex justify-center items-center
-                          text-sm font-bold rounded-2xl
-                          bg-primary text-white"
-            :class="[face.data.face_be_merged.length + 1 <= 99 ? 'w-8' : 'w-10' ]"
+                          text-sm font-bold rounded-2xl text-white"
+            style="box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.4);"
+            :style="{ backgroundColor: getAlbumBorder(face.highest) }"
+            :class="[
+              face.data.face_be_merged.length + 1 <= 99 ? 'w-8' : 'w-10',
+              getAlbumBorder(face.highest) === 'transparent' ? '!bg-album-none' : ''
+            ]"
             :id="`${type}-${face.data.id}`"
           >
             <template v-if="face.data.face_be_merged.length + 1<=99">
@@ -49,9 +56,9 @@
           </div>
         </template>
       </template>
-      <template v-else>
-        <div class="w-full" style="padding-top: 100%"></div>
-      </template>
+      <!-- <template v-else>
+        <div class="w-full"></div>
+      </template> -->
     </div>
   </div>
 </template>
@@ -61,8 +68,9 @@ import spiderman from '@/spiderman';
 import { storeToRefs } from 'pinia';
 
 import useStore from '@/modules/target/stores/index';
+import useAlbums from '@/stores/albums';
 
-defineProps({
+const props = defineProps({
   faces: {
     type: Array,
     default() {
@@ -81,7 +89,19 @@ const {
   setSelectedFace, setConfirmingFaces, setConfirmedFace, getLiveFaceImage
 } = store;
 
+const albumsStore = useAlbums();
+const { albums, albumColorMap } = storeToRefs(albumsStore);
+
+function getAlbumBorder(highest) {
+  if (!highest) return 'transparent';
+  const { albumId } = highest;
+  const idx = albums.value.findIndex((item) => item.albumId === albumId);
+  if (idx < 0) return 'transparent';
+  return  albumColorMap.value.get(idx) || 'transparent';
+}
+
 async function handleToggleFace(face) {
+  console.log(face);
   if (selectedFace.value?.data?.id === face.data.id) {
     setSelectedFace(null);
     setConfirmingFaces([]);

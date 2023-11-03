@@ -7,6 +7,10 @@
       {{ $t('SaveToAlbum') }}
     </template>
 
+    <template #description>
+      {{ $t('SaveToAlbumDialog') }}
+    </template>
+
     <template #default>
       <AppInput
         dark

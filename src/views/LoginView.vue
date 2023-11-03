@@ -12,7 +12,7 @@
         {{ $t('Version') }}: {{ spiderman.system.version }}
       </div>
     </div>
-    <div class="sm:w-full md:w-112 bg-panel shadow-md rounded mb-4 py-8 px-6">
+    <div class="sm:w-full md:w-112 bg-panel shadow-cus rounded mb-4 py-8 px-6">
       <div class="text-center mb-4 text-white font-bold text-3xl">
         {{ $t("LoginTitle") }}
       </div>
@@ -123,6 +123,7 @@ import useSubmit from '@/composable/useSubmit';
 import useUserStore from '@/stores/user';
 import useLanguageStore from '@/stores/language';
 import useDevices from '@/stores/devices';
+import useAlbums from '@/stores/albums';
 
 const router = useRouter();
 
@@ -138,9 +139,12 @@ const {
   getDevices, setDevices, getLiveDevices, setLiveDevices,
 } = devicesStore;
 
+const albumsStore = useAlbums();
+const { getAlbums, setAlbums } = albumsStore;
+
 const { hasSubmitted, generateSubmit } = useSubmit();
 
-// todo 拿掉 帳號密碼
+// FIXME: 拿掉 帳號密碼
 const form = ref({
   username: 'Admin',
   password: '123456',
@@ -160,5 +164,6 @@ const handleLogin = generateSubmit(async () => {
 async function setupResources() {
   setDevices(await getDevices(sessionId.value));
   setLiveDevices(await getLiveDevices(sessionId.value));
+  setAlbums(await getAlbums(sessionId.value));
 }
 </script>

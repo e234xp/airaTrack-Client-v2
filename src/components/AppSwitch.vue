@@ -1,7 +1,7 @@
 <template>
-  <div class="flex items-center bg-secondary bg-opacity-60 rounded-full text-white text-base border border-transparent">
+  <div class="flex items-center bg-ctrl-secondary rounded-full text-white text-base border border-transparent">
     <div class="relative rounded-2xl px-6 h-full py-2 cursor-pointer text-base leading-4"
-      :class="[item.value === value ? 'bg-gray-600 selected' : '']" @click="$emit('select', item.value)"
+      :class="[item.value === value ? 'bg-ctrl-switch shadow-tog selected' : '']" @click="$emit('select', item.value)"
       v-for="(item, idx) in list" :key="idx">
       <template v-if="item.text">
         {{ item.text }}
@@ -47,6 +47,6 @@ defineEmits(['select']);
   right: -1px;
   bottom: -1px;
   border-radius: 1rem;
-  border: 2px solid rgb(75, 85, 99);
+  border: 2px solid #576264;
 }
 </style>

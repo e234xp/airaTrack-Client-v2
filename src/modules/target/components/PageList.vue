@@ -7,6 +7,8 @@
         <DayChart
           v-model:modelSelectedDate="selectedDate"
           v-model:modelSelectedHour="selectedHour"
+          v-model:modelSelectedTimeType="selectTimeType"
+          @updateData="onUpdateData"
         />
       </template>
 
@@ -67,11 +69,11 @@
                     class="text-2xl leading-5 !py-0"
                     @click="handleToDetail(faceKey)"
                   >
-                    <div class="flex">
+                    <div class="flex container">
                       <div class="flex items-center text-default text-base">
                         {{ $t('Extend') }}
                       </div>
-                      <span class="more" >
+                      <span class="more">
                         <span class="hz" ></span>
                         <span class="vt" ></span>
                       </span>
@@ -80,7 +82,7 @@
                 </div>
               </div>
 
-              <div class="mt-3 mb-4 ml-6 mr-5 flex justify-center">
+              <div class="mt-2 mb-4 ml-4 mr-5 flex justify-center">
                 <FaceList
                   :faces="hourFaces[faceKey]"
                   type="list"
@@ -123,6 +125,7 @@ const { livedevices } = storeToRefs(devicesStore);
 
 const selectedDate = ref(spiderman.dayjs().format('YYYY-MM-DD'));
 const selectedHour = ref(parseInt(spiderman.dayjs().format('HH'), 10));
+const selectTimeType = ref('now');
 
 const hourFaceKeys = ref([]);
 const hourFaces = ref({});
@@ -133,13 +136,13 @@ const container = ref(null);
 
 const store = useStore();
 const { setPage, setSelectedFaceKey } = store;
-const { selectedCamera } = storeToRefs(store);
+const { selectedCamera, selectedAlbum } = storeToRefs(store);
 
-watch([selectedDate, selectedHour], ([date, hour]) => {
-  getLiveFaceHourly({ date, hour });
-}, { immediate: true });
+// watch([selectedDate, selectedHour], ([date, hour]) => {
+//   getLiveFaceHourly({ date, hour });
+// }, { immediate: true });
 
-watch(selectedCamera, async () => {
+watch([selectedCamera, selectedAlbum], async () => {
   const currentKey = helpers.getCurrentKey();
   
   await Promise.allSettled(hourFaceKeys.value.map(async (key) => {
@@ -152,6 +155,10 @@ watch(selectedCamera, async () => {
     return { result };
   }));
 });
+
+function onUpdateData() {
+  getLiveFaceHourly({ date: selectedDate.value, hour: selectedHour.value });
+}
 
 const performAnimation = helpers.getPerformAnimationFn('list');
 
@@ -194,12 +201,13 @@ async function getLiveFaceHourly({ date, hour }) {
           cameraList: selectedCamera.value,
           sessionId: sessionId.value,
         });
+        const filter = data.filter((item) => item.highest.albumId === '' || selectedAlbum.value.indexOf(item.highest.albumId) >= 0);
 
-        const dummy = data.length > 0 ? [...data, ...new Array(hourFacePerPage.value - data.length).fill().map(() => ({ data: { id: ''} }))] : data;
+        const dummy = filter.length > 0 ? [...filter, ...new Array(hourFacePerPage.value - filter.length).fill().map(() => ({ data: { id: ''} }))] : filter;
         hourFaces.value[key] = dummy;
         hourFacePaginations.value[key].totalItems = totalItems;
 
-        return data;
+        return filter;
       },
     };
     return acc;
@@ -218,6 +226,7 @@ async function getLiveFaceHourly({ date, hour }) {
 
 const timer = setInterval(async () => {
   const currentKey = helpers.getCurrentKey();
+  if (selectTimeType.value !== 'now') return;
   if (!hourFaceKeys.value.includes(currentKey)) return;
 
   await hourFacePaginations.value[currentKey].onTurnPage(
@@ -226,6 +235,10 @@ const timer = setInterval(async () => {
 
   performAnimation(hourFaces.value[currentKey]);
 }, 10 * 1000);
+
+onMounted(() => {
+  onUpdateData();
+})
 
 onUnmounted(() => {
   clearInterval(timer);
@@ -253,12 +266,12 @@ function handleToDetail(faceKey) {
     transform: scale(1);
     opacity: 1;
   }
-  60% {
-    transform: scale(2.3);
-    opacity: 0.4;
+  80% {
+    transform: scale(2.2);
+    opacity: 0.3;
   }
   100% {
-    transform: scale(2.4);
+    transform: scale(2.6);
     opacity: 0;
   }
 }
@@ -278,7 +291,30 @@ function handleToDetail(faceKey) {
   bottom: 0;
   animation: pulse 1.2s ease;
   border-radius: 1rem;
-  border: 4px double #3cb2fe;
+}
+
+.album-none::before {
+  border: 4px double theme('colors.album-none');
+}
+
+.album-1::before {
+  border: 4px double theme('colors.album-1');
+}
+
+.album-2::before {
+  border: 4px double theme('colors.album-2');
+}
+
+.album-3::before {
+  border: 4px double theme('colors.album-3');
+}
+
+.album-4::before {
+  border: 4px double theme('colors.album-4');
+}
+
+.album-5::before {
+  border: 4px double theme('colors.album-5');
 }
 
 .more {
@@ -335,7 +371,33 @@ function handleToDetail(faceKey) {
     }
   }
 
-  &:hover {
+  // &:hover {
+  //   .hz {
+  //     transform: translate(-50%, -50%);
+  //     width: 50%;
+  //     border-color: rgb(60 178 254);
+  //   }
+    
+  //   .vt {
+  //     transform: translate(140%, -50%);
+  //   }
+  //   .vt:before {
+  //     transform: rotate(-45deg);
+  //     border-color: rgb(60 178 254);
+  //   }
+  //   .vt:after {
+  //     transform: rotate(45deg);
+  //     border-color: rgb(60 178 254);
+  //   }
+  // }
+}
+
+.container:hover {
+  div {
+    color: rgb(60 178 254);
+  }
+
+  .more {
     .hz {
       transform: translate(-50%, -50%);
       width: 50%;

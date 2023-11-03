@@ -4,6 +4,10 @@
       {{ $t('AddToCase') }}
     </template>
 
+    <template #description>
+      {{ $t('AddToCaseDialog') }}
+    </template>
+
     <template #default>
       <div class="text-xl">
         {{ $t('CaseName') }}

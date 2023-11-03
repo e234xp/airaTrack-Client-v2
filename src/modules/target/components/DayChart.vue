@@ -1,9 +1,9 @@
 <template>
-  <div class="flex py-4">
+  <div class="flex py-4" ref="chartContainer">
     <div
       @click="handlePrevDate()"
-      class="rounded-lg border border-panel-border bg-panel
-        ml-6 mr-4 grid justify-center content-between text-white
+      class="rounded-lg border border-white/40 bg-black/20
+        ml-4 mr-4 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
       style="width: 5.75rem"
     >
@@ -17,17 +17,15 @@
         />
       </div>
       <div
-        class="mb-2 text"
+        class="mb-4 text-center select-none"
       >
-        {{ spiderman.dayjs(selectedDate).subtract(1,'day').format('DD, MMM') }}
+        {{ spiderman.formatDate.parse(spiderman.dayjs(selectedDate).subtract(1,'day'), { month: 'numeric', day: 'numeric' }) }}
       </div>
     </div>
-    <div class="flex-grow rounded-lg bg-panel p-4 cursor-pointer">
-      <div
-        class="flex text-white gap-4"
-      >
+    <div class="flex-grow rounded-lg border border-white/40 bg-black/20 p-4 cursor-pointer">
+      <div class="flex justify-between text-white gap-4 h-10">
         <div class="flex items-center gap-2" style="width: 30%">
-          <div>{{ $t('TimeTitle') }}</div>
+          <div class="select-none">{{ $t('TimeTitle') }}</div>
           <AppSwitch :value="selectedTimeType" :list="timeTypeList" @select="onSelectTimeType"></AppSwitch>
           <AppDatePicker
             v-model:modelSelected="selectedDate"
@@ -36,17 +34,32 @@
             v-if="selectedTimeType === 'custom'"
           />
         </div>
-        <div class="flex items-center gap-2" style="width: 43%">
-          <div>{{ $t('Camera') }}</div>
+        <div class="flex items-center gap-2" style="width: 30%">
+          <div class="select-none">{{ $t('Camera') }}</div>
           <AppSwitch :value="selectedCameraType" :list="cameraTypeList" @select="onSelectCameraType"></AppSwitch>
           <BadgeList
             :list="cameraList"
+            :limit="0"
             :selected="selectedCamera"
             @update:unSelectCamera="onUnSelect"
             v-if="selectedCameraType === 'select'"
           >
             <CameraList :list="cameraList" :selected="selectedCamera" 
               @update:unSelectCamera="onUnSelect" @update:selectCamera="onSelect"></CameraList>
+          </BadgeList>
+        </div>
+        <div class="flex items-center gap-2" style="width: 30%">
+          <div class="select-none">{{ $t('Album') }}</div>
+          <AppSwitch :value="selectedAlbumType" :list="albumTypeList" @select="onSelectAlbumType"></AppSwitch>
+          <BadgeList
+            :list="albumsList"
+            :limit="0"
+            :selected="selectedAlbum"
+            @update:unSelectCamera="onUnSelectAlbum"
+            v-if="selectedAlbumType === 'select'"
+          >
+            <CameraList :list="albumsList" :selected="selectedAlbum" :limit="false"
+              @update:unSelectCamera="onUnSelectAlbum" @update:selectCamera="onSelectAlbum"></CameraList>
           </BadgeList>
         </div>
       </div>
@@ -59,13 +72,13 @@
       <div
         class="flex justify-center text-primary text-xl"
       >
-        {{ spiderman.dayjs(selectedDate).format('DD, MMMM') }}
+        {{ spiderman.formatDate.parseStr(selectedDate, { month: 'numeric', day: 'numeric' }) }}
       </div>
     </div>
     <div
       @click="handleNextDate()"
-      class="rounded-lg border border-panel-border bg-panel
-        mr-6 ml-4 grid justify-center content-between text-white
+      class="rounded-lg border border-white/40 bg-black/20
+        mr-4 ml-4 grid justify-center content-between text-white
               cursor-pointer hover:bg-primary-hover transition"
       style="width: 5.75rem"
     >
@@ -79,9 +92,9 @@
         />
       </div>
       <div
-        class="mb-2"
+        class="mb-4 text-center select-none"
       >
-        {{ spiderman.dayjs(selectedDate).add(1,'day').format('DD, MMM') }}
+        {{ spiderman.formatDate.parse(spiderman.dayjs(selectedDate).add(1,'day'), { month: 'numeric', day: 'numeric' }) }}
       </div>
     </div>
   </div>
@@ -100,6 +113,7 @@ import spiderman from '@/spiderman';
 import errorStore from '@/components/AppError/error';
 
 import useDevices from '@/stores/devices';
+import useAlbums from '@/stores/albums';
 import useStore from '@/modules/target/stores/index';
 
 import BadgeList from './BadgeList.vue';
@@ -108,11 +122,16 @@ import CameraList from './CameraList.vue';
 const devicesStore = useDevices();
 const { livedevices } = storeToRefs(devicesStore);
 
+const albumsStore = useAlbums();
+const { albums, albumColorMap } = storeToRefs(albumsStore);
+
 const store = useStore();
-const { getLiveFaceHourlyCount, setSelectedCamera } = store;
-const { selectedCamera } = storeToRefs(store);
+const { getLiveFaceHourlyCount, setSelectedCamera, setSelectedAlbum } = store;
+const { selectedCamera, selectedAlbum } = storeToRefs(store);
 
 const i18n = useI18n();
+
+const chartContainer = ref(null);
 
 // selectedDate 與外部做連接
 const props = defineProps({
@@ -124,32 +143,53 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  modelSelectedTimeType: {
+    type: String,
+    default: '',
+  },
 });
 const emit = defineEmits([
   'update:modelSelectedDate',
   'update:modelSelectedHour',
+  'update:modelSelectedTimeType',
+  'updateData'
 ]);
 
 const selectedDate = computed({
   get: () => props.modelSelectedDate,
   set: (value) => {
     if (spiderman.dayjs().isBefore(value, 'date')) {
-      errorStore.show({ error: new Error('PleaseSelectBeforePresent') });
+      errorStore.show({ error: new Error(i18n.t('PleaseSelectBeforePresent')) });
       return;
     }
-    emit('update:modelSelectedDate', spiderman.dayjs(value).format('YYYY-MM-DD'))
+    if (spiderman.dayjs(value).format('YYYY-MM-DD') !== spiderman.dayjs().format('YYYY-MM-DD')) selectedTimeType.value = 'custom';
+    emit('update:modelSelectedDate', spiderman.dayjs(value).format('YYYY-MM-DD'));
+    emit('updateData');
   }
 });
 const selectedHour = computed({
   get: () => props.modelSelectedHour,
-  set: (value) => emit('update:modelSelectedHour', value),
+  set: (value) => {
+    if (value !== parseInt(spiderman.dayjs().format('HH'), 10)) selectedTimeType.value = 'custom';
+    emit('update:modelSelectedHour', value);
+    emit('updateData');
+  }
 });
 
-const selectedTimeType = ref('now');
+//------------------------------------------
+// time filter
+//------------------------------------------
+const selectedTimeType = computed({
+  get: () => props.modelSelectedTimeType,
+  set: (value) => {
+    emit('update:modelSelectedTimeType', value);
+    if (value === 'now') setCurrent();
+  }
+});
 const timeTypeList = ref([
   {
     value: 'now',
-    text: i18n.t('Today')
+    text: i18n.t('Now')
   }, {
     value: 'custom',
     icon: 'icon-calendar'
@@ -157,11 +197,11 @@ const timeTypeList = ref([
 ]);
 function onSelectTimeType(val) {
   selectedTimeType.value = val;
-  if (val === 'now') {
-    emit('update:modelSelectedDate', spiderman.dayjs().format('YYYY-MM-DD'))
-  }
 }
 
+//------------------------------------------
+// camera filter
+//------------------------------------------
 const selectedCameraType = ref('all');
 const cameraTypeList = ref([
   {
@@ -172,12 +212,6 @@ const cameraTypeList = ref([
     icon: 'icon-camera'
   }
 ]);
-function onSelectCameraType(val) {
-  selectedCameraType.value = val;
-  if (val === 'all') {
-    setSelectedCamera(livedevices.value.map(({ camera_id: cameraId }) => cameraId));
-  }
-}
 
 const cameraList = computed({
   get: () => {
@@ -185,25 +219,11 @@ const cameraList = computed({
   }
 })
 
-function setDate(date) {
-  selectedDate.value = spiderman.dayjs(date).format('YYYY-MM-DD');
-}
-function setHour(hour) {
-  selectedHour.value = hour;
-}
-
-function handlePrevDate() {
-  setDate(spiderman.dayjs(selectedDate.value).subtract(1, 'day'));
-}
-function handleNextDate() {
-  const now = spiderman.dayjs();
-
-  if (now.isSame(selectedDate.value, 'date')) {
-    errorStore.show({ error: new Error('PleaseSelectBeforePresent') });
-    return;
+function onSelectCameraType(val) {
+  selectedCameraType.value = val;
+  if (val === 'all') {
+    setSelectedCamera(livedevices.value.map(({ camera_id: cameraId }) => cameraId));
   }
-
-  setDate(spiderman.dayjs(selectedDate.value).add(1, 'day'));
 }
 
 function onUnSelect(id) {
@@ -220,25 +240,135 @@ function onSelect(id) {
   setSelectedCamera(temp);
 }
 
+//------------------------------------------
+// album filter
+//------------------------------------------
+const selectedAlbumType = ref('all');
+const albumTypeList = ref([
+  {
+    value: 'all',
+    text: i18n.t('All')
+  }, {
+    value: 'select',
+    icon: 'icon-note'
+  }
+]);
+
+const albumsList = computed({
+  get: () => {
+    return albums.value.map(({ albumId, albumName }) => ({ id: albumId, name: albumName }));
+  }
+})
+
+function onSelectAlbumType(val) {
+  selectedAlbumType.value = val;
+  if (val === 'all') {
+    setSelectedAlbum(albums.value.map(({ albumId }) => albumId));
+  }
+}
+
+function onUnSelectAlbum(id) {
+  const temp = selectedAlbum.value.map((id) => id);
+  const idx = temp.indexOf(id);
+  if (idx >= 0) temp.splice(idx, 1);
+  setSelectedAlbum(temp);
+}
+
+function onSelectAlbum(id) {
+  const temp = selectedAlbum.value.map((id) => id);
+  const idx = temp.indexOf(id);
+  if (idx < 0) temp.push(id);
+  setSelectedAlbum(temp);
+}
+
+//------------------------------------------
+// Pre/Next
+//------------------------------------------
+function handlePrevDate() {
+  setDate(spiderman.dayjs(selectedDate.value).subtract(1, 'day'));
+}
+
+function handleNextDate() {
+  const now = spiderman.dayjs();
+
+  if (now.isSame(selectedDate.value, 'date')) {
+    errorStore.show({ error: new Error(i18n.t('PleaseSelectBeforePresent')) });
+    return;
+  }
+
+  setDate(spiderman.dayjs(selectedDate.value).add(1, 'day'));
+}
+
+function setDate(date) {
+  selectedDate.value = spiderman.dayjs(date).format('YYYY-MM-DD');
+}
+
+function setCurrent() {
+  emit('update:modelSelectedDate', spiderman.dayjs().format('YYYY-MM-DD'));
+  emit('update:modelSelectedHour', parseInt(spiderman.dayjs().format('HH'), 10));
+  emit('updateData');
+}
+
+function setHour(hour) {
+  selectedHour.value = hour;
+  selectedTimeType.value = 'custom';
+}
+
+// function sizeAdjust() {
+
+// }
+
+watch(selectedDate, (date) => {
+  renderByDate(date);
+  const now = spiderman.dayjs();
+
+  if (now.isAfter(selectedDate.value, 'date')) return;
+  if (now.hour() >= selectedHour.value) return;
+  setHour(now.hour());
+  renderHourAnnotation(now.hour());
+});
+
+watch([selectedCamera, selectedAlbum], () => renderByDate(selectedDate.value));
+
+watch(selectedHour, () => renderHourAnnotation(selectedHour.value));
+
+const containerObserver = new ResizeObserver(() => {
+  console.log('containerObserver')
+  chart.update();
+})
+
 // 以下處理 chart
 Chart.register(annotationPlugin);
 
 let chart;
 let renderInterval;
 onMounted(() => {
+  containerObserver.observe(chartContainer.value);
+
   const ctx = document.getElementById('chart');
+  const unSelectAlbum = ['#9C5655', '#A08557', '#62925F', '#6766AC', '#9664A5'];
 
   chart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: Array.from(Array(24).keys()),
-      datasets: [
-        {
-          label: '# of Faces',
-          data: [],
-          backgroundColor: 'rgba(67, 160, 209, 0.4)'
-        },
-      ],
+      datasets: Array.from(Array(6).keys()).map((idx) => ({
+        label: idx == 0 ? '# of Faces' : `# of ${albumsList.value[idx - 1].name}`,
+        data: [],
+        backgroundColor: (context) => {
+          if (context.dataIndex === selectedHour.value) {
+            if (idx === 0) {
+              const { ctx, chartArea: { bottom, top } } = context.chart;
+              const gradientBg = ctx.createLinearGradient(0, context.parsed.y, 0, bottom);
+              gradientBg.addColorStop(0, '#43A0D1');
+              gradientBg.addColorStop(1, '#9CDDFF');
+              return gradientBg;
+            }
+            return albumColorMap.value.get(idx - 1);
+          }
+          return idx === 0 ? '#027CBC' : unSelectAlbum[idx - 1];
+        }
+      }))
     },
     options: {
       layout: {
@@ -258,6 +388,7 @@ onMounted(() => {
               return 'rgba(0, 0, 0, 0)';
             },
           },
+          stacked: true
         },
         x: {
           ticks: {
@@ -275,6 +406,7 @@ onMounted(() => {
           grid: {
             display: false,
           },
+          stacked: true
         },
       },
       transitions: {
@@ -345,7 +477,7 @@ onMounted(() => {
           return tmpIsFuture;
         })();
         if (isFuture) {
-          errorStore.show({ error: new Error('PleaseSelectBeforePresent') });
+          errorStore.show({ error: new Error(i18n.t('PleaseSelectBeforePresent')) });
           return;
         }
 
@@ -358,25 +490,21 @@ onMounted(() => {
   renderByDate(selectedDate.value);
   renderInterval = setInterval(
     () => {
-      renderByDate(selectedDate.value);
+      if (spiderman.dayjs(selectedDate.value).format('YYYYMMDD') !== spiderman.dayjs().format('YYYYMMDD')) return;
+      if (selectedTimeType.value === 'now' 
+        && spiderman.dayjs().format('YYYY-MM-DD H') !== `${selectedDate.value} ${selectedHour.value}`) {
+        setCurrent();
+        renderByDate(spiderman.dayjs().format('YYYY-MM-DD'));
+      } else {
+        renderByDate(selectedDate.value);  
+      }
     },
     10 * 1000,
   );
 });
 
-watch(selectedDate, (date) => {
-  renderByDate(date);
-  const now = spiderman.dayjs();
-
-  if (now.isAfter(selectedDate.value, 'date')) return;
-  if (now.hour() >= selectedHour.value) return;
-  setHour(now.hour());
-  renderHourAnnotation(now.hour());
-});
-
-watch(selectedCamera, () => renderByDate(selectedDate.value));
-
 onUnmounted(() => {
+  containerObserver.unobserve(chartContainer.value);
   clearInterval(renderInterval);
 });
 
@@ -385,11 +513,22 @@ async function renderByDate(date) {
   const today = spiderman.dayjs().format('YYYY-MM-DD');
   const start = spiderman.dayjs(`${date} 00:00:00`).unix();
   const end = today === date ? spiderman.dayjs().unix() : spiderman.dayjs(`${date} 23:59:59`).unix();
-  const dataOfDate = await getLiveFaceHourlyCount(start, end, selectedCamera.value);
-  const maxOfData = Math.max(...dataOfDate);
+  const tempData = await getLiveFaceHourlyCount(start, end, selectedCamera.value);
+  const template = [0, 1, 2, 3, 4, 5];
+  const dataOfDate = template.map((idx) => {
+    if (idx === 0) return tempData.map((list) => list[idx]);
+    if (selectedAlbum.value.indexOf(albumsList.value[idx - 1].id) >= 0) return tempData.map((list) => list[idx]);
+    return new Array(24).fill(0);
+  })
+  const sumData = new Array(24).fill(1).map((_, idx) => {
+    return dataOfDate.reduce((temp, cur) => temp += cur[idx], 0);
+  })
+  const maxOfData = Math.max(...sumData);
 
   // 設定 data
-  chart.data.datasets[0].data = dataOfDate;
+  template.forEach((idx) => {
+    chart.data.datasets[idx].data = dataOfDate[idx];
+  })
 
   // 設定 最大高度
   const maxY = (() => {
@@ -405,7 +544,7 @@ async function renderByDate(date) {
   chart.options.plugins.annotation.annotations.box.yMax = maxAnnotationY;
   // chart.options.plugins.annotation.annotations.box1.yMax = maxAnnotationY;
 
-  updateBarColor();
+  // updateBarColor();
 
   chart.update();
 }
@@ -417,7 +556,7 @@ function renderHourAnnotation(hour) {
   // chart.options.plugins.annotation.annotations.box1.xMin = hour - 0.45;
   // chart.options.plugins.annotation.annotations.box1.xMax = hour + 0.45;
 
-  updateBarColor(hour);
+  // updateBarColor(hour);
 
   chart.update();
 }

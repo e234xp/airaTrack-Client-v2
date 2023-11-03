@@ -107,13 +107,13 @@
                   </template>
                   <template v-else>
                     <div>
-                      {{ spiderman.dayjs(item.running_start_time).format('YYYY-MM-DD HH:mm:ss') }}
+                      {{ `${spiderman.formatDate.parseStr(item.running_start_time)} ${spiderman.dayjs(item.running_start_time).format('HH:mm:ss')}` }}
                     </div>
                     <div class="mx-5">
                       ~
                     </div>
                     <div>
-                      {{ spiderman.dayjs(item.running_end_time).format('YYYY-MM-DD HH:mm:ss') }}
+                      {{ `${spiderman.formatDate.parseStr(item.running_end_time)} ${spiderman.dayjs(item.running_end_time).format('HH:mm:ss')}` }}
                     </div>
                   </template>
                 </div>
@@ -131,13 +131,13 @@
                   </template>
                   <template v-else>
                     <div>
-                      {{ spiderman.dayjs(item.search_start_time).format('YYYY-MM-DD HH:mm:ss') }}
+                      {{ `${spiderman.formatDate.parseStr(item.search_start_time)} ${spiderman.dayjs(item.search_start_time).format('HH:mm:ss')}` }}
                     </div>
                     <div class="mx-5">
                       ~
                     </div>
                     <div>
-                      {{ spiderman.dayjs(item.search_end_time).format('YYYY-MM-DD HH:mm:ss') }}
+                      {{ `${spiderman.formatDate.parseStr(item.search_end_time)} ${spiderman.dayjs(item.search_end_time).format('HH:mm:ss')}` }}
                     </div>
                   </template>
                 </div>

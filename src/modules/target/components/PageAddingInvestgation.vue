@@ -1,12 +1,12 @@
 <template>
   <ProgressBarLayout>
     <FullLayout>
-      <template #header>
+      <!-- <template #header>
         <NavigationBar />
-      </template>
+      </template> -->
 
       <template #grow>
-        <div class="mt-12 flex justify-center" style="height: calc(100% - 3rem)">
+        <div class="mt-16 flex justify-center" style="height: calc(100% - 3rem)">
           <div class="w-full 2xl:w-352 h-full">
             <div class="flex justify-center gap-4 h-full">
               <img
@@ -43,18 +43,18 @@
                   </AppLabel>
                 </div>
                 <div class="flex gap-2 mb-8" style="height: calc(100% - 20rem)">
-                  <div class="w-1/2 pr-1">
+                  <div class="w-1/2 pr-2">
                     <div class="text-white text-xl">
                       {{ $t('LiveChannel') }}
                       ({{ form.livechannels.length }}/{{ liveChannelAmount }})
                     </div>
 
                     <div
-                      class="border-t-4 border-live-channel rounded bg-gray-800 bg-opacity-50 py-2 px-4 overflow-y-auto"
+                      class="border-t-4 border-live-channel rounded bg-third py-2 px-4 overflow-y-auto"
                       style="height: calc(100% - 2rem)"
                     >
                       <AppCheckBox
-                        class="mb-4 text-xl text-white"
+                        class="pb-2 mb-2 text-xl text-white border-b-2 border-dashed border-panel"
                         :placeholder="$t('All')"
                         :checked="form.livechannels.length===livedevices.length"
                         @on-change="()=>{
@@ -64,7 +64,7 @@
                             form.livechannels = spiderman.lodash.cloneDeep(livedevices);
                           }
                         }"
-                      />
+                      >{{ $t('All') }}</AppCheckBox>
                       <AppCheckBox
                         v-for="livedevice in livedevices"
                         :key="livedevice.camera_id"
@@ -75,21 +75,21 @@
                         :disabled="(form.livechannels.length>=liveChannelAmount)
                           &&!form.livechannels
                             .map(({camera_id})=>camera_id).includes(livedevice.camera_id)"
-                      />
+                      >{{ livedevice.name }}</AppCheckBox>
                     </div>
                   </div>
 
-                  <div class="w-1/2 pl-1">
+                  <div class="w-1/2 pr-2">
                     <div class="text-white text-xl">
                       {{ $t('NxVideoArchive') }}
                       <!-- ({{ form.archchannels.length }}/{{ archiveAmount }}) -->
                     </div>
                     <div
-                      class="border-t-4 border-archive-channel rounded bg-gray-800 bg-opacity-50 py-2 px-4 overflow-y-auto"
+                      class="border-t-4 border-archive-channel rounded bg-third py-2 px-4 overflow-y-auto"
                       style="height: calc(100% - 2rem)"
                     >
                       <AppCheckBox
-                        class="mb-4 text-xl text-white"
+                        class="pb-2 mb-2 text-xl text-white border-b-2 border-dashed border-panel"
                         :placeholder="$t('All')"
                         :checked="form.archchannels.length===devices.length"
                         @on-change="()=>{
@@ -99,7 +99,7 @@
                             form.archchannels = spiderman.lodash.cloneDeep(devices);
                           }
                         }"
-                      />
+                      >{{ $t('All') }}</AppCheckBox>
                       <AppCheckBox
                         v-for="device in devices"
                         :key="device.camera_id"
@@ -110,7 +110,7 @@
                         :disabled="(form.archchannels.length>=archiveAmount)
                           &&!form.archchannels
                             .map(({camera_id})=>camera_id).includes(device.camera_id)"
-                      />
+                      >{{ device.name }}</AppCheckBox>
                     </div>
                   </div>
                 </div>

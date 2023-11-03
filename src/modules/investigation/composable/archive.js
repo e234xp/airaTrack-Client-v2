@@ -1,5 +1,6 @@
 import JSZip from 'jszip';
 import fetchTimeout from 'fetch-timeout';
+import { saveAs } from 'file-saver';
 import spiderman from '@/spiderman';
 import useUserStore from '@/stores/user';
 import useDevices from '@/stores/devices';
@@ -35,7 +36,7 @@ async function fetchVideoResource(item) {
       })
 
       return await response.blob();
-  } catch { err => console.log(err) }
+        } catch { err => console.log(err) }
 }
 
 export default async function downloadReport(form, taskName, faceDataList, timestamp, faceImage, startTime, endTime) {
@@ -44,6 +45,14 @@ export default async function downloadReport(form, taskName, faceDataList, times
   let archMap = new Map();
   let archCameras = '';
   let timeList = '';
+  // console.log(form);
+  // console.log(taskName);
+  // console.log(faceDataList);
+  // console.log(timestamp);
+  // console.log(faceImage);
+  // console.log(startTime);
+  // console.log(endTime);
+  // return;
 
   const userStore = useUserStore();
   const { user } = userStore;
@@ -64,10 +73,10 @@ export default async function downloadReport(form, taskName, faceDataList, times
   for (let I = 0; I < faceDataList.length; I++) {
       const faceData = faceDataList[I];
 
-      if (faceData.checked) {
+      if (faceData.checked || true) {
           checkedItems.push(faceData);
 
-          let videoFilename = formatDataTime(faceData.highest.timestamp) + getCameraName(faceData.highest.camera_id) + '.webm';
+          let videoFilename = formatDataTime(faceData.highest.timestamp) + getCameraName(faceData.highest.cid) + '.webm';
           let videoFilenameFormat = videoFilename.replace(/\s/g, '').replace(/:/g, '_');
           let accompany = '';
           let accNumber = 0;
@@ -85,7 +94,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
 
           let mediaClip = `<div class="summary">
                               <div class="record-title">
-                                  <span>${formatDataTime(faceData.highest.timestamp)} &nbsp - &nbsp ${faceData.highest.camera_id}</span>
+                                  <span>${formatDataTime(faceData.highest.timestamp)} &nbsp - &nbsp ${getCameraName(faceData.highest.cid)}</span>
                               </div>
                               <div class="facegroup">
                                   <div class="mugshot-big">
@@ -101,25 +110,25 @@ export default async function downloadReport(form, taskName, faceDataList, times
                           </div>`;
           videoGroup += mediaClip;
 
-          if (faceData.resultFrom == "LIVE") {
-              if (!liveMap.has(faceData.highest.camera_id)) {
-                  liveMap.set(faceData.highest.camera_id);
+          if (faceData.resultFrom === 'LIVE') {
+              if (!liveMap.has(faceData.highest.cid)) {
+                  liveMap.set(faceData.highest.cid);
 
-                  liveCameras += `<li>${faceData.highest.camera_id}</li>`;
+                  liveCameras += `<li>${getCameraName(faceData.highest.cid)}</li>`;
               }
           }
-          else if (faceData.resultFrom == "PLAYBACK") {
-              if (!archMap.has(faceData.highest.camera_id)) {
-                  archMap.set(faceData.highest.camera_id);
+          else if (faceData.resultFrom === 'PLAYBACK') {
+              if (!archMap.has(faceData.highest.cid)) {
+                  archMap.set(faceData.highest.cid);
 
-                  archCameras += `<li>${faceData.highest.camera_id}</li>`;
+                  archCameras += `<li>${getCameraName(faceData.highest.cid)}</li>`;
               }
           }
 
           let tlist = `
               <div class="tlist">
                   <div class="circle"></div>
-                  <span>${formatDataTime(faceData.highest.timestamp)} &nbsp ${faceData.highest.camera_id}</span>
+                  <span>${formatDataTime(faceData.highest.timestamp)} &nbsp ${getCameraName(faceData.highest.cid)}</span>
               </div>`;
 
           timeList += tlist;
@@ -222,7 +231,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
       </div>`;
 
   let camList = ``;
-  if (liveCameras != "") {
+  if (liveCameras != '') {
       camList = `
       <div class="live-cam">
           <div class="circle"></div>
@@ -231,7 +240,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
       </div>`;
   }
 
-  if (archCameras != "") {
+  if (archCameras != '') {
       camList += `
       <div class="live-cam">
           <div class="circle"></div>
@@ -305,7 +314,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
 
   async function batchAddFileContent(_item) {
       console.log('LayoutInvestigation', 'doJobWithThrottle', 'takeOne', 'batchAddFileContent');
-      let videoFilename = formatDataTime(_item.highest.timestamp) + getCameraName(_item.highest.camera_id) + '.webm';
+      let videoFilename = formatDataTime(_item.highest.timestamp) + getCameraName(_item.highest.cid) + '.webm';
       let videoFilenameFormat = videoFilename.replace(/\s/g, '').replace(/:/g, '_');
 
       // add aira track logo
@@ -328,10 +337,10 @@ export default async function downloadReport(form, taskName, faceDataList, times
           console.log(videoFilenameFormat, blob.size);
           if (blob.size <= 102400) {
               var txtFile =  videoFilenameFormat.replace('.webm', '.txt') ;
-              videosFolder.file(txtFile, "doenload video file error. please download again");       
+              videosFolder.file(txtFile, 'doenload video file error. please download again');       
           }
           videosFolder.file(videoFilenameFormat, blob, { binary: true });
-          console.log("LayoutInvestigation", "doJobWithThrottle", "takeOne", "batchAddFileContent", videoFilename);
+          console.log('LayoutInvestigation', 'doJobWithThrottle', 'takeOne', 'batchAddFileContent', videoFilename);
       } catch (err) {
           console.log(err);
       }
@@ -339,26 +348,26 @@ export default async function downloadReport(form, taskName, faceDataList, times
 
   let lastitem = 1;
   let doJobWithThrottle = (items, throttle = 1) => {
-      console.log("LayoutInvestigation", "doJobWithThrottle");
+    console.log('LayoutInvestigation', 'doJobWithThrottle');
 
-      return new Promise(resolve => {
-          const takeOne = async () => {
-              console.log("LayoutInvestigation", "doJobWithThrottle", "takeOne");
-              let item = items.shift();
+    return new Promise(resolve => {
+      const takeOne = async () => {
+        console.log('LayoutInvestigation', 'doJobWithThrottle', 'takeOne');
+        let item = items.shift();
 
-              if (!item) {
-                  lastitem--;
-                  if (lastitem <= 0)
-                      resolve();
-                  return;
-              }
-              else {
-                  await batchAddFileContent(item);
-                  takeOne();
-              }
-          }
-          for (let i = 0; i < throttle; ++i) takeOne();
-      })
+        if (!item) {
+            lastitem--;
+            if (lastitem <= 0)
+                resolve();
+            return;
+        }
+        else {
+            await batchAddFileContent(item);
+            takeOne();
+        }
+      }
+      for (let i = 0; i < throttle; ++i) takeOne();
+    })
   }
 
   await doJobWithThrottle(checkedItems);
@@ -371,18 +380,16 @@ export default async function downloadReport(form, taskName, faceDataList, times
   fileContent += `<div id="app">${header}${summary}${remark}${incidentSummary}${footer1}</div>`;
   fileContent += `<div id="app2">${header}${incidentInfo}${videoGroup}${footer2}</div>`;
   fileContent += `</body></html>`;
-  console.log(fileContent);
 
-//   zip.file('index.html', fileContent);
+  zip.file('index.html', fileContent);
 
-//   try {
-//       zip.generateAsync({ type: 'blob' }).then((blob) => {
-//           saveAs(blob, `${taskName}.zip`);
-//         //   this.isDownloadingReport = false;
-//         //   this.$store.state.isDownloadingReport = this.isDownloadingReport;
-//       })
-//   }
-//   catch (e) {
-//       console.log(e);
-//   }
+  try {
+    zip.generateAsync({ type: 'blob' }).then((blob) => {
+      saveAs(blob, `${taskName}.zip`);
+          //   this.isDownloadingReport = false;
+          //   this.$store.state.isDownloadingReport = this.isDownloadingReport;
+    })
+  } catch (e) {
+          console.log(e);
+  }
 }

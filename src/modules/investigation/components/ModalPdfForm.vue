@@ -7,6 +7,10 @@
       {{ $t('GeneratePdfReport') }}
     </template>
 
+    <template #description>
+      {{ $t('SaveToPdfDialog') }}
+    </template>
+
     <template #default>
       <div class="text-xl">
         {{ $t('Title') }}

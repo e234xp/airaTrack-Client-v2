@@ -7,6 +7,10 @@
       {{ $t('VmsBookmark') }}
     </template>
 
+    <template #description>
+      {{ $t('BookmarkDialog') }}
+    </template>
+
     <template #default>
       <div class="mb-4 text-xl">
         <div

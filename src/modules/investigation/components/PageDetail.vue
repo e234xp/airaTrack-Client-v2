@@ -10,16 +10,19 @@
           <div class="w-160 border-r border-gray-600">
             <FullLayout>
               <template #header>
-                <AppButton
-                  type="transparent"
-                  class="!text-xl w-20 !justify-start pl-4"
-                  @click="
-                    setPage('list');
-                    setDataType(dataType);
-                  "
-                >
-                  {{ $t('Back') }}
-                </AppButton>
+                <div class="px-4 pt-2 pb-4 flex items-center gap-4">
+                  <AppButton
+                    type="secondary"
+                    class="w-8 h-8 !p-0"
+                    @click="
+                      setPage('list');
+                      setDataType(dataType);
+                    "
+                  >
+                    <AppSvgIcon name="icon-chevron-left" class="text-white w-4 h-4" />
+                  </AppButton>
+                  <div class="text-white text-xl">{{ selectedTask.task_name }}</div>
+                </div>
                 <div class="px-4 pb-4 text-white text-xl">
                   <div class="flex">
                     <img
@@ -27,15 +30,14 @@
                       :src="spiderman.base64Image.getSrc(selectedTask.target_face_image)"
                       alt=""
                     >
-                    <div class="w-full flex flex-col justify-between">
+                    <div class="flex flex-col justify-between" style="width: calc(100% - 7rem)">
                       <div class="flex">
                         <div class="flex-grow text-base truncate">
                           <div class="truncate">
                             {{ targetDevice.name }}
                           </div>
                           <div class="truncate">
-                            {{ spiderman.dayjs(selectedTask.target.timestamp)
-                              .format('YYYY/MM/DD HH:mm:ss') }}
+                            {{ `${spiderman.formatDate.parseStr(selectedTask.target.timestamp)} ${spiderman.dayjs(selectedTask.target.timestamp).format('HH:mm:ss')}` }}
                           </div>
                         </div>
                         <AppButton type="secondary"
@@ -124,10 +126,7 @@
                     :placeholder="$t('SelectAll')"
                     :checked="selectedResultIndexes.length === taskResults.length"
                     @on-change="handleSelectAll"
-                  />
-                  <div>
-                    ({{ selectedResultIndexes.length }})
-                  </div>
+                  >{{ $t('SelectAll') }} ({{ selectedResultIndexes.length }})</AppCheckBox>
                 </div>
               </template>
 
@@ -138,7 +137,7 @@
                   class="flex px-4"
                 >
                   <AppCheckBox
-                    class="mt-4 mr-2"
+                    class="mt-4 mr-2 !w-6 h-4"
                     v-model:modelInput="selectedResultIndexes"
                     :value="index"
                   />
@@ -164,17 +163,17 @@
                     />
 
                     <div
-                      class="rounded-full
+                      class="flex rounded-full
                       mb-2 ml-4 py-1 px-4
-                      text-sm text-white border-2"
+                      text-sm text-white border-2 gap-2"
                       :class="{
                         'border-live-channel': result.resultFrom === 'LIVE',
                         'border-archive-channel': result.resultFrom === 'PLAYBACK',
                         'border-2 border-white':index === videoResultIndex
                       }"
                     >
-                      <span class="mr-2">{{ spiderman.dayjs(result.highest.timestamp).format('YYYY/MM/DD HH:mm:ss') }} </span> 
-                      {{ findDevice(result.highest.cid).name }}
+                      <div class="w-2/5">{{ `${spiderman.formatDate.parseStr(result.highest.timestamp)} ${spiderman.dayjs(result.highest.timestamp).format('HH:mm:ss')}` }} </div> 
+                      <div class="w-3/5 truncate">{{ findDevice(result.highest.cid).name }}</div>
                     </div>
 
                     <div
@@ -254,8 +253,7 @@
                 <div>
                   {{
                     videoResult
-                      ? spiderman.dayjs(videoResult.highest.timestamp)
-                        .format('YYYY/MM/DD HH:mm:ss')
+                      ? `${spiderman.formatDate.parseStr(videoResult.highest.timestamp)} ${spiderman.dayjs(videoResult.highest.timestamp).format('HH:mm:ss')}`
                       : '-'
                   }}
                 </div>
@@ -280,8 +278,7 @@
                   >
                     <div class="mx-4 flex justify-center text-white">
                       <div class="pr-4 whitespace-nowrap flex items-center">
-                        {{ spiderman.dayjs(videoProgressBarTimeSlot.startTime)
-                          .format('YYYY/MM/DD HH:mm:ss') }}
+                        {{ `${spiderman.formatDate.parseStr(videoProgressBarTimeSlot.startTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.startTime).format('HH:mm:ss')}` }}
                       </div>
 
                       <div class="w-full flex items-center">
@@ -309,8 +306,7 @@
                       </div>
 
                       <div class="pl-4 whitespace-nowrap flex items-center">
-                        {{ spiderman.dayjs(videoProgressBarTimeSlot.endTime)
-                          .format('YYYY/MM/DD HH:mm:ss') }}
+                        {{ `${spiderman.formatDate.parseStr(videoProgressBarTimeSlot.endTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.endTime).format('HH:mm:ss')}` }}
                       </div>
                     </div>
                   </div>
@@ -442,7 +438,6 @@ import useStore from '@/modules/investigation/stores/index';
 import useTarget from '@/modules/target/stores/index';
 import useVideo from '@/modules/investigation/composable/video';
 import downloadReport from '@/modules/investigation/composable/archive';
-import { AppButton, AppDivider, AppSvgIcon } from '../../../components/app';
 
 const devicesStore = useDevices();
 const { findDevice } = devicesStore;
@@ -618,7 +613,7 @@ async function handleVideoArchive() {
 async function onAddVideoArchive() {
   // console.log(selectedTask.value);
   // return;
-  downloadReport(pdfForm.value, selectedTask.value.task_name, selectedResults, selectedTask.value.target.timestamp, selectedTask.value.target_face_image, selectedTask.value.search_start_time, selectedTask.value.search_end_time);
+  downloadReport(pdfForm.value, selectedTask.value.task_name, selectedResults.value, selectedTask.value.target.timestamp, selectedTask.value.target_face_image, selectedTask.value.search_start_time, selectedTask.value.search_end_time);
 }
 
 async function onSnapshot() {
@@ -638,7 +633,7 @@ async function onVideoArchive() {
   const file = await response.blob();
   const link = document.createElement('a');
   link.href = URL.createObjectURL(file);
-  link.download = `${selectedTask.value.task_name}_${spiderman.dayjs().format('YYYY-MM-DD')}`; //or any other extension
+  link.download = `${selectedTask.value.task_name}_${spiderman.formatDate.today()}`; //or any other extension
   link.click();
 }
 </script>

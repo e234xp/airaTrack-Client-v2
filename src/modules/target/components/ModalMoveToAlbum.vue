@@ -1,17 +1,20 @@
 <template>
   <ModalLayout
-    :is-open="modal === 'save-to-album'"
+    :is-open="modal === 'move-to-other'"
     @close="setModal('')"
   >
     <template #header>
-      {{ $t('SaveToAlbum') }}
+      {{ $t('MovePhoto') }}
     </template>
 
     <template #description>
-      {{ $t('SaveToAlbumDialog') }}
+      {{ $t('MoveToAlbumDialog') }}
     </template>
 
     <template #default>
+      <div class="mb-2 text-xl">
+        {{ $t('CurrentAlbum') }} : {{ currentAlbumName }}
+      </div>
       <AppLabel :label="$t('Album')">
         <AppInput
           dark
@@ -36,9 +39,9 @@
         <AppButton
           type="primary"
           class="px-6"
-          @click="handleAdd"
+          @click="handleMove"
         >
-          {{ $t('Add') }}
+          {{ $t('Move') }}
         </AppButton>
       </div>
     </template>
@@ -46,11 +49,11 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import useStore from '@/modules/target/stores/index';
 
-const emit = defineEmits(['add']);
+const emit = defineEmits(['move']);
 
 const store = useStore();
 const { modal } = storeToRefs(store);
@@ -61,6 +64,10 @@ const props = defineProps({
     type: Array,
     default: []
   },
+  current: {
+    type: String,
+    default: ''
+  }
 })
 
 const options = ref(null);
@@ -68,18 +75,26 @@ const form = ref({
   albumId: ''
 });
 
-onMounted(async () => {
-  options.value = props.list.reduce((obj, album) => {
+const currentAlbumName = computed({
+  get: () => {
+    if (props.current === '') return '';
+    return props.list.find((item) => item.albumId === props.current).albumName || '';
+  }
+})
+
+watch(() => props.current, () => {
+  const filter = props.list.filter((item) => item.albumId !== props.current);
+  options.value = filter.reduce((obj, album) => {
     const tmp = obj;
 
     tmp[album.albumName] = album.albumId;
     return tmp;
   }, {});
 
-  form.value.albumId = props.list[0].albumId;
-});
+  if (filter.length !== 0) form.value.albumId = filter[0].albumId;
+})
 
-function handleAdd() {
-  emit('add', form.value);
+function handleMove() {
+  emit('move', form.value);
 }
 </script>

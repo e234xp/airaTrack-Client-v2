@@ -9,12 +9,12 @@
         </AppButton>
       </div>
     </div>
-    <div class="bg-third rounded-2xl px-2 py-1 w-10 h-8 text-center select-none" v-if="selected.length > filter.length">
+    <!-- <div class="bg-third rounded-2xl px-2 py-1 w-10 h-8 text-center select-none" v-if="selected.length > filter.length">
       +{{ selected.length - filter.length }}
-    </div>
+    </div> -->
     <div class="relative bg-secondary w-5 h-5 p-0.5 rounded-md hover:bg-primary-hover" @mouseenter="onOpen" @mouseleave="onOpen">
       <AppSvgIcon name="icon-chevron-botton" class="text-white w-4 h-4"/>
-      <div class="absolute -top-2 left-5 pl-2" v-if="isOpen">
+      <div class="absolute -top-2 left-5 pl-2 z-10" v-if="isOpen">
         <slot></slot>
       </div>
     </div>
