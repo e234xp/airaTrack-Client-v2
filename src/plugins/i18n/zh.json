@@ -586,5 +586,9 @@
   "MovePhoto": "移至他人",
   "MoveToAlbumDialog": "使用者可以輕鬆將目前的圖片移動到其他相簿中，以更有效地組織和管理他們的圖像內容。這提供了更靈活的資源配置。",
   "CurrentAlbum": "當前專輯",
-  "Move": "移動"
+  "Move": "移動",
+  "UnitDay": "天",
+  "UnitHour": "時",
+  "UnitMin": "分",
+  "UnitSec": "秒"
 }

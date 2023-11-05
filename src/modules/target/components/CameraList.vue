@@ -1,7 +1,7 @@
 <template>
   <div class="bg-third max-w-xs p-4 flex flex-col gap-2 rounded-lg" style="max-height: 50vh; ">
     <div class="flex items-center gap-2" v-for="(item, idx) in list">
-      <AppCheckBox :placeholder="item.name" :modelInput="isChecked(item.id)" :disabled="isChecked(item.id) && limit && selected.length === 1" @onChange="onCheck(item.id)">
+      <AppCheckBox :placeholder="item.name" :modelInput="isChecked(item.id)" @onChange="onCheck(item.id)">
         <div class="flex items-center gap-2">
           <div class="truncate">{{ item.name }}</div>
           <div class="w-4 h-4 rounded" :style="{ backgroundColor: getAlbumColor(idx) }" v-if="!limit"></div>
@@ -51,7 +51,6 @@ function onCheck(id) {
   if (idx < 0) {
     emit('update:selectCamera', id);
   } else {
-    if (props.selected.length === 1) return;
     emit('update:unSelectCamera', id);
   }
 }

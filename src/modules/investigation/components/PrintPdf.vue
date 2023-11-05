@@ -14,7 +14,7 @@
           <div class="text-white text-md text-right">
             <div>{{ user.username }}</div>
             <div>
-              {{ `${spiderman.formatDate.parseStr(task.target.timestamp)} ${spiderman.dayjs(task.target.timestamp).format('HH:mm')}` }}
+              {{ `${spiderman.formatDate.parse(task.target.timestamp)} ${spiderman.dayjs(task.target.timestamp).format('HH:mm')}` }}
             </div>
           </div>
         </div>
@@ -38,16 +38,16 @@
             <div class="flex gap-2">
               <span class="w-24" style="opacity: 0.8;">Create Date:</span>
               <span class="font-bold">
-                {{ `${spiderman.formatDate.parseStr(task.target.timestamp)} ${spiderman.dayjs(task.target.timestamp).format('HH:mm')}` }}
+                {{ `${spiderman.formatDate.parse(task.target.timestamp)} ${spiderman.dayjs(task.target.timestamp).format('HH:mm')}` }}
               </span>
             </div>
             <div style="opacity: 0.8;">
               Investigation Period:
             </div>
             <div class="font-bold">
-              {{ `${spiderman.formatDate.parseStr(task.search_start_time)} ${spiderman.dayjs(task.search_start_time).format('HH:mm:ss')}` }}
+              {{ `${spiderman.formatDate.parse(task.search_start_time)} ${spiderman.dayjs(task.search_start_time).format('HH:mm:ss')}` }}
               <span class="mx-1">-</span>
-              {{ `${spiderman.formatDate.parseStr(task.search_end_time)} ${spiderman.dayjs(task.search_end_time).format('HH:mm:ss')}` }}
+              {{ `${spiderman.formatDate.parse(task.search_end_time)} ${spiderman.dayjs(task.search_end_time).format('HH:mm:ss')}` }}
             </div>
             <div style="opacity: 0.8;">
               Investigation Camera:
@@ -106,7 +106,7 @@
               }"
             />
             <div class="w-40 flex items-center">
-              {{ `${spiderman.formatDate.parseStr(result.highest.timestamp)} ${spiderman.dayjs(result.highest.timestamp).format('HH:mm:ss')}` }}
+              {{ `${spiderman.formatDate.parse(result.highest.timestamp)} ${spiderman.dayjs(result.highest.timestamp).format('HH:mm:ss')}` }}
             </div>
             <div class="w-40 flex items-center">
               {{ findDevice(result.highest.cid).name }}
@@ -127,7 +127,7 @@
           <div class="text-white text-md text-right">
             <div>{{ user.username }}</div>
             <div>
-              {{ `${spiderman.formatDate.parseStr(task.target.timestamp)} ${spiderman.dayjs(task.target.timestamp).format('HH:mm:ss')}` }}
+              {{ `${spiderman.formatDate.parse(task.target.timestamp)} ${spiderman.dayjs(task.target.timestamp).format('HH:mm:ss')}` }}
             </div>
           </div>
         </div>
@@ -150,7 +150,7 @@
         >
           <div class="mb-4 px-8 py-2 bg-gray-200 rounded flex">
             <div class="w-40 flex items-center">
-              {{ `${spiderman.formatDate.parseStr(result.highest.timestamp)} ${spiderman.dayjs(result.highest.timestamp).format('HH:mm:ss')}` }}
+              {{ `${spiderman.formatDate.parse(result.highest.timestamp)} ${spiderman.dayjs(result.highest.timestamp).format('HH:mm:ss')}` }}
             </div>
             <div class="w-40 flex items-center">
               {{ findDevice(result.highest.cid).name }}

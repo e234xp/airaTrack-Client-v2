@@ -1,5 +1,5 @@
 <template>
-  <div class="flex py-4" ref="chartContainer">
+  <div class="flex py-4 w-full" ref="chartContainer">
     <div
       @click="handlePrevDate()"
       class="rounded-lg border border-white/40 bg-black/20
@@ -16,13 +16,11 @@
           class="w-6 h-6"
         />
       </div>
-      <div
-        class="mb-4 text-center select-none"
-      >
-        {{ spiderman.formatDate.parse(spiderman.dayjs(selectedDate).subtract(1,'day'), { month: 'numeric', day: 'numeric' }) }}
+      <div class="mb-4 text-center select-none">
+        {{ spiderman.formatDate.parse(spiderman.dayjs(selectedDate).subtract(1,'day'), ['month', 'day']) }}
       </div>
     </div>
-    <div class="flex-grow rounded-lg border border-white/40 bg-black/20 p-4 cursor-pointer">
+    <div class="rounded-lg border border-white/40 bg-black/20 p-4 cursor-pointer" style="width: calc(100% - 15.5rem)">
       <div class="flex justify-between text-white gap-4 h-10">
         <div class="flex items-center gap-2" style="width: 30%">
           <div class="select-none">{{ $t('TimeTitle') }}</div>
@@ -65,14 +63,11 @@
       </div>
       <AppDivider class="my-2" />
 
-      <canvas
-        id="chart"
-        height="30"
-      />
-      <div
-        class="flex justify-center text-primary text-xl"
-      >
-        {{ spiderman.formatDate.parseStr(selectedDate, { month: 'numeric', day: 'numeric' }) }}
+      <div class="w-full" style="height: 8.25rem;">
+        <canvas id="chart" />
+      </div>
+      <div class="flex justify-center text-primary text-xl">
+        {{ spiderman.formatDate.parse(selectedDate, ['month', 'day']) }}
       </div>
     </div>
     <div
@@ -91,10 +86,8 @@
           class="w-6 h-6"
         />
       </div>
-      <div
-        class="mb-4 text-center select-none"
-      >
-        {{ spiderman.formatDate.parse(spiderman.dayjs(selectedDate).add(1,'day'), { month: 'numeric', day: 'numeric' }) }}
+      <div class="mb-4 text-center select-none">
+        {{ spiderman.formatDate.parse(spiderman.dayjs(selectedDate).add(1,'day'), ['month', 'day']) }}
       </div>
     </div>
   </div>
@@ -147,11 +140,21 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  modelSelectedCameraType: {
+    type: String,
+    default: '',
+  },
+  modelSelectedAlbumType: {
+    type: String,
+    default: '',
+  }
 });
 const emit = defineEmits([
   'update:modelSelectedDate',
   'update:modelSelectedHour',
   'update:modelSelectedTimeType',
+  'update:modelSelectedCameraType',
+  'update:modelSelectedAlbumType',
   'updateData'
 ]);
 
@@ -202,7 +205,13 @@ function onSelectTimeType(val) {
 //------------------------------------------
 // camera filter
 //------------------------------------------
-const selectedCameraType = ref('all');
+// const selectedCameraType = ref('all');
+const selectedCameraType = computed({
+  get: () => props.modelSelectedCameraType,
+  set: (value) => {
+    emit('update:modelSelectedCameraType', value);
+  }
+});
 const cameraTypeList = ref([
   {
     value: 'all',
@@ -221,9 +230,6 @@ const cameraList = computed({
 
 function onSelectCameraType(val) {
   selectedCameraType.value = val;
-  if (val === 'all') {
-    setSelectedCamera(livedevices.value.map(({ camera_id: cameraId }) => cameraId));
-  }
 }
 
 function onUnSelect(id) {
@@ -243,7 +249,13 @@ function onSelect(id) {
 //------------------------------------------
 // album filter
 //------------------------------------------
-const selectedAlbumType = ref('all');
+// const selectedAlbumType = ref('all');
+const selectedAlbumType = computed({
+  get: () => props.modelSelectedAlbumType,
+  set: (value) => {
+    emit('update:modelSelectedAlbumType', value);
+  }
+});
 const albumTypeList = ref([
   {
     value: 'all',
@@ -262,9 +274,6 @@ const albumsList = computed({
 
 function onSelectAlbumType(val) {
   selectedAlbumType.value = val;
-  if (val === 'all') {
-    setSelectedAlbum(albums.value.map(({ albumId }) => albumId));
-  }
 }
 
 function onUnSelectAlbum(id) {
@@ -314,10 +323,6 @@ function setHour(hour) {
   selectedTimeType.value = 'custom';
 }
 
-// function sizeAdjust() {
-
-// }
-
 watch(selectedDate, (date) => {
   renderByDate(date);
   const now = spiderman.dayjs();
@@ -328,23 +333,18 @@ watch(selectedDate, (date) => {
   renderHourAnnotation(now.hour());
 });
 
-watch([selectedCamera, selectedAlbum], () => renderByDate(selectedDate.value));
+watch([selectedCamera, selectedAlbum, selectedCameraType, selectedAlbumType], () => renderByDate(selectedDate.value));
 
 watch(selectedHour, () => renderHourAnnotation(selectedHour.value));
-
-const containerObserver = new ResizeObserver(() => {
-  console.log('containerObserver')
-  chart.update();
-})
 
 // 以下處理 chart
 Chart.register(annotationPlugin);
 
+const sumData = ref([]);
+
 let chart;
 let renderInterval;
 onMounted(() => {
-  containerObserver.observe(chartContainer.value);
-
   const ctx = document.getElementById('chart');
   const unSelectAlbum = ['#9C5655', '#A08557', '#62925F', '#6766AC', '#9664A5'];
 
@@ -371,6 +371,8 @@ onMounted(() => {
       }))
     },
     options: {
+      maintainAspectRatio: false,
+      responsive: true,
       layout: {
         padding: {
           bottom: 2
@@ -436,6 +438,10 @@ onMounted(() => {
           callbacks: {
             title: function (context) {
               return `${context[0].label}:00`;
+            },
+            footer: function(context) {
+              return ((context[0].raw / sumData.value[context[0].dataIndex]) * 100).toFixed(0)
+              + `% / Total: ${sumData.value[context[0].dataIndex]}`;
             }
           }
         },
@@ -504,7 +510,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  containerObserver.unobserve(chartContainer.value);
   clearInterval(renderInterval);
 });
 
@@ -513,17 +518,18 @@ async function renderByDate(date) {
   const today = spiderman.dayjs().format('YYYY-MM-DD');
   const start = spiderman.dayjs(`${date} 00:00:00`).unix();
   const end = today === date ? spiderman.dayjs().unix() : spiderman.dayjs(`${date} 23:59:59`).unix();
-  const tempData = await getLiveFaceHourlyCount(start, end, selectedCamera.value);
+  const cList = selectedCameraType.value === 'all' ? livedevices.value.map(({ camera_id: cameraId }) => cameraId) : selectedCamera.value;
+  const tempData = await getLiveFaceHourlyCount(start, end, cList);
   const template = [0, 1, 2, 3, 4, 5];
   const dataOfDate = template.map((idx) => {
     if (idx === 0) return tempData.map((list) => list[idx]);
-    if (selectedAlbum.value.indexOf(albumsList.value[idx - 1].id) >= 0) return tempData.map((list) => list[idx]);
+    if (selectedAlbumType.value === 'all' || selectedAlbum.value.indexOf(albumsList.value[idx - 1].id) >= 0) return tempData.map((list) => list[idx]);
     return new Array(24).fill(0);
   })
-  const sumData = new Array(24).fill(1).map((_, idx) => {
+  sumData.value = new Array(24).fill(1).map((_, idx) => {
     return dataOfDate.reduce((temp, cur) => temp += cur[idx], 0);
   })
-  const maxOfData = Math.max(...sumData);
+  const maxOfData = Math.max(...sumData.value);
 
   // 設定 data
   template.forEach((idx) => {

@@ -33,11 +33,11 @@
                     <div class="flex flex-col justify-between" style="width: calc(100% - 7rem)">
                       <div class="flex">
                         <div class="flex-grow text-base truncate">
-                          <div class="truncate">
-                            {{ targetDevice.name }}
+                          <div class="flex items-center gap-2 truncate">
+                            <AppSvgIcon name="icon-camera" class="w-4 h-4" /> {{ targetDevice.name }}
                           </div>
-                          <div class="truncate">
-                            {{ `${spiderman.formatDate.parseStr(selectedTask.target.timestamp)} ${spiderman.dayjs(selectedTask.target.timestamp).format('HH:mm:ss')}` }}
+                          <div class="flex items-center gap-2 truncate">
+                            <AppSvgIcon name="icon-calendar" class="w-4 h-4" /> {{ `${spiderman.formatDate.parse(selectedTask.target.timestamp)} ${spiderman.dayjs(selectedTask.target.timestamp).format('HH:mm:ss')}` }}
                           </div>
                         </div>
                         <AppButton type="secondary"
@@ -172,7 +172,7 @@
                         'border-2 border-white':index === videoResultIndex
                       }"
                     >
-                      <div class="w-2/5">{{ `${spiderman.formatDate.parseStr(result.highest.timestamp)} ${spiderman.dayjs(result.highest.timestamp).format('HH:mm:ss')}` }} </div> 
+                      <div class="w-2/5">{{ `${spiderman.formatDate.parse(result.highest.timestamp)} ${spiderman.dayjs(result.highest.timestamp).format('HH:mm:ss')}` }} </div> 
                       <div class="w-3/5 truncate">{{ findDevice(result.highest.cid).name }}</div>
                     </div>
 
@@ -253,7 +253,7 @@
                 <div>
                   {{
                     videoResult
-                      ? `${spiderman.formatDate.parseStr(videoResult.highest.timestamp)} ${spiderman.dayjs(videoResult.highest.timestamp).format('HH:mm:ss')}`
+                      ? `${spiderman.formatDate.parse(videoResult.highest.timestamp)} ${spiderman.dayjs(videoResult.highest.timestamp).format('HH:mm:ss')}`
                       : '-'
                   }}
                 </div>
@@ -278,7 +278,7 @@
                   >
                     <div class="mx-4 flex justify-center text-white">
                       <div class="pr-4 whitespace-nowrap flex items-center">
-                        {{ `${spiderman.formatDate.parseStr(videoProgressBarTimeSlot.startTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.startTime).format('HH:mm:ss')}` }}
+                        {{ `${spiderman.formatDate.parse(videoProgressBarTimeSlot.startTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.startTime).format('HH:mm:ss')}` }}
                       </div>
 
                       <div class="w-full flex items-center">
@@ -306,7 +306,7 @@
                       </div>
 
                       <div class="pl-4 whitespace-nowrap flex items-center">
-                        {{ `${spiderman.formatDate.parseStr(videoProgressBarTimeSlot.endTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.endTime).format('HH:mm:ss')}` }}
+                        {{ `${spiderman.formatDate.parse(videoProgressBarTimeSlot.endTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.endTime).format('HH:mm:ss')}` }}
                       </div>
                     </div>
                   </div>

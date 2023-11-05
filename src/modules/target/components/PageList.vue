@@ -1,6 +1,6 @@
 <template>
   <ProgressBarLayout>
-    <FullLayout>
+    <FullLayout style="width: calc(100% - 20rem)">
       <template #header>
         <NavigationBar />
 
@@ -8,6 +8,8 @@
           v-model:modelSelectedDate="selectedDate"
           v-model:modelSelectedHour="selectedHour"
           v-model:modelSelectedTimeType="selectTimeType"
+          v-model:modelSelectedCameraType="selectedCameraType"
+          v-model:modelSelectedAlbumType="selectedAlbumType"
           @updateData="onUpdateData"
         />
       </template>
@@ -138,11 +140,10 @@ const store = useStore();
 const { setPage, setSelectedFaceKey } = store;
 const { selectedCamera, selectedAlbum } = storeToRefs(store);
 
-// watch([selectedDate, selectedHour], ([date, hour]) => {
-//   getLiveFaceHourly({ date, hour });
-// }, { immediate: true });
+const selectedCameraType = ref('all');
+const selectedAlbumType = ref('all');
 
-watch([selectedCamera, selectedAlbum], async () => {
+watch([selectedCamera, selectedAlbum, selectedCameraType, selectedAlbumType], async () => {
   const currentKey = helpers.getCurrentKey();
   
   await Promise.allSettled(hourFaceKeys.value.map(async (key) => {
@@ -192,16 +193,17 @@ async function getLiveFaceHourly({ date, hour }) {
 
         const startTime = key;
         const endTime = startTime + TEN_MINUTES_MS;
+        const cameraList = selectedCameraType.value === 'all' ? livedevices.value.map(({ camera_id: cameraId }) => cameraId) : selectedCamera.value;
 
         const { totalItems, data } = await helpers.getLiveFaces({
           startTime,
           endTime,
           page: pageNumber,
           perPage: hourFacePerPage.value,
-          cameraList: selectedCamera.value,
+          cameraList,
           sessionId: sessionId.value,
         });
-        const filter = data.filter((item) => item.highest.albumId === '' || selectedAlbum.value.indexOf(item.highest.albumId) >= 0);
+        const filter = data.filter((item) => selectedAlbumType.value === 'all' || item.highest.albumId === '' || selectedAlbum.value.indexOf(item.highest.albumId) >= 0);
 
         const dummy = filter.length > 0 ? [...filter, ...new Array(hourFacePerPage.value - filter.length).fill().map(() => ({ data: { id: ''} }))] : filter;
         hourFaces.value[key] = dummy;

@@ -586,5 +586,9 @@
   "MovePhoto": "Move to others",
   "MoveToAlbumDialog": "Users can effortlessly move their current photos to other albums, enabling more efficient organization and management of their image content. This offers greater flexibility in resource allocation.",
   "CurrentAlbum": "Current Album",
-  "Move": "Move"
+  "Move": "Move",
+  "UnitDay": "day",
+  "UnitHour": "hr.",
+  "UnitMin": "min.",
+  "UnitSec": "sec."
 }

@@ -1,6 +1,6 @@
 <template>
   <ProgressBarLayout>
-    <FullLayout>
+    <FullLayout style="width: calc(100% - 20rem)">
       <!-- <template #header>
         <NavigationBar />
       </template> -->

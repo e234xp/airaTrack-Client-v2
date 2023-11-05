@@ -9,10 +9,11 @@ import formatDate from './format-date';
 
 // http://192.168.10.76:8082
 // http://192.168.10.119:8081
+// http://211.75.111.228:8083
 const system = {
   version: '2.0.0 231103',
   apiBaseUrl: import.meta.env.MODE === 'development'
-    ? 'http://192.168.10.119:8081'
+    ? 'http://211.75.111.228:8083'
     : '',
 };
 

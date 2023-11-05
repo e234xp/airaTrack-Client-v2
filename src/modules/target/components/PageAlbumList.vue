@@ -1,13 +1,14 @@
 <template>
   <ProgressBarLayout>
-    <FullLayout>
+    <FullLayout style="width: calc(100% - 20rem)">
       <template #header>
         <NavigationBar />
       </template>
 
       <template #grow>
         <div class="h-full mx-4 my-4 flex items-center justify-center gap-4">
-          <div class="album w-1/5 h-2/3 p-5 bg-black/40 rounded-lg border-2 border-panel shadow-cus flex flex-col gap-5"
+          <div class="album h-2/3 p-5 bg-black/40 rounded-lg border-2 border-panel shadow-cus flex flex-col gap-5"
+            style="width: calc(20% - 1.25rem)"
             v-for="(album, idx) in albumsList" :key="album.id">
             <div class="text-white text-2xl">{{ album.name }}</div>
             <div class="w-full h-3 bg-album-1" :style="{ background: albumColorMap.get(idx) }"></div>

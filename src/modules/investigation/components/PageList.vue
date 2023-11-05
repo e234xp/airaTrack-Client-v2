@@ -102,19 +102,32 @@
                   {{ $t("RunningTime") }}:
                 </div>
                 <div class="flex">
-                  <template v-if="!item.running_start_time && !item.running_end_time">
+                  <template v-if="!item.running_start_time">
                     -
                   </template>
                   <template v-else>
                     <div>
-                      {{ `${spiderman.formatDate.parseStr(item.running_start_time)} ${spiderman.dayjs(item.running_start_time).format('HH:mm:ss')}` }}
+                      {{ `${spiderman.formatDate.parse(item.running_start_time)} ${spiderman.dayjs(item.running_start_time).format('HH:mm:ss')}` }}
                     </div>
-                    <div class="mx-5">
+                    <!-- <div class="mx-5">
                       ~
                     </div>
                     <div>
-                      {{ `${spiderman.formatDate.parseStr(item.running_end_time)} ${spiderman.dayjs(item.running_end_time).format('HH:mm:ss')}` }}
-                    </div>
+                      {{ `${spiderman.formatDate.parse(item.running_end_time)} ${spiderman.dayjs(item.running_end_time).format('HH:mm:ss')}` }}
+                    </div> -->
+                  </template>
+                </div>
+              </div>
+              <div class="flex pb-1 pl-4">
+                <div class="w-60 text-gray-400">
+                  {{ $t("Duration") }}:
+                </div>
+                <div class="flex">
+                  <template v-if="!item.running_start_time && !item.running_end_time">
+                    -
+                  </template>
+                  <template v-else>
+                    &lt; {{ parseTime(item.running_end_time - item.running_start_time) }}
                   </template>
                 </div>
               </div>
@@ -131,13 +144,13 @@
                   </template>
                   <template v-else>
                     <div>
-                      {{ `${spiderman.formatDate.parseStr(item.search_start_time)} ${spiderman.dayjs(item.search_start_time).format('HH:mm:ss')}` }}
+                      {{ `${spiderman.formatDate.parse(item.search_start_time)} ${spiderman.dayjs(item.search_start_time).format('HH:mm')}` }}
                     </div>
                     <div class="mx-5">
                       ~
                     </div>
                     <div>
-                      {{ `${spiderman.formatDate.parseStr(item.search_end_time)} ${spiderman.dayjs(item.search_end_time).format('HH:mm:ss')}` }}
+                      {{ `${spiderman.formatDate.parse(item.search_end_time)} ${spiderman.dayjs(item.search_end_time).format('HH:mm')}` }}
                     </div>
                   </template>
                 </div>
@@ -196,11 +209,13 @@ import spiderman from '@/spiderman';
 import NavigationBar from '@/modules/investigation/components/NavigationBar.vue';
 
 import useStore from '@/modules/investigation/stores/index';
-import { AppDivider } from '../../../components/app';
+import { useI18n } from 'vue-i18n';
 
 const store = useStore();
 const { dataType, page } = storeToRefs(store);
 const { setPage, setSelectedTask, getTaskListWithoutResult, startTask, removeTask, getTask, modifyTask, stopTask } = store;
+
+const i18n = useI18n();
 
 const isProgress = ref(false);
 
@@ -228,6 +243,20 @@ async function setRefreshInterval(taskId) {
     },
     5 * 1000,
   );
+}
+
+function parseTime(timestamp) {
+  const sec = Math.floor(timestamp / 1000);
+  const timeList = ['', '', '', '']; // day / hr / min / sec
+  const timeMap = [i18n.t('UnitDay'), i18n.t('UnitHour'), i18n.t('UnitMin'), i18n.t('UnitSec')];
+  let temp = sec;
+  timeList.forEach((_, idx) => {
+    const pIdx = timeList.length - idx - 1;
+    const val = Math.floor(temp / Math.pow(60, pIdx));
+    if (val > 0) timeList[idx] = val + ' ' + timeMap[idx];
+    temp = temp % Math.pow(60, pIdx);
+  });
+  return timeList.filter((t) => t !== '').slice(0, 2).join('');
 }
 
 onMounted(async () => {
