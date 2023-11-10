@@ -1,32 +1,29 @@
 <template>
-  <div class="w-80 bg-side-bar">
+  <div class="w-1/6 bg-side-bar" style="max-width: 20rem">
     <FullLayout>
-      <template #header>
-        <div
-          class="mx-4 py-2 text-white text-xl"
-        >
-          {{ $t('Target') }}
-        </div>
-
-        <AppDivider />
-
-        <AppButton
-          type="secondary"
-          class="mx-4 my-4"
-          @click="onUpload"
-        >
-          {{ $t("Upload") }}
-        </AppButton>
-
-        <AppDivider />
-      </template>
-
       <template #grow>
         <div class="m-4">
           <div
             v-if="selectedFace"
             class="aira-row-auto-1 gap-4"
           >
+
+            <div class="relative text-default pr-8" style="grid-column: 1 / span 2">
+              <div class="flex items-center gap-2">
+                <AppSvgIcon name="icon-camera" class="w-4 h-4" />
+                <div class="truncate">{{ cameraName }}</div>
+              </div>
+              <div class="flex items-center gap-2">
+                <AppSvgIcon name="icon-calendar" class="w-4 h-4" />
+                <div class="truncate">{{ `${spiderman.formatDate.parseYMD(selectedFace.timestamp)} ${spiderman.dayjs(selectedFace.timestamp).format('HH:mm:ss')}` }}</div>
+              </div>
+              <AppButton :type="$route.path !== '/config' ? 'secondary' : 'primary'"
+                @click="clearSelection"
+                class="absolute top-0 right-0 !p-0">
+                <AppSvgIcon name="icon-close" class="text-white w-6 h-6" />
+              </AppButton>
+            </div>
+
             <img
               class="w-full h-full"
               :src="spiderman.base64Image.getSrc(selectedFace?.data.face_image)"
@@ -34,16 +31,20 @@
             >
 
             <div class="relative w-full h-full">
+              <div class="flex gap-1 items-center">
+                <AppSvgIcon name="icon-album" :color="albumColor" class="w-5 h-6" />
+                <div class="w-full h-6 truncate" :style="{ color: albumColor }">
+                  {{ albumName }}
+                </div>
+              </div>
               <img
-                class="w-3/4 h-3/4 rounded border border-dashed"
+                class="absolute left-0 bottom-0 w-5/6 h-5/6 rounded border-2 border-dashed"
                 :style="{ borderColor: albumColor }"
                 :src="spiderman.base64Image.getSrc(albumImage)"
                 alt=""
                 v-if="albumImage !== ''"
               >
-              <div class="absolute left-0 bottom-0 w-full h-6" :style="{ backgroundColor: albumColor }"></div>
             </div>
-
           </div>
 
           <div
@@ -56,7 +57,7 @@
 
         <AppDivider v-if="selectedFace" />
 
-        <div class="m-4 aira-row-auto-1 gap-4">
+        <div class="mt-4 ml-4 pr-2 aira-row-auto-1 gap-4 overflow-y-auto">
           <div
             v-for="face in confirmingFaces"
             :key="face.data.id"
@@ -116,14 +117,6 @@
           >
             {{ $t("MovePhoto") }}
           </AppButton>
-          <AppButton
-            type="secondary"
-            :is-enable="!!selectedFace?.data.id"
-            class="mx-4 mb-4"
-            @click="clearSelection()"
-          >
-            {{ $t("ClearSelection") }}
-          </AppButton>
         </div>
       </template>
     </FullLayout>
@@ -150,6 +143,7 @@ import successStore from '@/components/AppSuccess/success';
 
 import useStore from '@/modules/target/stores/index';
 import useAlbums from '@/stores/albums';
+import useDevices from '@/stores/devices';
 
 import ModalSaveToAlbum from '@/modules/target/components/ModalSaveToAlbum.vue';
 import ModalMoveToAlbum from '@/modules/target/components/ModalMoveToAlbum.vue';
@@ -164,14 +158,30 @@ const albumsStore = useAlbums();
 const { albums, albumPhotoList, albumPhotoImage, albumColorMap } = storeToRefs(albumsStore);
 const { getAlbumPhoto, deleteAlbumPhoto } = useAlbums();
 
-const albumColor = computed({
+const devicesStore = useDevices();
+const { findDevice } = devicesStore;
+
+const albumIdx = computed({
   get: () => {
     if (selectedFace.value && selectedFace.value.highest && selectedFace.value.highest.albumId !== '') {
       const idx = albums.value.findIndex((item) => item.albumId === selectedFace.value.highest.albumId);
-      if (idx < 0) return '';
-      return albumColorMap.value.get(idx) || '';
+      return idx;
     }
-    return '';
+    return -1;
+  }
+})
+
+const albumColor = computed({
+  get: () => {
+    if (albumIdx.value < 0) return '';
+    return albumColorMap.value.get(albumIdx.value) || '';
+  }
+})
+
+const albumName = computed({
+  get: () => {
+    if (albumIdx.value < 0) return '';
+    return albums.value[albumIdx.value]?.albumName || '';
   }
 })
 
@@ -203,6 +213,13 @@ const albumFrom = computed({
 const isFromAlbum = computed({
   get: () => {
     return selectedFace.value && selectedFace.value.photoId;
+  }
+})
+
+const cameraName = computed({
+  get: () => {
+    const id = selectedFace.value.camera_id || '';
+    return findDevice(id)?.name || '--';
   }
 })
 

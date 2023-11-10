@@ -1,12 +1,8 @@
 <template>
   <ProgressBarLayout>
-    <FullLayout style="width: calc(100% - 20rem)">
-      <!-- <template #header>
-        <NavigationBar />
-      </template> -->
-
+    <FullLayout style="width: max(83%, calc(100% - 20rem))">
       <template #grow>
-        <div class="mx-4 my-2">
+        <div class="m-4">
           <div class="flex justify-between">
             <div class="mb-2 flex justify-start items-center gap-2">
               <AppButton
@@ -16,7 +12,7 @@
               >
                 <AppSvgIcon name="icon-chevron-left" class="text-white w-4 h-4" />
               </AppButton>
-              <AppSvgIcon name="icon-images" class="w-6 h-6" :color="albumColor" />
+              <AppSvgIcon name="icon-album" class="w-6 h-6" :color="albumColor" />
               <div class="text-xl" :style="{ color: albumColor }">{{ albumName }}</div>
             </div>
 
@@ -73,7 +69,7 @@
               >
               <AppCheckBox
                 :checked="findIndex(face) !== -1"
-                class="absolute bottom-1 right-1"
+                class="absolute bottom-1 -right-3 !w-8"
               />
             </div>
           </div>
@@ -99,11 +95,11 @@ import useAlbums from '@/stores/albums';
 
 const albumsStore = useAlbums();
 const { albums, albumPhotoList, albumColorMap, albumPhotoImage } = storeToRefs(albumsStore);
-const { getAlbumPhoto } = useAlbums();
+const { getAlbumPhoto, deleteAlbumPhoto } = useAlbums();
 
 const store = useStore();
 const { selectedAlbumDetail } = storeToRefs(store);
-const { setPage, deleteAlbumPhoto } = store;
+const { setPage } = store;
 
 const albumName = computed({
   get: () => { 

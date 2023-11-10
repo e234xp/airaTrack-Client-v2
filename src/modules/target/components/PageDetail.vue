@@ -1,6 +1,6 @@
 <template>
   <ProgressBarLayout>
-    <FullLayout style="width: calc(100% - 20rem)">
+    <FullLayout style="width: max(83%, calc(100% - 20rem))">
       <template #header>
         <div class="flex justify-between m-4">
           <AppButton
@@ -11,7 +11,7 @@
             {{ $t('Return') }}
           </AppButton>
           <div class="flex items-center text-white text-2xl">
-            {{ spiderman.formatDate.parse(selectedFaceKey) }}
+            {{ spiderman.formatDate.parseYMD(selectedFaceKey) }}
             {{ spiderman.dayjs(selectedFaceKey).format('HH:mm') }}
           </div>
           <div />

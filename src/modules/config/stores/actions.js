@@ -126,7 +126,6 @@ export async function getNxConfig() {
     method: 'get',
     headers: { sessionId: userStore.sessionId }
   })
-  console.log(result)
   return result;
 }
 

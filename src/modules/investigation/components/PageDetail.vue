@@ -7,8 +7,8 @@
 
       <template #grow>
         <div class="flex h-full font-thin">
-          <div class="w-160 border-r border-gray-600">
-            <FullLayout>
+          <div class="border-r border-gray-600">
+            <FullLayout class="!w-128">
               <template #header>
                 <div class="px-4 pt-2 pb-4 flex items-center gap-4">
                   <AppButton
@@ -26,23 +26,25 @@
                 <div class="px-4 pb-4 text-white text-xl">
                   <div class="flex">
                     <img
-                      class="w-24 h-24 mr-4"
+                      class="w-24 h-24 mr-4 rounded"
                       :src="spiderman.base64Image.getSrc(selectedTask.target_face_image)"
                       alt=""
                     >
                     <div class="flex flex-col justify-between" style="width: calc(100% - 7rem)">
-                      <div class="flex">
-                        <div class="flex-grow text-base truncate">
-                          <div class="flex items-center gap-2 truncate">
-                            <AppSvgIcon name="icon-camera" class="w-4 h-4" /> {{ targetDevice.name }}
+                      <div class="flex w-full gap-2">
+                        <div class="text-base" style="width: calc(100% - 2.5rem)">
+                          <div class="flex items-center gap-2">
+                            <AppSvgIcon name="icon-camera" class="w-4 h-4" />
+                            <div class="truncate" style="width: calc(100% - 1.5rem)">{{ targetDevice.name }}</div>
                           </div>
-                          <div class="flex items-center gap-2 truncate">
-                            <AppSvgIcon name="icon-calendar" class="w-4 h-4" /> {{ `${spiderman.formatDate.parse(selectedTask.target.timestamp)} ${spiderman.dayjs(selectedTask.target.timestamp).format('HH:mm:ss')}` }}
+                          <div class="flex items-center gap-2">
+                            <AppSvgIcon name="icon-calendar" class="w-4 h-4" />
+                            <div class="truncate" style="width: calc(100% - 1.5rem)">{{ `${spiderman.formatDate.parseYMD(selectedTask.target.timestamp)} ${spiderman.dayjs(selectedTask.target.timestamp).format('HH:mm:ss')}` }}</div>
                           </div>
                         </div>
                         <AppButton type="secondary"
                           @click="addTaskToAlbum"
-                          class="w-8 h-8 ml-auto !p-0">
+                          class="w-8 h-8 !p-0">
                           <AppSvgIcon name="icon-add-to-album" class="text-white w-8 h-8" />
                         </AppButton>
                       </div>
@@ -59,7 +61,7 @@
                               type="range"
                               class="w-full h-1
                                     rounded-full appearance-none cursor-pointer
-                                    bg-progress-bar accent-gray-300"
+                                    bg-panel accent-gray-300"
                               v-model="targetScore"
                               :min="0.5"
                               :max="1"
@@ -80,45 +82,6 @@
                   </div>
                 </div>
 
-                <!-- <AppDivider /> -->
-
-                <!-- <div class="border-gray-500 py-4 px-4 text-white"> -->
-                  <!-- <div class="mb-2 text-xl">
-                    {{ $t('IncidentList') }}
-                  </div> -->
-
-                  <!-- <div class="flex">
-                    <div class="w-32 px-2 flex items-center justify-end text-base">
-                      {{ $t("TargetScore") }}：
-                    </div>
-                    <template v-if="!fromCase">
-                      <div class="text-base">
-                        0.5
-                      </div>
-                      <div class="mx-3 flex-grow flex items-center">
-                        <input
-                          type="range"
-                          class="w-full h-1
-                                rounded-full appearance-none cursor-pointer
-                                bg-progress-bar accent-gray-300"
-                          v-model="targetScore"
-                          :min="0.5"
-                          :max="1"
-                          :step="0.05"
-                        >
-                      </div>
-                      <div class="text-base">
-                        1.0
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div class="text-base">
-                        {{ selectedTask.target_score }}
-                      </div>
-                    </template>
-                  </div> -->
-                <!-- </div> -->
-
                 <AppDivider />
 
                 <div class="flex gap-2 mt-4 mb-2 px-4 text-white text-base">
@@ -134,17 +97,17 @@
                 <div
                   v-for="(result, index) in taskResults"
                   :key="index"
-                  class="flex px-4"
+                  class="flex pl-4 pr-2"
                 >
                   <AppCheckBox
-                    class="mt-4 mr-2 !w-6 h-4"
+                    class="mt-3 mr-2 !w-6 h-4"
                     v-model:modelInput="selectedResultIndexes"
                     :value="index"
                   />
                   <div
-                    class="relative
+                    class="task relative
                     flex-grow border-l-4 border-general
-                    pb-2 pt-2
+                    pb-2
                     text-white text-xl cursor-pointer"
                     @click="setVideoResultIndex({
                       index,
@@ -154,7 +117,7 @@
                     :id="`result-${index}`"
                   >
                     <div
-                      class="absolute -left-2.5 w-4 h-4 mt-2 rounded-full border-2 border-transparent"
+                      class="absolute -left-2.5 w-4 h-4 mt-3 rounded-full border-2 border-transparent"
                       :class="{
                         'border-2 border-white':index === videoResultIndex,
                         'bg-live-channel': result.resultFrom === 'LIVE',
@@ -163,41 +126,31 @@
                     />
 
                     <div
-                      class="flex rounded-full
-                      mb-2 ml-4 py-1 px-4
-                      text-sm text-white border-2 gap-2"
+                      class="con flex gap-2 ml-4 p-2 border-2 rounded border-transparent"
                       :class="{
-                        'border-live-channel': result.resultFrom === 'LIVE',
-                        'border-archive-channel': result.resultFrom === 'PLAYBACK',
-                        'border-2 border-white':index === videoResultIndex
+                        '!border-live-channel':index === videoResultIndex && result.resultFrom === 'LIVE',
+                        '!border-archive-channel':index === videoResultIndex && result.resultFrom === 'PLAYBACK',
                       }"
                     >
-                      <div class="w-2/5">{{ `${spiderman.formatDate.parse(result.highest.timestamp)} ${spiderman.dayjs(result.highest.timestamp).format('HH:mm:ss')}` }} </div> 
-                      <div class="w-3/5 truncate">{{ findDevice(result.highest.cid).name }}</div>
-                    </div>
-
-                    <div
-                      class="flex gap-4"
-                    >
                       <img
-                        class="w-24 h-24 ml-8"
+                        class="w-24 h-24 rounded"
                         :src="spiderman.base64Image.getSrc(result.highest.face_image)"
                         alt=""
                       >
-                      <!-- <div class="truncate text-base">
-                        {{ spiderman.dayjs(result.highest.timestamp)
-                          .format('YYYY/MM/DD HH:mm:ss') }}
-                      </div> -->
+                      <div class="hint text-base text-default" style="">
+                        <div class="truncate">
+                          {{ `${spiderman.formatDate.parseYMD(result.highest.timestamp)} ${spiderman.dayjs(result.highest.timestamp).format('HH:mm:ss')}` }}
+                        </div>
+                        <div class="truncate">
+                          {{ findDevice(result.highest.cid).name }}
+                        </div>
+                      </div>
+
                       <AppButton type="secondary"
-                        @click="addTargetToAlbum(result)"
-                        class="w-8 h-8 mr-2 ml-auto !p-0">
+                        @click.stop="addTargetToAlbum(result)"
+                        class="btn w-8 h-8 ml-auto !p-0 z-10">
                         <AppSvgIcon name="icon-add-to-album" class="text-white w-8 h-8" />
                       </AppButton>
-                      <!-- <AppSvgIcon
-                        name="icon-add-to-album"
-                        class="w-10 h-10 mr-2 ml-auto hover:bg-primary-hover"
-                        @click="addTargetToAlbum(result)"
-                      /> -->
                     </div>
                   </div>
                 </div>
@@ -253,7 +206,7 @@
                 <div>
                   {{
                     videoResult
-                      ? `${spiderman.formatDate.parse(videoResult.highest.timestamp)} ${spiderman.dayjs(videoResult.highest.timestamp).format('HH:mm:ss')}`
+                      ? `${spiderman.formatDate.parseYMD(videoResult.highest.timestamp)} ${spiderman.dayjs(videoResult.highest.timestamp).format('HH:mm:ss')}`
                       : '-'
                   }}
                 </div>
@@ -278,7 +231,7 @@
                   >
                     <div class="mx-4 flex justify-center text-white">
                       <div class="pr-4 whitespace-nowrap flex items-center">
-                        {{ `${spiderman.formatDate.parse(videoProgressBarTimeSlot.startTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.startTime).format('HH:mm:ss')}` }}
+                        {{ `${spiderman.formatDate.parseYMD(videoProgressBarTimeSlot.startTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.startTime).format('HH:mm:ss')}` }}
                       </div>
 
                       <div class="w-full flex items-center">
@@ -306,7 +259,7 @@
                       </div>
 
                       <div class="pl-4 whitespace-nowrap flex items-center">
-                        {{ `${spiderman.formatDate.parse(videoProgressBarTimeSlot.endTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.endTime).format('HH:mm:ss')}` }}
+                        {{ `${spiderman.formatDate.parseYMD(videoProgressBarTimeSlot.endTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.endTime).format('HH:mm:ss')}` }}
                       </div>
                     </div>
                   </div>
@@ -409,6 +362,7 @@
   />
 
   <ModalSaveToAlbum
+    :list="albums"
     @add="handleAddToAlbum"
   />
 
@@ -437,6 +391,8 @@ import ModalSaveToAlbum from '@/modules/investigation/components/ModalSaveToAlbu
 import useStore from '@/modules/investigation/stores/index';
 import useTarget from '@/modules/target/stores/index';
 import useVideo from '@/modules/investigation/composable/video';
+import useAlbums from '@/stores/albums';
+
 import downloadReport from '@/modules/investigation/composable/archive';
 
 const devicesStore = useDevices();
@@ -449,6 +405,9 @@ const { setPage, setDataType } = store;
 
 const targetStore = useTarget();
 const { addPhotoFeature } = targetStore;
+
+const albumsStore = useAlbums();
+const { albums } = storeToRefs(albumsStore);
 
 const {
   videoResultIndex,
@@ -497,7 +456,7 @@ const taskResults = ref([]);
 const targetScore = ref(0.8);
 watch(targetScore, async (newScore) => {
   await setTaskResults(newScore);
-  setVideoResultIndex({ index: 0, results: taskResults.value, range: range.value });
+  if (taskResults.value.length !== 0) setVideoResultIndex({ index: 0, results: taskResults.value, range: range.value });
 }, { immediate: true });
 
 watch(range, (newRange) => {
@@ -511,6 +470,7 @@ watch(range, (newRange) => {
 async function setTaskResults(score) {
   if (!fromCase.value) {
     ({ result: taskResults.value } = await getTaskResultAll(selectedTask.value.task_id, score));
+
   } else {
     taskResults.value = selectedTask.value.facesData;
   }
@@ -611,8 +571,6 @@ async function handleVideoArchive() {
 }
 
 async function onAddVideoArchive() {
-  // console.log(selectedTask.value);
-  // return;
   downloadReport(pdfForm.value, selectedTask.value.task_name, selectedResults.value, selectedTask.value.target.timestamp, selectedTask.value.target_face_image, selectedTask.value.search_start_time, selectedTask.value.search_end_time);
 }
 
@@ -633,7 +591,31 @@ async function onVideoArchive() {
   const file = await response.blob();
   const link = document.createElement('a');
   link.href = URL.createObjectURL(file);
-  link.download = `${selectedTask.value.task_name}_${spiderman.formatDate.today()}`; //or any other extension
+  link.download = `${selectedTask.value.task_name}_${spiderman.formatDate.today().split(' ').join('')}`; //or any other extension
   link.click();
 }
 </script>
+
+<style lang="scss">
+.btn {
+  display: none;
+}
+
+.hint {
+  width: calc(100% - 6.5rem);
+}
+
+.task:hover {
+  .btn {
+    display: flex;
+  }
+
+  .con {
+    border-color: theme('colors.general');
+  }
+
+  .hint {
+    width: calc(100% - 9rem);
+  }
+}
+</style>

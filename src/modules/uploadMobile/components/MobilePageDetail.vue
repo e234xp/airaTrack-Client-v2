@@ -1,6 +1,6 @@
 <template>
   <ProgressBarLayout>
-    <FullLayout style="width: calc(100% - 20rem)">
+    <FullLayout style="width: max(83%, calc(100% - 20rem))">
       <template #header>
         <div class="flex justify-between m-8">
           <AppButton

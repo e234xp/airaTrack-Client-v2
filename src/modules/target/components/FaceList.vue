@@ -1,5 +1,5 @@
 <template>
-  <div class="content-start gap-3 list-container">
+  <div class="gap-3 list-container" :style="gridStyle">
     <div
       v-for="face in faces"
       :key="face.data.id"
@@ -64,6 +64,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import spiderman from '@/spiderman';
 import { storeToRefs } from 'pinia';
 
@@ -80,17 +81,26 @@ const props = defineProps({
   type: {
     type: String,
     default: '',
-  },
+  }
 });
 
 const store = useStore();
-const { selectedFace, confirmingFaces } = storeToRefs(store);
+const { selectedFace, confirmingFaces, faceListRow, faceListCol } = storeToRefs(store);
 const {
   setSelectedFace, setConfirmingFaces, setConfirmedFace, getLiveFaceImage
 } = store;
 
 const albumsStore = useAlbums();
 const { albums, albumColorMap } = storeToRefs(albumsStore);
+
+const gridStyle = computed({
+  get: () => {
+    return {
+      'grid-template-columns': `repeat(${faceListCol.value}, 1fr)`,
+      'grid-template-rows': `repeat(${faceListRow.value}, 1fr)`
+    }
+  }
+})
 
 function getAlbumBorder(highest) {
   if (!highest) return 'transparent';
@@ -101,7 +111,6 @@ function getAlbumBorder(highest) {
 }
 
 async function handleToggleFace(face) {
-  console.log(face);
   if (selectedFace.value?.data?.id === face.data.id) {
     setSelectedFace(null);
     setConfirmingFaces([]);
@@ -130,7 +139,7 @@ async function setConfirmingFacesAll(face) {
     await Promise.allSettled(faceBatch.map(async (f) => {
       const image = {};
 
-      ({ b64: image.b64, feature: image.feature } = await getLiveFaceImage(f.face_file));
+      ({ b64: image.b64 } = await getLiveFaceImage(f.face_file));
 
       tmp = [...tmp, {
         camera_id: face.camera_id,
@@ -139,7 +148,7 @@ async function setConfirmingFacesAll(face) {
           id: f.id,
           face_file: f.face_file,
           face_image: image.b64,
-          feature: image.feature,
+          feature: f.feature,
         },
       }];
       return { id: f.id };
@@ -167,8 +176,6 @@ function chunkArray(array, chunkSize) {
 .list-container {
   display: grid;
   grid-auto-flow: dense;
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(2, 1fr);
 }
 
 </style>

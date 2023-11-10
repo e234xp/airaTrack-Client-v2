@@ -17,6 +17,8 @@
           dark
           v-model:modelInput="name"
           :placeholder="$t('AlbumName')"
+          :maxLength="15"
+          @valid="handleValid"
           class="mb-6 text-base"
         />
       </AppLabel>
@@ -26,6 +28,7 @@
           dark
           v-model:modelInput="description"
           :placeholder="$t('Description')"
+          :maxLength="50"
           class="mb-6 text-base"
         />
       </AppLabel>
@@ -44,6 +47,7 @@
         <AppButton
           type="primary"
           class="px-6"
+          :disabled="valid"
           @click="handleEdit"
         >
           {{ $t('Save') }}
@@ -54,7 +58,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import useStore from '@/modules/target/stores/index';
 
@@ -75,6 +79,8 @@ const store = useStore();
 const { modal } = storeToRefs(store);
 const { setModal } = store;
 
+const valid = ref(true);
+
 const name = computed({
   get: () => props.modalName,
   set: (val) => emit('update:modalName', val)
@@ -84,6 +90,10 @@ const description = computed({
   get: () => props.modalDescription,
   set: (val) => emit('update:modalDescription', val)
 })
+
+function handleValid(flag) {
+  valid.value = flag;
+}
 
 function handleEdit() {
   emit('edit');

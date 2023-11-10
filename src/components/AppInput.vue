@@ -67,6 +67,7 @@
         }"
         :type="type"
         :placeholder="placeholder"
+        :maxlength="maxLength"
         v-model="input"
         @blur="handleBlur"
         @keydown.enter="$emit('submit')"
@@ -122,6 +123,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  maxLength: {
+    type: Number,
+    default: -1,
+  }
 });
 
 const emit = defineEmits(['update:modelInput', 'submit', 'valid']);
@@ -129,7 +134,7 @@ const input = computed({
   get: () => props.modelInput,
   set: (value) => {
     emit('update:modelInput', value);
-    emit('valid', !validators[props.rule].valid(value));
+    emit('valid', validators[props.rule] && validators[props.rule].valid(value));
   }
 });
 
@@ -142,7 +147,7 @@ const handleBlur = () => {
 const i18n = useI18n();
 const validators = {
   required: {
-    valid: (val) => !val,
+    valid: (val) => !!val,
     isPassed: () => validators.required.valid(input.value),
     generateMessage: () => {
       const placeholder = props.placeholder !== '' ? props.placeholder : i18n.t('field');
@@ -150,11 +155,19 @@ const validators = {
     },
   },
   ip: {
-    valid: (val) => !val || !/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(val),
+    valid: (val) => val && /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(val),
     isPassed: () => validators.ip.valid(input.value),
     generateMessage: () => {
       const placeholder = props.placeholder !== '' ? props.placeholder : i18n.t('field');
-      return 'Invalid IP address';
+      return i18n.t('InvalidIP');
+    }
+  },
+  port: {
+    valid: (val) => +val >= 0 && +val <= 65535,
+    isPassed: () => validators.port.valid(input.value),
+    generateMessage: () => {
+      const placeholder = props.placeholder !== '' ? props.placeholder : i18n.t('field');
+      return i18n.t('InvalidPort');
     }
   }
 };
@@ -163,7 +176,7 @@ const isShowError = computed(() => {
   if (!props.rule) return false;
   const { isPassed } = validators[props.rule];
 
-  return isPassed() && (hasTouched.value || props.hasSubmitted);
+  return !isPassed() && (hasTouched.value || props.hasSubmitted);
 });
 
 const errorMessage = computed(() => {

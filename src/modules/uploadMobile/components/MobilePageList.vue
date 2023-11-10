@@ -86,7 +86,6 @@
 
 
   function clickOnPickUploadPhoto() {
-    const self = this;
     const input = document.getElementById('fileSelecter');
     input.click();
 
@@ -110,7 +109,6 @@
   }
 
   function selectPhotoFromFile(cb) {
-    const self = this;
     flag_aaa.value += "2";
 
     // const input = document.createElement("input");
@@ -165,8 +163,8 @@
     const file = e.target.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(file, "UTF-8");
-    const maxWidth = 200;
-    const maxHeight = 200;
+    const maxWidth = 500;
+    const maxHeight = 500;
     reader.onload = async (readerEvent) => {
       // value_imageB64.value = readerEvent.target.result;
       // const img = document.createElement("img");

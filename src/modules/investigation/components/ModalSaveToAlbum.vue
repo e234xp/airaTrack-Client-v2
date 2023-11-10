@@ -47,7 +47,6 @@ import { onMounted, ref } from 'vue';
 import { storeToRefs } from 'pinia';
 
 import useStore from '@/modules/investigation/stores/index';
-import useTargetStore from '@/modules/target/stores/index';
 
 const emit = defineEmits(['add']);
 
@@ -55,31 +54,30 @@ const store = useStore();
 const { modal } = storeToRefs(store);
 const { setModal } = store;
 
-const targetStore = useTargetStore();
-const { getAlbum } = targetStore;
-
 const options = ref(null);
 const form = ref({
   albumId: '',
 });
+
+const props = defineProps({
+  list: {
+    type: Array,
+    default: []
+  },
+})
 
 function handleAdd() {
   emit('add', form.value);
 }
 
 onMounted(async () => {
-  const { data } = await getAlbum();
-
-  const albums = data.filter(({ albumName }) => albumName !== 'Upload Photo');
-  options.value = albums.reduce((obj, album) => {
+  options.value = props.list.reduce((obj, album) => {
     const tmp = obj;
 
     tmp[album.albumName] = album.albumId;
     return tmp;
   }, {});
 
-  const defaultAlbum = albums.find((album) => album.albumName === 'Default album');
-
-  form.value.albumId = defaultAlbum.albumId;
+  form.value.albumId = props.list[0].albumId;
 });
 </script>

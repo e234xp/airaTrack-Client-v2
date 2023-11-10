@@ -15,10 +15,10 @@
       <thead>
         <tr>
           <th width="10%" class="text-left">{{ $t('Target') }}</th>
-          <th width="10%" class="text-left">{{ $t('TimeTitle') }}</th>
+          <th width="20%" class="text-left">{{ $t('TimeTitle') }}</th>
           <th width="20%" class="text-left">{{ $t('CaseName') }}</th>
-          <th width="30%" class="text-left">{{ $t('Description') }}</th>
-          <th width="20%" class="text-left">{{ $t('ByUser') }}</th>
+          <th width="25%" class="text-left">{{ $t('Description') }}</th>
+          <th width="15%" class="text-left">{{ $t('ByUser') }}</th>
           <th></th>
         </tr>
       </thead>
@@ -48,7 +48,7 @@
       @onTurnPage="onTurnPage" class="mt-5 text-center">
     </AppPagination>
     <div class="text-white mt-2">
-      please remember to download case manually because video archive could be expired.
+      {{ $t('CaseHint') }}
     </div>
   </div>
 </template>
@@ -58,8 +58,6 @@ import spiderman from '@/spiderman';
 import { useRouter } from 'vue-router';
 import useStore from '../stores';
 import useInvestStore from '../../investigation/stores/index';
-
-import AppMultiSwitch from './AppMultiSwitch.vue';
 
 const router = useRouter();
 

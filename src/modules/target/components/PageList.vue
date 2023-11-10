@@ -1,6 +1,6 @@
 <template>
   <ProgressBarLayout>
-    <FullLayout style="width: calc(100% - 20rem)">
+    <FullLayout style="width: max(83%, calc(100% - 20rem))">
       <template #header>
         <NavigationBar />
 
@@ -23,7 +23,7 @@
             v-show="hourFaces[faceKey].length > 0"
             class="flex justify-center"
           >
-            <div class="w-full" ref="container">
+            <div class="w-full">
               <div class="pl-6 flex gap-4">
                 <div class="flex">
                   <div class="grid content-center text-white text-2xl leading-4">
@@ -71,7 +71,7 @@
                     class="text-2xl leading-5 !py-0"
                     @click="handleToDetail(faceKey)"
                   >
-                    <div class="flex container">
+                    <div class="flex expand-hint">
                       <div class="flex items-center text-default text-base">
                         {{ $t('Extend') }}
                       </div>
@@ -103,7 +103,7 @@
 
 <script setup>
 import {
-  onUnmounted, ref, watch, onMounted, onBeforeMount
+  onUnmounted, ref, watch, onMounted, computed
 } from 'vue';
 import { storeToRefs } from 'pinia';
 import spiderman from '@/spiderman';
@@ -121,9 +121,9 @@ import helpers from '@/modules/target/helpers';
 
 const userStore = useUserStore();
 const { sessionId } = storeToRefs(userStore);
+
 const devicesStore = useDevices();
 const { livedevices } = storeToRefs(devicesStore);
-// const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
 
 const selectedDate = ref(spiderman.dayjs().format('YYYY-MM-DD'));
 const selectedHour = ref(parseInt(spiderman.dayjs().format('HH'), 10));
@@ -132,12 +132,10 @@ const selectTimeType = ref('now');
 const hourFaceKeys = ref([]);
 const hourFaces = ref({});
 const hourFacePaginations = ref({});
-const hourFacePerPage = ref(24);
-
-const container = ref(null);
+const hourFacePerPage = ref(0);
 
 const store = useStore();
-const { setPage, setSelectedFaceKey } = store;
+const { setPage, setSelectedFaceKey, setFaceListSize } = store;
 const { selectedCamera, selectedAlbum } = storeToRefs(store);
 
 const selectedCameraType = ref('all');
@@ -203,7 +201,7 @@ async function getLiveFaceHourly({ date, hour }) {
           cameraList,
           sessionId: sessionId.value,
         });
-        const filter = data.filter((item) => selectedAlbumType.value === 'all' || item.highest.albumId === '' || selectedAlbum.value.indexOf(item.highest.albumId) >= 0);
+        const filter = data.filter((item) => selectedAlbumType.value === 'all' || selectedAlbum.value.indexOf(item.highest.albumId === '' ? '0' : item.highest.albumId) >= 0);
 
         const dummy = filter.length > 0 ? [...filter, ...new Array(hourFacePerPage.value - filter.length).fill().map(() => ({ data: { id: ''} }))] : filter;
         hourFaces.value[key] = dummy;
@@ -238,11 +236,32 @@ const timer = setInterval(async () => {
   performAnimation(hourFaces.value[currentKey]);
 }, 10 * 1000);
 
+function handleResize() {
+  const temp = hourFacePerPage.value;
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const ratio = width / height;
+  for (const rule of helpers.sizeMap) {
+    const { range, row, col } = rule;
+    if (ratio >= range[0] && ratio < range[1]) {
+      // hourFaceListRow.value = row;
+      // hourFaceListCol.value = col;
+      setFaceListSize({ row, col });
+      hourFacePerPage.value = row * col;
+      if (temp !== 0 && temp !== hourFacePerPage.value) onUpdateData();
+      return;
+    }
+  }
+}
+
 onMounted(() => {
+  handleResize();
+  window.addEventListener('resize', handleResize);
   onUpdateData();
 })
 
 onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
   clearInterval(timer);
 });
 
@@ -394,7 +413,7 @@ function handleToDetail(faceKey) {
   // }
 }
 
-.container:hover {
+.expand-hint:hover {
   div {
     color: rgb(60 178 254);
   }

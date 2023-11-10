@@ -1,16 +1,23 @@
 <template>
   <ProgressBarLayout>
-    <FullLayout style="width: calc(100% - 20rem)">
+    <FullLayout style="width: max(83%, calc(100% - 20rem))">
       <template #header>
         <NavigationBar />
       </template>
 
       <template #grow>
-        <div class="h-full mx-4 my-4 flex items-center justify-center gap-4">
+        <div class="relative h-full m-4 flex items-center justify-center gap-4">
+          <AppButton
+            type="secondary"
+            class="absolute top-0 right-0 w-32"
+            @click="onUpload"
+          >
+            {{ $t("Upload") }}
+          </AppButton>
           <div class="album h-2/3 p-5 bg-black/40 rounded-lg border-2 border-panel shadow-cus flex flex-col gap-5"
-            style="width: calc(20% - 1.25rem)"
+            :style="cardStyle"
             v-for="(album, idx) in albumsList" :key="album.id">
-            <div class="text-white text-2xl">{{ album.name }}</div>
+            <div class="text-white text-2xl truncate">{{ album.name }}</div>
             <div class="w-full h-3 bg-album-1" :style="{ background: albumColorMap.get(idx) }"></div>
             <div class="w-full bg-black/40 relative" style="padding-top: 100%;" ref="albumImage">
               <div class="absolute top-0 left-0 w-full h-full flex flex-wrap">
@@ -58,25 +65,30 @@
     v-model:modalName="editAlbumForm.albumName"
     v-model:modalDescription="editAlbumForm.description"
     @edit="handleEditAlbum"/>
+
+  <ModalUpload @add="handleUploadAlbum" :list="albums" />
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
+import { onMounted, onBeforeUnmount, ref, computed, onUnmounted } from 'vue';
 import spiderman from '@/spiderman';
 import { storeToRefs } from 'pinia';
-import NavigationBar from '@/modules/target/components/NavigationBar.vue';
-import SideBar from '@/modules/target/components/SideBar.vue';
-import ModalEditAlbum from '@/modules/target/components/ModalEditAlbum.vue';
+
 import useStore from '@/modules/target/stores/index';
 import useAlbums from '@/stores/albums';
 import successStore from '@/components/AppSuccess/success';
+
+import NavigationBar from '@/modules/target/components/NavigationBar.vue';
+import SideBar from '@/modules/target/components/SideBar.vue';
+import ModalEditAlbum from '@/modules/target/components/ModalEditAlbum.vue';
+import ModalUpload from '@/modules/target/components/ModalUpload.vue';
 
 const store = useStore();
 const { setPage, setModal, setSelectedAlbumDetail } = store;
 
 const albumsStore = useAlbums();
 const { albums, albumPhotoList, albumPhotoImage, albumColorMap } = storeToRefs(albumsStore);
-const { getAlbumData, getAlbumPhoto, editAlbum, updateAlbum } = useAlbums();
+const { getAlbumData, getAlbumPhoto, editAlbum, updateAlbum, uploadAlbumPhoto } = useAlbums();
 
 const editAlbumForm = ref({
   albumId: '',
@@ -86,6 +98,15 @@ const editAlbumForm = ref({
 const imageList = ref(new Map());
 const albumImage = ref(null);
 const albumWidth = ref(0);
+const cardWidth = ref(0);
+
+const cardStyle = computed({
+  get: () => {
+    return cardWidth.value !== 0 ? {
+      width: `${cardWidth.value}px`
+    } : {}
+  }
+})
 
 const albumsList = computed({
   get: () => {
@@ -126,27 +147,59 @@ async function handleEditAlbum() {
   }
 }
 
+function onUpload() {
+  setModal('upload');
+}
+
+async function handleUploadAlbum(payload) {
+  uploadAlbumPhoto(payload);
+  await refreshList(payload.id);
+}
+
+async function refreshList(albumId) {
+  const list = albumPhotoList.value.get(albumId).slice(0, 4);
+  const filter = list.filter((id) => albumPhotoImage.value.findIndex((img) => img.photoId === id) < 0);
+  if (filter.length !== 0) await getAlbumPhoto(filter);
+  imageList.value.set(albumId, list);
+}
+
+function handleResize() {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const ratio = width / height;
+  if (ratio > 2) {
+    cardWidth.value = (height * 1.6) / 5;
+  } else cardWidth.value = 0;
+}
+
 const containerObserver = new ResizeObserver(() => {
   albumWidth.value = albumImage.value[0].clientWidth;
 })
 
 onMounted(async () => {
+  handleResize();
+  window.addEventListener('resize', handleResize);
   containerObserver.observe(albumImage.value[0]);
   await Promise.allSettled(albums.value.map(async (item) => {
     await getAlbumData(item.albumId);
-    const list = albumPhotoList.value.get(item.albumId).slice(0, 4);
-    const filter = list.filter((id) => albumPhotoImage.value.findIndex((img) => img.photoId === id) < 0);
-    if (filter.length !== 0) await getAlbumPhoto(filter);
-    imageList.value.set(item.albumId, list);
+    refreshList(item.albumId);
   }));
 })
 
 onBeforeUnmount(() => {
   containerObserver.unobserve(albumImage.value[0]);
 })
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style lang="scss">
+.album {
+  width: calc(20% - 1.25rem);
+}
+
 .album:hover .button {
   display: flex;
 }

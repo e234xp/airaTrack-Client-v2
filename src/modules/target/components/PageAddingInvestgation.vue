@@ -6,7 +6,7 @@
       </template> -->
 
       <template #grow>
-        <div class="mt-16 flex justify-center" style="height: calc(100% - 3rem)">
+        <div class="mt-16 flex justify-center" style="height: calc(100% - 4rem)">
           <div class="w-full 2xl:w-352 h-full">
             <div class="flex justify-center gap-4 h-full">
               <img
@@ -193,11 +193,12 @@ const form = ref({
   search_interval_ms: 1000,
 
   // 以下是 UI 會控制
+  search_end_time: spiderman.dayjs(confirmedFace.value.timestamp).add(1, 'minute').format('YYYY-MM-DD HH:mm'),
   search_start_time: spiderman
     .dayjs(confirmedFace.value.timestamp)
+    .add(1, 'minute')
     .subtract(1, 'hour')
     .format('YYYY-MM-DD HH:mm'),
-  search_end_time: spiderman.dayjs(confirmedFace.value.timestamp).format('YYYY-MM-DD HH:mm'),
   task_name: `task-${spiderman.dayjs().format('YYYYMMDD')}`,
   livechannels: [],
   archchannels: [],
@@ -208,7 +209,7 @@ async function handleAddTask(theForm) {
   taskForm.search_start_time = spiderman.dayjs(theForm.search_start_time).valueOf();
   taskForm.search_end_time = spiderman.dayjs(theForm.search_end_time).valueOf();
 
-  addTask(taskForm);
+  await addTask(taskForm);
 
   router.push({ path: '/investigation' });
 }

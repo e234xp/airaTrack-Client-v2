@@ -46,6 +46,11 @@ export default defineStore('user', () => {
     }, 60 * 1000);
   }
 
+  const path = ref('');
+  function setPath(val) {
+    path.value = val;
+  }
+
   return {
     sessionId,
     user,
@@ -53,5 +58,8 @@ export default defineStore('user', () => {
     loginUser,
     setUser,
     startMaintainUser,
+
+    path,
+    setPath
   };
 });

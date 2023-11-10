@@ -10,7 +10,7 @@
           v-for="item in list"
           v-show="dataType === 'all' || item.data_type === dataType"
           :key="item.task_id"
-          class="mx-4"
+          class="ml-4"
         >
           <div class="flex py-4 pl-8">
             <img
@@ -22,7 +22,8 @@
             <div class="w-full flex-grow text-white text-xl">
               <div class="flex justify-around pl-4">
                 <div class="w-32 mr-8 flex items-center content-center">
-                  <template v-if="item.data_type === 'stop'">
+                  {{ item.data_type }}
+                  <!-- <template v-if="item.data_type === 'stop'">
                     {{ $t('Init') }}
                   </template>
                   <template v-else-if="item.data_type === 'progress'">
@@ -30,7 +31,7 @@
                   </template>
                   <template v-else-if="item.data_type === 'finish'">
                     {{ $t('Completed') }}
-                  </template>
+                  </template> -->
                 </div>
                 <div class="flex items-center" style="width: calc(100% - 32rem)">
                   <div class="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700">
@@ -38,7 +39,7 @@
                       class="h-3.5 rounded-full"
                       :class="{
                         'bg-green-600': item.progress === 100,
-                        'bg-red-300': item.progress !== 100,
+                        'bg-red-400': item.progress !== 100,
                       }"
                       :style="{
                         width: `${item.progress}%`,
@@ -107,14 +108,8 @@
                   </template>
                   <template v-else>
                     <div>
-                      {{ `${spiderman.formatDate.parse(item.running_start_time)} ${spiderman.dayjs(item.running_start_time).format('HH:mm:ss')}` }}
+                      {{ `${spiderman.formatDate.parseYMD(item.running_start_time)} ${spiderman.dayjs(item.running_start_time).format('HH:mm:ss')}` }}
                     </div>
-                    <!-- <div class="mx-5">
-                      ~
-                    </div>
-                    <div>
-                      {{ `${spiderman.formatDate.parse(item.running_end_time)} ${spiderman.dayjs(item.running_end_time).format('HH:mm:ss')}` }}
-                    </div> -->
                   </template>
                 </div>
               </div>
@@ -144,13 +139,13 @@
                   </template>
                   <template v-else>
                     <div>
-                      {{ `${spiderman.formatDate.parse(item.search_start_time)} ${spiderman.dayjs(item.search_start_time).format('HH:mm')}` }}
+                      {{ `${spiderman.formatDate.parseYMD(item.search_start_time)} ${spiderman.dayjs(item.search_start_time).format('HH:mm')}` }}
                     </div>
                     <div class="mx-5">
                       ~
                     </div>
                     <div>
-                      {{ `${spiderman.formatDate.parse(item.search_end_time)} ${spiderman.dayjs(item.search_end_time).format('HH:mm')}` }}
+                      {{ `${spiderman.formatDate.parseYMD(item.search_end_time)} ${spiderman.dayjs(item.search_end_time).format('HH:mm')}` }}
                     </div>
                   </template>
                 </div>

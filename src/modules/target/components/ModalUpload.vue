@@ -69,6 +69,7 @@ const props = defineProps({
     default: []
   },
 })
+const emit = defineEmits(['add']);
 
 const image = ref('');
 const file = ref(null);
@@ -87,8 +88,9 @@ function onUploadImage() {
 }
 
 async function handleUpload() {
-  const result = await uploadPhoto(image.value, form.value.albumId);
-  if (result) {
+  const { fileNames } = await uploadPhoto(image.value, form.value.albumId);
+  if (fileNames.length !== 0) {
+    emit('add', { id: form.value.albumId, file: fileNames[0] });
     successStore.show();
     onClose();
   }
@@ -98,8 +100,8 @@ function fileOnChange(e) {
   const file = e.target.files[0];
   const reader = new FileReader();
   reader.readAsDataURL(file, 'UTF-8');
-  const maxWidth = 200;
-  const maxHeight = 200;
+  const maxWidth = 500;
+  const maxHeight = 500;
   reader.onload = async (readerEvent) => {
     const img = new Image();
     img.src = readerEvent.target.result;

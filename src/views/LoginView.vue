@@ -45,7 +45,7 @@
         />
       </div>
 
-      <div class="mb-4">
+      <div class="mb-6">
         <AppInput
           dark
           type="select"
@@ -60,7 +60,7 @@
         />
       </div>
 
-      <div class="mb-6">
+      <!-- <div class="mb-6">
         <AppInput
           dark
           type="select"
@@ -73,7 +73,7 @@
           rule="required"
           :has-submitted="hasSubmitted"
         />
-      </div>
+      </div> -->
 
       <AppButton
         class="mx-10 mb-4 py-2 px-20"
@@ -128,7 +128,7 @@ import useAlbums from '@/stores/albums';
 const router = useRouter();
 
 const userStore = useUserStore();
-const { sessionId } = storeToRefs(userStore);
+const { sessionId, path } = storeToRefs(userStore);
 const { loginUser, setUser, startMaintainUser } = userStore;
 
 const languageStore = useLanguageStore();
@@ -157,8 +157,10 @@ const handleLogin = generateSubmit(async () => {
 
   await setupResources();
 
-  if (form.value.mode === 'general') router.push({ path: '/target' });
-  if (form.value.mode === 'upload') router.push({ path: '/upload-mobile' });
+  if (path.value === '/m' || path.value === '/upload-mobile') router.push({ path: '/upload-mobile' });
+  else router.push({ path: '/target' });
+  // if (form.value.mode === 'general') router.push({ path: '/target' });
+  // if (form.value.mode === 'upload') router.push({ path: '/upload-mobile' });
 });
 
 async function setupResources() {

@@ -30,7 +30,7 @@
         :class="{
           'bg-primary': page === currentPage
         }"
-        class="relative inline-flex items-center
+        class="relative inline-flex items-center rounded
         px-4 py-2 text-sm font-semibold text-white
         hover:bg-primary-hover hover:text-white focus:z-20 focus:outline-offset-0"
       >

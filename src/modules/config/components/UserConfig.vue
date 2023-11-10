@@ -73,7 +73,7 @@
           {{ $t('Cancel') }}
         </AppButton>
 
-        <AppButton type="primary" :isEnable="name !== ''" class="px-6" @click="onSaveDelete">
+        <AppButton type="danger" :isEnable="name !== ''" class="px-6" @click="onSaveDelete">
           {{ $t('Delete') }}
         </AppButton>
       </div>

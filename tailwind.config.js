@@ -9,10 +9,7 @@ module.exports = {
       'primary-hover': '#2c77a0',
       'primary-border': '#80D3FF',
       secondary: '#1A1A1A',
-      'secondary-hover': '#43A0D1',
       third: '#313131',
-      danger: '#dc3545',
-      'danger-hover': '#a71d31',
       panel: '#282828',
       header: '#1E1E1E',
       white: '#f2f2f2',
@@ -23,9 +20,7 @@ module.exports = {
       orange: colors.orange,
       'side-bar': '#2C2C2C',
       modal: 'rgba(40, 40, 40, 1)',
-      'day-chart': '#242928',
       'video-bar': '#131617',
-      'progress-bar': '#646f71',
       'live-channel': '#8fb5ec',
       'archive-channel': '#77a17a',
       transparent: colors.transparent,
@@ -48,9 +43,8 @@ module.exports = {
         default: '#485454',
       },
       boxShadow: {
-        'cus': '0px 4px 12px 0px rgba(0, 0, 0, 0.25)',
-        'btn': '0px 4px 4px 0px rgba(0, 0, 0, 0.10)',
-        'tog': '0px 1px 0px 0px rgba(255, 255, 255, 0.20) inset;'
+        'cus': '2px 4px 12px 0px rgba(0, 0, 0, 0.25)',
+        'btn': '2px 4px 8px 0px rgba(0, 0, 0, 0.15)'
       },
       borderColor: {
         modal: '#696969',
@@ -63,6 +57,8 @@ module.exports = {
         'ctrl-secondary-hover': 'radial-gradient(50% 31.25% at 50% 100%, #67CAFF 0%, rgba(103, 202, 255, 0.00) 100%), linear-gradient(180deg, #404040 0%, #232323 44.79%, #000 47.4%, #232323 100%)',
         'ctrl-danger': 'linear-gradient(180deg, #B0342C 0%, #97231A 44.79%, #7D1810 47.4%, #96221A 100%)',
         'ctrl-danger-hover': 'radial-gradient(50% 31.25% at 50% 100%, rgba(255, 255, 255, 0.50) 0%, rgba(255, 255, 255, 0.00) 100%), linear-gradient(180deg, #B0342C 0%, #97231A 44.79%, #7D1810 47.4%, #96221A 100%)',
+        'ctrl-secondary-lg': 'linear-gradient(180deg, #404040 0%, #000 100%)',
+        'ctrl-secondary-lg-hover': 'radial-gradient(50% 8% at 50% 100%, #67CAFF 0%, rgba(103, 202, 255, 0.00) 100%), linear-gradient(180deg, #404040 0%, #000 100%)'
       },
       fontFamily: {
         custom: ['Helvetica', 'sans'],

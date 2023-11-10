@@ -18,6 +18,10 @@ const router = createRouter({
       component: () => import('../views/UploadMobile.vue'),
     },
     {
+      path: '/m',
+      component: () => import('../views/UploadMobile.vue'),
+    },
+    {
       path: '/case',
       component: () => import('../views/CaseView.vue'),
     },

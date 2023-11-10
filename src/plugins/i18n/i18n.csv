@@ -593,3 +593,10 @@ UnitDay,day,日,天
 UnitHour,hr.,時,時
 UnitMin,min.,分,分
 UnitSec,sec.,秒,秒
+CameraFilter,Camera Filter,カメラフィルター,場景篩選
+AlbumFilter,Album Filter,アルバムフィルター,相簿篩選
+CameraFilterDialog,"Users have the option to select the specific scene data they wish to access, providing a personalized viewing experience tailored to their preferences.",ユーザーは、個々の好みに合わせたパーソナライズされた視聴体験を提供するために、アクセスしたい特定のシーンデータを選択するオプションを持っています。,使用者可以選擇他們想要查看的特定場景數據，提供根據個人喜好度身訂製的觀賞體驗。
+AlbumFilterDialog,"Users have the option to select whether they want to view results that have been specifically categorized within the album or explore uncategorized results, offering flexibility in their browsing experience.",ユーザーは、アルバム内で特定のカテゴリに分類された結果を表示するか、未分類の結果を探索するかを選択でき、ブラウジング体験の柔軟性が提供されています。,使用者可以選擇是否要查看相簿內已經明確分類的結果，或者探索尚未歸類的結果，為他們的瀏覽體驗提供更多彈性。
+CaseHint,please remember to download case manually because video archive could be expired.,ビデオアーカイブの有効期限が切れる可能性があるため、ケースを手動でダウンロードすることを忘れないでください。,請記住要手動下載案件，因為視頻檔案可能會過期。
+InvalidIP,Invalid IP address,無効なIPアドレス,無效的IP地址
+InvalidPort,Invalid Port,無効なポート,無效端口

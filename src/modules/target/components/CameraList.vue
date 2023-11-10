@@ -39,7 +39,7 @@ const emit = defineEmits([
 ]);
 
 function getAlbumColor(val) {
-  return albumColorMap.value.get(val);
+  return albumColorMap.value.get(val - 1);
 }
 
 function isChecked(id) {

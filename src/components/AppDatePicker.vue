@@ -10,6 +10,7 @@
     :preview-format="format"
     :locale="language"
     :range="range"
+    :max-date="maxDate"
     ref="dp"
   >
     <template #action-buttons>
@@ -63,6 +64,10 @@ const selected = computed({
   get: () => props.modelSelected,
   set: (value) => emit('update:modelSelected', value),
 });
+
+const maxDate = computed({
+  get: () => new Date()
+})
 
 const dp = ref();
 

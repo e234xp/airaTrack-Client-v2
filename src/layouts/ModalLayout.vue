@@ -25,13 +25,13 @@
       </h2>
 
       <div class="flex">
-        <div class="relative w-1/2 border-r-2 border-gray-600 mr-4 pt-4">
+        <div class="relative w-5/12 border-r-2 border-gray-600 mr-4 pt-4 pr-4">
           <div class="h-60 min-h-full w-full">
             <slot name="description" />
           </div>
         </div>
 
-        <div class="w-1/2 flex flex-col">
+        <div class="w-7/12 flex flex-col">
 
           <div class="pb-16">
             <slot />

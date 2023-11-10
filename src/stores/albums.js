@@ -10,6 +10,7 @@ export default defineStore('album', () => {
   const albumPhotoImage = ref([]);
 
   const albumColorMap = ref(new Map()
+  .set(-1, '#027CBC')
   .set(0, '#ED6060')
   .set(1, '#EDB45E')
   .set(2, '#63CF6D')
@@ -23,7 +24,6 @@ export default defineStore('album', () => {
       headers: { sessionId },
     })
 
-    console.log(data);
     return data;
   }
 
@@ -47,7 +47,6 @@ export default defineStore('album', () => {
         albumId: id
       }
     })
-
     albumPhotoList.value.set(id, fileData);
   }
 
@@ -97,6 +96,15 @@ export default defineStore('album', () => {
     albumPhotoList.value.set(data.albumId, list);
   }
 
+  function uploadAlbumPhoto(payload) {
+    const { id, file } = payload;
+    const list = albumPhotoList.value.get(id);
+    if (list) {
+      list.push(file);
+    }
+    albumPhotoList.value.set(id, list);
+  }
+
   return {
     albumColorMap,
     albums,
@@ -110,6 +118,8 @@ export default defineStore('album', () => {
 
     updateAlbum,
     editAlbum,
-    deleteAlbumPhoto
+    deleteAlbumPhoto,
+
+    uploadAlbumPhoto
   };
 })

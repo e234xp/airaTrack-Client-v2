@@ -59,8 +59,8 @@ export default defineStore('module-investigation', () => {
   const caseData = ref(null);
   function setCaseData(data) {
     const devicesStore = useDevices();
-    const { devices, livedevices } = storeToRefs(devicesStore);
-    const { target, timestamp, search_start_time, search_end_time,
+    const { devices } = storeToRefs(devicesStore);
+    const { caseName, target, timestamp, search_start_time, search_end_time,
       media_list_live, media_list_arch, facesData } = data;
     caseData.value = {
       target: {
@@ -68,14 +68,14 @@ export default defineStore('module-investigation', () => {
         timestamp: spiderman.dayjs(timestamp)
       },
       target_face_image: target.faceImage,
-      feature: '',
+      feature: target.feature,
       target_score: target.score,
       search_motion: true,
       subtasks: [],
       search_interval_ms: 1000,
       search_start_time: search_start_time,
       search_end_time: search_end_time,
-      task_name: '',
+      task_name: caseName,
       livechannels: media_list_live.map((id) => devices.value.find((d) => d.camera_id === id)).filter((item) => item !== undefined),
       archchannels: media_list_arch.map((id) => devices.value.find((d) => d.camera_id === id)).filter((item) => item !== undefined),
       task_id: '',

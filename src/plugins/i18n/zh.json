@@ -590,5 +590,12 @@
   "UnitDay": "天",
   "UnitHour": "時",
   "UnitMin": "分",
-  "UnitSec": "秒"
+  "UnitSec": "秒",
+  "CameraFilter": "場景篩選",
+  "AlbumFilter": "相簿篩選",
+  "CameraFilterDialog": "使用者可以選擇他們想要查看的特定場景數據，提供根據個人喜好度身訂製的觀賞體驗。",
+  "AlbumFilterDialog": "使用者可以選擇是否要查看相簿內已經明確分類的結果，或者探索尚未歸類的結果，為他們的瀏覽體驗提供更多彈性。",
+  "CaseHint": "請記住要手動下載案件，因為視頻檔案可能會過期。",
+  "InvalidIP": "無效的IP地址",
+  "InvalidPort": "無效端口"
 }

@@ -8,9 +8,38 @@ html {
   font-size: 16px;
 }
 
-@media screen and (min-width: 1921px) {
+// 寬螢幕直放
+@media screen and (max-width: 1920px) and (min-height: 1081px) and (orientation: portrait) {
+  html {
+    font-size: 20px;
+  }
+}
+
+// 寬螢幕橫放 21:9
+@media screen and (min-width: 1921px) and (max-width: 3840px) and (max-height: 1600px) and (orientation: landscape) {
+  html {
+    font-size: 20px;
+  }
+}
+
+// 寬螢幕橫放 32:9
+@media screen and (min-width: 3841px)  and (max-height: 1600px) and (orientation: landscape) {
   html {
     font-size: 24px;
+  }
+}
+
+// 4k
+@media screen and (min-width: 1921px) and (max-width: 3840px) and (min-height: 1441px) and  (max-height: 2160px) and (orientation: landscape) {
+  html {
+    font-size: 28px;
+  }
+}
+
+// 8k
+@media screen and (min-width: 3841px) and (max-width: 7680px) and (min-height: 2161px) and (max-height: 4320px) and (orientation: landscape) {
+  html {
+    font-size: 56px;
   }
 }
 
@@ -25,6 +54,12 @@ body {
   --dp-primary-color: #3cb2fe !important;
   --dp-background-color: theme(colors.third) !important;
   --dp-border-color: theme(colors.general) !important;
+  --dp-input-padding: 1rem !important;
+  --dp-input-icon-padding: 2.5rem !important;
+}
+
+.dp__input_icons {
+  padding: 0 1rem !important;
 }
 
 .table {

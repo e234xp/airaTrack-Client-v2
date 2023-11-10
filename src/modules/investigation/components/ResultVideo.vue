@@ -1,11 +1,13 @@
 <template>
-  <div class="h-full pb-4 flex flex-col px-4">
+  <div class="h-full flex flex-col px-4 pb-4">
     <div
-      class="w-full bg-black flex justify-center"
+      class="relative w-full bg-black flex justify-center"
       style="height: calc(100% - 8rem);"
       ref="panelRef"
     >
-      <div class="relative" :style="{ width: `${width}px`, height: `${height}px` }">
+      <div class="absolute"
+        style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
+        :style="{ width: `${width}px`, height: `${height}px` }">
         <video
           ref="videoRef"
           :key="videoUrl"
@@ -14,7 +16,6 @@
           @ended="handleVideoEnded"
           @playing="handleVideoStarted"
           class="absolute w-full h-full"
-          style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
         >
           <source
             :src="videoUrl"
@@ -38,31 +39,33 @@
 
     <slot name="select-video-bar" />
 
+    <!-- background-image: linear-gradient(45deg,#404040 0,#131617 70%) -->
     <div class="mx-4 flex">
       <div class="flex-1 flex gap-2 items-center">
         <slot name="video-bar-download" />
       </div>
-      <div class="flex-1 flex justify-center">
+      <div class="flex-1 flex justify-center rounded-full border border-white/80 bg-ctrl-secondary gap-6"
+      style="max-width: 18rem;box-shadow: inset 1px 1px 4px rgba(0,0,0,0.6), inset -1px -1px 4px rgba(255,255,255,0.2);">
         <img
           src="@/assets/images/btn-prev.png"
-          class="w-12 mx-1 cursor-pointer"
+          class="w-12 cursor-pointer"
           @click="$emit('onPrev')"
         >
         <img
           src="@/assets/images/btn-play.png"
           v-if="!isPlaying"
-          class="w-12 mx-1 cursor-pointer"
+          class="w-12 cursor-pointer"
           @click="play"
         >
         <img
           src="@/assets/images/btn-pause.png"
           v-else
-          class="w-12 mx-1 cursor-pointer"
+          class="w-12 cursor-pointer"
           @click="pause"
         >
         <img
           src="@/assets/images/btn-next.png"
-          class="w-12 mx-1 cursor-pointer"
+          class="w-12 cursor-pointer"
           @click="$emit('onNext')"
         >
       </div>

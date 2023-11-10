@@ -7,7 +7,7 @@
       <AppInput :dark="true" class="w-1/3" :rule="'ip'" @valid="onValid($event, 1)" v-model:modelInput="connect.ip" />
     </AppLabel>
     <AppLabel :label="$t('Port')">
-      <AppInput :dark="true" class="w-1/3" v-model:modelInput="connect.port" />
+      <AppInput :dark="true" class="w-1/3" :rule="'port'" v-model:modelInput="connect.port" />
     </AppLabel>
     <AppLabel :label="$t('Username')">
       <AppInput :dark="true" class="w-1/3" v-model:modelInput="login.username" />

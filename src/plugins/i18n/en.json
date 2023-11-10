@@ -590,5 +590,12 @@
   "UnitDay": "day",
   "UnitHour": "hr.",
   "UnitMin": "min.",
-  "UnitSec": "sec."
+  "UnitSec": "sec.",
+  "CameraFilter": "Camera Filter",
+  "AlbumFilter": "Album Filter",
+  "CameraFilterDialog": "Users have the option to select the specific scene data they wish to access, providing a personalized viewing experience tailored to their preferences.",
+  "AlbumFilterDialog": "Users have the option to select whether they want to view results that have been specifically categorized within the album or explore uncategorized results, offering flexibility in their browsing experience.",
+  "CaseHint": "please remember to download case manually because video archive could be expired.",
+  "InvalidIP": "Invalid IP address",
+  "InvalidPort": "Invalid Port"
 }

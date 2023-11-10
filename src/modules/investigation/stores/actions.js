@@ -98,6 +98,7 @@ export async function addCase(data) {
     search_end_time: selectedTask.search_end_time,
     search_start_time: selectedTask.search_start_time,
     target: {
+      feature: selectedTask.feature,
       faceImage: selectedTask.target_face_image,
       camera_id: selectedTask.target.camera_id,
       cameraName: selectedTask.livechannels.find((item) => item.camera_id === selectedTask.target.camera_id)?.name || '',

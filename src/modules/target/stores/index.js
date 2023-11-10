@@ -15,6 +15,8 @@ export default defineStore('module-target', () => {
     selectedAlbumDetail: '',
     selectedCamera: [],
     page: 'list',
+    faceListRow: 0,
+    faceListCol: 0,
     modal: '',
   };
 
@@ -53,6 +55,14 @@ export default defineStore('module-target', () => {
     selectedAlbumDetail.value = data;
   }
 
+  const faceListRow = ref(initialState.faceListRow);
+  const faceListCol = ref(initialState.faceListCol);
+  function setFaceListSize(data) {
+    const { row, col } = data;
+    faceListRow.value = row;
+    faceListCol.value = col;
+  }
+
   const page = ref(initialState.page);
   function setPage(data) {
     page.value = data;
@@ -71,10 +81,10 @@ export default defineStore('module-target', () => {
     setSelectedFaceKey(initialState.selectedFaceKey);
     setConfirmingFaces(initialState.confirmingFaces);
     setConfirmedFace(initialState.confirmedFace);
-    setSelectedAlbum(initialState.selectedAlbum);
+    // setSelectedAlbum(initialState.selectedAlbum);
 
     const albumStore = useAlbums();
-    setSelectedAlbum(albumStore.albums.map(({ albumId }) => albumId));
+    setSelectedAlbum(['0', ...albumStore.albums.map(({ albumId }) => albumId)]);
 
     const deviceStore = useDevices();
     setSelectedCamera(deviceStore.livedevices.map(({ camera_id: cameraId }) => cameraId));
@@ -110,6 +120,10 @@ export default defineStore('module-target', () => {
     setSelectedCamera,
 
     selectedAlbumDetail,
-    setSelectedAlbumDetail
+    setSelectedAlbumDetail,
+
+    faceListRow,
+    faceListCol,
+    setFaceListSize
   };
 });

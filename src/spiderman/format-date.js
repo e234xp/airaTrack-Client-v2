@@ -4,28 +4,33 @@ const userLocale = navigator.language || navigator.userLanguage;
 const opt = Intl.DateTimeFormat().resolvedOptions();
 
 function today() {
-  return dayjs().toDate().toLocaleDateString(userLocale, opt);
+  return Intl.DateTimeFormat(userLocale, { dateStyle: 'medium'}).format(dayjs().toDate());
+  // return dayjs().toDate().toLocaleDateString(userLocale, opt);
 }
 
-function parseStr(dateStr, list) {
-  const option = list.reduce((obj, key) => {
-    obj[key] = opt[key];
-    return obj;
-  }, {});
-  return dayjs(dateStr).toDate().toLocaleDateString(userLocale, option);
+function parseYMD(date) {
+  return parse(date, { dateStyle: 'medium' });
 }
 
-function parse(date, list) {
-  const option = list ? list.reduce((obj, key) => {
-    obj[key] = opt[key];
-    return obj;
-  }, {}) : opt;
+function parseMD(date) {
+  const { month, day } = opt;
+  return parse(date, { month, day });
+}
+
+function parse(date, option) {
+  // console.log(opt);
+  // const option = list ? list.reduce((obj, key) => {
+  //   obj[key] = opt[key];
+  //   return obj;
+  // }, {}) : opt;
   const tempDate = typeof date === 'string' || typeof date === 'number' ? dayjs(date) : date;
-  return tempDate.toDate().toLocaleDateString(userLocale, option);
+  return Intl.DateTimeFormat(userLocale, option).format(tempDate.toDate());
+  // return tempDate.toDate().toLocaleDateString(userLocale, { dateStyle: 'full'});
 }
 
 export default {
   today,
-  parseStr,
+  parseYMD,
+  parseMD,
   parse
 };

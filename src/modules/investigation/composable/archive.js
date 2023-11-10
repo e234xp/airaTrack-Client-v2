@@ -45,14 +45,6 @@ export default async function downloadReport(form, taskName, faceDataList, times
   let archMap = new Map();
   let archCameras = '';
   let timeList = '';
-  // console.log(form);
-  // console.log(taskName);
-  // console.log(faceDataList);
-  // console.log(timestamp);
-  // console.log(faceImage);
-  // console.log(startTime);
-  // console.log(endTime);
-  // return;
 
   const userStore = useUserStore();
   const { user } = userStore;

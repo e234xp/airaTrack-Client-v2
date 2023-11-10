@@ -2,9 +2,9 @@
   <div class="flex py-4 w-full" ref="chartContainer">
     <div
       @click="handlePrevDate()"
-      class="rounded-lg border border-white/40 bg-black/20
+      class="rounded-lg border border-white/80
         ml-4 mr-4 grid justify-center content-between text-white
-              cursor-pointer hover:bg-primary-hover transition"
+              cursor-pointer bg-ctrl-secondary-lg hover:bg-ctrl-secondary-lg-hover"
       style="width: 5.75rem"
     >
       <div class="invisible">
@@ -17,64 +17,54 @@
         />
       </div>
       <div class="mb-4 text-center select-none">
-        {{ spiderman.formatDate.parse(spiderman.dayjs(selectedDate).subtract(1,'day'), ['month', 'day']) }}
+        {{ spiderman.formatDate.parseMD(spiderman.dayjs(selectedDate).subtract(1,'day')) }}
       </div>
     </div>
     <div class="rounded-lg border border-white/40 bg-black/20 p-4 cursor-pointer" style="width: calc(100% - 15.5rem)">
       <div class="flex justify-between text-white gap-4 h-10">
-        <div class="flex items-center gap-2" style="width: 30%">
-          <div class="select-none">{{ $t('TimeTitle') }}</div>
+        <div class="flex items-center gap-2">
+          <div class="select-none w-16 text-right">{{ $t('TimeTitle') }}</div>
           <AppSwitch :value="selectedTimeType" :list="timeTypeList" @select="onSelectTimeType"></AppSwitch>
           <AppDatePicker
+            class="!w-48"
             v-model:modelSelected="selectedDate"
-            class="!w-2/3"
             :dark="true"
-            v-if="selectedTimeType === 'custom'"
+            :style="{ opacity: selectedTimeType === 'custom' ? 1 : 0 }"
           />
         </div>
-        <div class="flex items-center gap-2" style="width: 30%">
-          <div class="select-none">{{ $t('Camera') }}</div>
+        <div class="flex items-center gap-2">
+          <div class="select-none w-16 text-right">{{ $t('Camera') }}</div>
           <AppSwitch :value="selectedCameraType" :list="cameraTypeList" @select="onSelectCameraType"></AppSwitch>
-          <BadgeList
-            :list="cameraList"
-            :limit="0"
-            :selected="selectedCamera"
-            @update:unSelectCamera="onUnSelect"
-            v-if="selectedCameraType === 'select'"
-          >
-            <CameraList :list="cameraList" :selected="selectedCamera" 
-              @update:unSelectCamera="onUnSelect" @update:selectCamera="onSelect"></CameraList>
-          </BadgeList>
+          <div class="bg-ctrl-secondary w-5 h-5 p-0.5 rounded-md hover:bg-ctrl-secondary-hover" 
+            @click="handleOpenCameraFilter"
+            :style="{ opacity: selectedCameraType === 'select' ? 1 : 0 }">
+            <AppSvgIcon name="icon-chevron-botton" class="text-white w-4 h-4"/>
+          </div>
         </div>
-        <div class="flex items-center gap-2" style="width: 30%">
-          <div class="select-none">{{ $t('Album') }}</div>
+        <div class="flex items-center gap-2 pl-40">
+          <div class="select-none w-16 text-right">{{ $t('Album') }}</div>
           <AppSwitch :value="selectedAlbumType" :list="albumTypeList" @select="onSelectAlbumType"></AppSwitch>
-          <BadgeList
-            :list="albumsList"
-            :limit="0"
-            :selected="selectedAlbum"
-            @update:unSelectCamera="onUnSelectAlbum"
-            v-if="selectedAlbumType === 'select'"
-          >
-            <CameraList :list="albumsList" :selected="selectedAlbum" :limit="false"
-              @update:unSelectCamera="onUnSelectAlbum" @update:selectCamera="onSelectAlbum"></CameraList>
-          </BadgeList>
+          <div class="bg-ctrl-secondary w-5 h-5 p-0.5 rounded-md hover:bg-ctrl-secondary-hover" 
+            @click="handleOpenAlbumFilter"
+            :style="{ opacity: selectedAlbumType === 'select' ? 1 : 0 }">
+            <AppSvgIcon name="icon-chevron-botton" class="text-white w-4 h-4"/>
+          </div>
         </div>
       </div>
       <AppDivider class="my-2" />
 
-      <div class="w-full" style="height: 8.25rem;">
+      <div class="w-full mx-auto" style="height: 8.25rem;">
         <canvas id="chart" />
       </div>
       <div class="flex justify-center text-primary text-xl">
-        {{ spiderman.formatDate.parse(selectedDate, ['month', 'day']) }}
+        {{ spiderman.formatDate.parseMD(selectedDate) }}
       </div>
     </div>
     <div
       @click="handleNextDate()"
-      class="rounded-lg border border-white/40 bg-black/20
+      class="rounded-lg border border-white/80
         mr-4 ml-4 grid justify-center content-between text-white
-              cursor-pointer hover:bg-primary-hover transition"
+              cursor-pointer transition bg-ctrl-secondary-lg hover:bg-ctrl-secondary-lg-hover"
       style="width: 5.75rem"
     >
       <div class="invisible">
@@ -87,10 +77,13 @@
         />
       </div>
       <div class="mb-4 text-center select-none">
-        {{ spiderman.formatDate.parse(spiderman.dayjs(selectedDate).add(1,'day'), ['month', 'day']) }}
+        {{ spiderman.formatDate.parseMD(spiderman.dayjs(selectedDate).add(1,'day')) }}
       </div>
     </div>
   </div>
+
+  <ModalAlbumFilter :list="albumsList" :selected="selectedAlbum" @filter="handleAlbumFilter"></ModalAlbumFilter>
+  <ModalCameraFilter :list="cameraList" :selected="selectedCamera" @filter="handleCameraFilter"></ModalCameraFilter>
 </template>
 
 <script setup>
@@ -111,6 +104,8 @@ import useStore from '@/modules/target/stores/index';
 
 import BadgeList from './BadgeList.vue';
 import CameraList from './CameraList.vue';
+import ModalAlbumFilter from './ModalAlbumFilter.vue';
+import ModalCameraFilter from './ModalCameraFilter.vue';
 
 const devicesStore = useDevices();
 const { livedevices } = storeToRefs(devicesStore);
@@ -119,7 +114,7 @@ const albumsStore = useAlbums();
 const { albums, albumColorMap } = storeToRefs(albumsStore);
 
 const store = useStore();
-const { getLiveFaceHourlyCount, setSelectedCamera, setSelectedAlbum } = store;
+const { getLiveFaceHourlyCount, setSelectedCamera, setSelectedAlbum, setModal } = store;
 const { selectedCamera, selectedAlbum } = storeToRefs(store);
 
 const i18n = useI18n();
@@ -205,7 +200,6 @@ function onSelectTimeType(val) {
 //------------------------------------------
 // camera filter
 //------------------------------------------
-// const selectedCameraType = ref('all');
 const selectedCameraType = computed({
   get: () => props.modelSelectedCameraType,
   set: (value) => {
@@ -229,27 +223,22 @@ const cameraList = computed({
 })
 
 function onSelectCameraType(val) {
+  if (val === selectedCameraType.value) return;
   selectedCameraType.value = val;
+  if (val === 'select' && selectedCamera.value.length === cameraList.value.length) setModal('camera-filter');
 }
 
-function onUnSelect(id) {
-  const temp = selectedCamera.value.map((id) => id);
-  const idx = temp.indexOf(id);
-  if (idx >= 0) temp.splice(idx, 1);
-  setSelectedCamera(temp);
+function handleOpenCameraFilter() {
+  setModal('camera-filter');
 }
 
-function onSelect(id) {
-  const temp = selectedCamera.value.map((id) => id);
-  const idx = temp.indexOf(id);
-  if (idx < 0) temp.push(id);
-  setSelectedCamera(temp);
+function handleCameraFilter(list) {
+  setSelectedCamera(list);
 }
 
 //------------------------------------------
 // album filter
 //------------------------------------------
-// const selectedAlbumType = ref('all');
 const selectedAlbumType = computed({
   get: () => props.modelSelectedAlbumType,
   set: (value) => {
@@ -268,26 +257,25 @@ const albumTypeList = ref([
 
 const albumsList = computed({
   get: () => {
-    return albums.value.map(({ albumId, albumName }) => ({ id: albumId, name: albumName }));
+    return [
+      { id: '0', name: 'Unclassified' },
+      ...albums.value.map(({ albumId, albumName }) => ({ id: albumId, name: albumName }))
+    ];
   }
 })
 
 function onSelectAlbumType(val) {
+  if (val === selectedAlbumType.value) return;
   selectedAlbumType.value = val;
+  if (val === 'select' && selectedAlbum.value.length === albumsList.value.length) setModal('album-filter');
 }
 
-function onUnSelectAlbum(id) {
-  const temp = selectedAlbum.value.map((id) => id);
-  const idx = temp.indexOf(id);
-  if (idx >= 0) temp.splice(idx, 1);
-  setSelectedAlbum(temp);
+function handleOpenAlbumFilter() {
+  setModal('album-filter');
 }
 
-function onSelectAlbum(id) {
-  const temp = selectedAlbum.value.map((id) => id);
-  const idx = temp.indexOf(id);
-  if (idx < 0) temp.push(id);
-  setSelectedAlbum(temp);
+function handleAlbumFilter(list) {
+  setSelectedAlbum(list);
 }
 
 //------------------------------------------
@@ -353,7 +341,7 @@ onMounted(() => {
     data: {
       labels: Array.from(Array(24).keys()),
       datasets: Array.from(Array(6).keys()).map((idx) => ({
-        label: idx == 0 ? '# of Faces' : `# of ${albumsList.value[idx - 1].name}`,
+        label: idx == 0 ? '# of Faces' : `# of ${albumsList.value[idx].name}`,
         data: [],
         backgroundColor: (context) => {
           if (context.dataIndex === selectedHour.value) {
@@ -372,7 +360,6 @@ onMounted(() => {
     },
     options: {
       maintainAspectRatio: false,
-      responsive: true,
       layout: {
         padding: {
           bottom: 2
@@ -401,7 +388,16 @@ onMounted(() => {
               return '#839195';
             },
             font: {
-              size: 16,
+              size(context) {
+                const width = context.chart.width;
+                const height = context.chart.height;
+                if (height < 140) return 16;
+                if (height < 170) return 25;
+                if (height < 200) return 30;
+                if (width > 5000) return 70;
+                if (width > 2500) return 33;
+                return 16;
+              },
               family: 'Helvetica',
             },
           },
@@ -425,10 +421,10 @@ onMounted(() => {
         hide: {
           animations: {
             x: {
-              from: 0
+              to: 0
             },
             y: {
-              from: 0
+              to: 0
             }
           }
         }
@@ -514,7 +510,6 @@ onUnmounted(() => {
 });
 
 async function renderByDate(date) {
-  // const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
   const today = spiderman.dayjs().format('YYYY-MM-DD');
   const start = spiderman.dayjs(`${date} 00:00:00`).unix();
   const end = today === date ? spiderman.dayjs().unix() : spiderman.dayjs(`${date} 23:59:59`).unix();
@@ -522,8 +517,8 @@ async function renderByDate(date) {
   const tempData = await getLiveFaceHourlyCount(start, end, cList);
   const template = [0, 1, 2, 3, 4, 5];
   const dataOfDate = template.map((idx) => {
-    if (idx === 0) return tempData.map((list) => list[idx]);
-    if (selectedAlbumType.value === 'all' || selectedAlbum.value.indexOf(albumsList.value[idx - 1].id) >= 0) return tempData.map((list) => list[idx]);
+    const aId = albumsList.value[idx].id;
+    if (selectedAlbumType.value === 'all' || selectedAlbum.value.indexOf(aId) >= 0) return tempData.map((list) => list[idx]);
     return new Array(24).fill(0);
   })
   sumData.value = new Array(24).fill(1).map((_, idx) => {
