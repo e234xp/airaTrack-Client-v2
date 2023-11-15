@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="rounded-lg border border-white/40 bg-black/20 p-4 cursor-pointer" style="width: calc(100% - 15.5rem)">
-      <div class="flex justify-between text-white gap-4 h-10">
+      <div class="flex text-white gap-4 h-10">
         <div class="flex items-center gap-2">
           <div class="select-none w-16 text-right">{{ $t('TimeTitle') }}</div>
           <AppSwitch :value="selectedTimeType" :list="timeTypeList" @select="onSelectTimeType"></AppSwitch>
@@ -32,7 +32,7 @@
             :style="{ opacity: selectedTimeType === 'custom' ? 1 : 0 }"
           />
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 mx-auto">
           <div class="select-none w-16 text-right">{{ $t('Camera') }}</div>
           <AppSwitch :value="selectedCameraType" :list="cameraTypeList" @select="onSelectCameraType"></AppSwitch>
           <div class="bg-ctrl-secondary w-5 h-5 p-0.5 rounded-md hover:bg-ctrl-secondary-hover" 
@@ -41,7 +41,7 @@
             <AppSvgIcon name="icon-chevron-botton" class="text-white w-4 h-4"/>
           </div>
         </div>
-        <div class="flex items-center gap-2 pl-40">
+        <div class="flex items-center gap-2 ml-auto">
           <div class="select-none w-16 text-right">{{ $t('Album') }}</div>
           <AppSwitch :value="selectedAlbumType" :list="albumTypeList" @select="onSelectAlbumType"></AppSwitch>
           <div class="bg-ctrl-secondary w-5 h-5 p-0.5 rounded-md hover:bg-ctrl-secondary-hover" 

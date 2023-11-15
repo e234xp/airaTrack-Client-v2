@@ -15,9 +15,16 @@ export default defineStore('module-investigation', () => {
       remark: '',
     },
     bookmarkForm: {
-      firstResult: null,
-      resultLength: null,
       description: '',
+    },
+    archiveForm: {
+      title: 'Investigation Report',
+      subject: 'Subject',
+      remark: '',
+    },
+    selectedExport: {
+      firstResult: null,
+      resultLength: null
     },
     dataType: 'all',
     selectedTask: null,
@@ -53,6 +60,16 @@ export default defineStore('module-investigation', () => {
   const bookmarkForm = ref(null);
   function setBookmarkForm(data) {
     bookmarkForm.value = data;
+  }
+
+  const archiveForm = ref(null);
+  function setArchiveForm(data) {
+    archiveForm.value = data;
+  }
+
+  const selectedExport = ref(null);
+  function setSelectedExport(data) {
+    selectedExport.value = data;
   }
 
   const fromCase = ref(false);
@@ -120,11 +137,17 @@ export default defineStore('module-investigation', () => {
     bookmarkForm,
     setBookmarkForm,
 
+    archiveForm,
+    setArchiveForm,
+
     dataType,
     setDataType,
 
     selectedTask,
     setSelectedTask,
+
+    selectedExport,
+    setSelectedExport,
 
     fromCase,
     caseData,

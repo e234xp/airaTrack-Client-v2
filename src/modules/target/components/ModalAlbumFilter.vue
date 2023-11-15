@@ -16,7 +16,7 @@
         <div class="flex items-center gap-2" v-for="(item, idx) in list">
           <AppCheckBox :placeholder="item.name" :modelInput="isChecked(item.id)" @onChange="onCheck(item.id)">
             <div class="flex items-center gap-2">
-              <AppSvgIcon name="icon-album" class="w-6 h-6" :color="getAlbumColor(idx)" />
+              <AppSvgIcon name="icon-avatar-album" class="w-6 h-6" :color="getAlbumColor(idx)" :stroke="getAlbumColor(idx)" />
               <!-- <div class="w-4 h-4 rounded" :style="{ backgroundColor: getAlbumColor(idx) }"></div> -->
               <div class="truncate" :style="{color: getAlbumColor(idx)}">{{ item.name }}</div>
             </div>

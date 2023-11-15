@@ -14,16 +14,15 @@
         >
           <div class="flex py-4 pl-8">
             <img
-              class="w-60 h-60 mr-4"
+              class="w-60 h-60 mr-2 object-cover"
               :src="spiderman.base64Image.getSrc(item.target_face_image)"
               alt=""
             >
 
-            <div class="w-full flex-grow text-white text-xl">
+            <div class="text-white text-xl" style="width: calc(100% - 15rem)">
               <div class="flex justify-around pl-4">
                 <div class="w-32 mr-8 flex items-center content-center">
-                  {{ item.data_type }}
-                  <!-- <template v-if="item.data_type === 'stop'">
+                  <template v-if="item.data_type === 'stop'">
                     {{ $t('Init') }}
                   </template>
                   <template v-else-if="item.data_type === 'progress'">
@@ -31,7 +30,7 @@
                   </template>
                   <template v-else-if="item.data_type === 'finish'">
                     {{ $t('Completed') }}
-                  </template> -->
+                  </template>
                 </div>
                 <div class="flex items-center" style="width: calc(100% - 32rem)">
                   <div class="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700">
@@ -248,10 +247,14 @@ function parseTime(timestamp) {
   timeList.forEach((_, idx) => {
     const pIdx = timeList.length - idx - 1;
     const val = Math.floor(temp / Math.pow(60, pIdx));
-    if (val > 0) timeList[idx] = val + ' ' + timeMap[idx];
     temp = temp % Math.pow(60, pIdx);
+    if (val > 0) {
+      if (idx === 2 && temp !== 0) timeList[idx] = (val + 1) + ' ' + timeMap[idx];
+      else timeList[idx] = val + ' ' + timeMap[idx];
+    }
   });
-  return timeList.filter((t) => t !== '').slice(0, 2).join('');
+  const max = timeList.findIndex((t) => t !== '');
+  return max === 2 ? timeList.filter((t) => t !== '').slice(0, 1).join(' ') : timeList.filter((t) => t !== '').slice(0, 2).join(' ');
 }
 
 onMounted(async () => {

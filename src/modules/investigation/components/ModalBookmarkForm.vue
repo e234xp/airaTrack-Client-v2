@@ -12,45 +12,18 @@
     </template>
 
     <template #default>
-      <div class="mb-4 text-xl">
-        <div
-          class="border border-gray-400 rounded mb-2 flex p-2"
-        >
-          <img
-            class="w-36 h-36 mr-4"
-            :src="spiderman.base64Image.getSrc(bookmarkForm.firstResult.faceImage)"
-            alt=""
-          >
-          <div class="flex flex-col justify-center text-xl">
-            <div>
-              {{ bookmarkForm.firstResult.deviceName }}
-            </div>
-            <div>
-              {{ spiderman.dayjs(bookmarkForm.firstResult.timestamp)
-                .format('YYYY/MM/DD HH:mm:ss') }}
-            </div>
-          </div>
-        </div>
-        <div
-          v-if="bookmarkForm.resultLength > 1"
-          class="flex"
-        >
-          <div>
-            {{ $t('AndMore', { number: bookmarkForm.resultLength - 1 }) }}
-          </div>
-        </div>
-      </div>
+      <RegionExportItem />
 
-      <div class="text-xl">
-        {{ $t('Comment') }}
-      </div>
+      <AppLabel :label="$t('Comment')">
+        <AppInput
+          dark
+          v-model:modelInput="bookmarkForm.description"
+          :placeholder="$t('Comment')"
+          :rule="''"
+          class="mb-6 text-base"
+        />
+      </AppLabel>
 
-      <AppInput
-        dark
-        v-model:modelInput="bookmarkForm.description"
-        :placeholder="$t('Comment')"
-        class="mb-6 text-base"
-      />
     </template>
 
     <template #footer>
@@ -80,6 +53,8 @@ import { storeToRefs } from 'pinia';
 import spiderman from '@/spiderman';
 
 import useStore from '@/modules/investigation/stores/index';
+
+import RegionExportItem from './RegionExportItem.vue';
 
 defineEmits(['confirm']);
 

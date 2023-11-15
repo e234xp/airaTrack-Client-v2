@@ -1,5 +1,5 @@
 <template>
-  <ModalLayout :is-open="modal === 'case'" @close="setModal('')">
+  <ModalLayout :is-open="modal === 'case'" @close="onCancel">
     <template #header>
       {{ $t('AddToCase') }}
     </template>
@@ -9,28 +9,27 @@
     </template>
 
     <template #default>
-      <div class="text-xl">
-        {{ $t('CaseName') }}
-      </div>
+      <RegionExportItem />
 
-      <AppInput
-        dark
-        v-model:modelInput="name"
-        :placeholder="'Name'"
-        class="mb-4 text-base"
-      />
+      <AppLabel :label="$t('CaseName')">
+        <AppInput
+          dark
+          v-model:modelInput="name"
+          :placeholder="$t('CaseName')"
+          class="mb-4 text-base"
+        />
+      </AppLabel>
 
-      <div class="text-xl">
-        {{ $t('CaseDescription') }}
-      </div>
+      <AppLabel :label="$t('CaseDescription')">
+        <AppInput
+          dark
+          v-model:modelInput="description"
+          :rule="''"
+          :placeholder="$t('Description')"
+          class="mb-6 text-base"
+        />
+      </AppLabel>
 
-      <AppInput
-        dark
-        v-model:modelInput="description"
-        :rule="''"
-        :placeholder="$t('Description')"
-        class="mb-6 text-base"
-      />
     </template>
 
     <template #footer>
@@ -38,7 +37,7 @@
         <AppButton
           type="secondary"
           class="px-6"
-          @click="setModal('')"
+          @click="onCancel"
         >
           {{ $t('Cancel') }}
         </AppButton>
@@ -62,6 +61,8 @@ import { storeToRefs } from 'pinia';
 
 import useStore from '@/modules/investigation/stores/index';
 
+import RegionExportItem from './RegionExportItem.vue';
+
 defineEmits(['add']);
 
 const store = useStore();
@@ -70,4 +71,10 @@ const { setModal } = store;
 
 const name = ref('');
 const description = ref('');
+
+function onCancel() {
+  name.value = '';
+  description.value = '';
+  setModal('')
+}
 </script>

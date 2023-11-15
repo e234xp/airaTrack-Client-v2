@@ -32,13 +32,13 @@
 
             <div class="relative w-full h-full">
               <div class="flex gap-1 items-center">
-                <AppSvgIcon name="icon-album" :color="albumColor" class="w-5 h-6" />
+                <AppSvgIcon name="icon-avatar-album" :color="albumColor" :stroke="albumColor" class="w-5 h-6" />
                 <div class="w-full h-6 truncate" :style="{ color: albumColor }">
                   {{ albumName }}
                 </div>
               </div>
               <img
-                class="absolute left-0 bottom-0 w-5/6 h-5/6 rounded border-2 border-dashed"
+                class="absolute left-0 bottom-0 w-4/5 h-4/5 rounded border-2 border-dashed"
                 :style="{ borderColor: albumColor }"
                 :src="spiderman.base64Image.getSrc(albumImage)"
                 alt=""
@@ -173,7 +173,7 @@ const albumIdx = computed({
 
 const albumColor = computed({
   get: () => {
-    if (albumIdx.value < 0) return '';
+    if (albumIdx.value < 0) return 'transparent';
     return albumColorMap.value.get(albumIdx.value) || '';
   }
 })

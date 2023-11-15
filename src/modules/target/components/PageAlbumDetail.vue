@@ -12,7 +12,7 @@
               >
                 <AppSvgIcon name="icon-chevron-left" class="text-white w-4 h-4" />
               </AppButton>
-              <AppSvgIcon name="icon-album" class="w-6 h-6" :color="albumColor" />
+              <AppSvgIcon name="icon-avatar-album" class="w-6 h-6" :color="albumColor" :stroke="albumColor" />
               <div class="text-xl" :style="{ color: albumColor }">{{ albumName }}</div>
             </div>
 
@@ -20,6 +20,7 @@
               <template v-if="!isEditMode">
                 <AppButton
                   type="secondary"
+
                   class="w-40"
                   @click="toggleEditMode"
                 >

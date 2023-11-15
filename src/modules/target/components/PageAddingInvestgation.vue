@@ -193,10 +193,10 @@ const form = ref({
   search_interval_ms: 1000,
 
   // 以下是 UI 會控制
-  search_end_time: spiderman.dayjs(confirmedFace.value.timestamp).add(1, 'minute').format('YYYY-MM-DD HH:mm'),
+  search_end_time: spiderman.dayjs(confirmedFace.value.timestamp).add(11, 'minute').format('YYYY-MM-DD HH:mm'),
   search_start_time: spiderman
     .dayjs(confirmedFace.value.timestamp)
-    .add(1, 'minute')
+    .add(11, 'minute')
     .subtract(1, 'hour')
     .format('YYYY-MM-DD HH:mm'),
   task_name: `task-${spiderman.dayjs().format('YYYYMMDD')}`,

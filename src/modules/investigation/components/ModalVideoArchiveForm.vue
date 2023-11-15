@@ -12,34 +12,36 @@
     </template>
 
     <template #default>
-      <div class="text-xl">
-        {{ $t('Title') }}
-      </div>
-      <AppInput
-        dark
-        v-model:modelInput="pdfForm.title"
-        :placeholder="$t('Title')"
-        class="mb-4 text-base"
-      />
-      <div class="text-xl">
-        {{ $t('Subject') }}
-      </div>
-      <AppInput
-        dark
-        v-model:modelInput="pdfForm.subject"
-        :placeholder="$t('Subject')"
-        class="mb-4 text-base"
-      />
-      <div class="text-xl">
-        {{ $t('Remark') }}
-      </div>
-      <AppInput
-        dark
-        v-model:modelInput="pdfForm.remark"
-        :placeholder="$t('Remark')"
-        class="mb-6 text-base"
-        rule=""
-      />
+      <RegionExportItem />
+
+      <AppLabel :label="$t('Title')">
+        <AppInput
+          dark
+          v-model:modelInput="archiveForm.title"
+          :placeholder="$t('Title')"
+          class="mb-4 text-base"
+        />
+      </AppLabel>
+
+      <AppLabel :label="$t('Subject')">
+        <AppInput
+          dark
+          v-model:modelInput="archiveForm.subject"
+          :placeholder="$t('Subject')"
+          class="mb-4 text-base"
+        />
+      </AppLabel>
+
+      <AppLabel :label="$t('Remark')">
+        <AppInput
+          dark
+          v-model:modelInput="archiveForm.remark"
+          :placeholder="$t('Remark')"
+          class="mb-6 text-base"
+          rule=""
+        />
+      </AppLabel>
+      
     </template>
 
     <template #footer>
@@ -55,6 +57,7 @@
         <AppButton
           type="primary"
           class="px-6"
+          :isEnable="archiveForm.title !== '' && archiveForm.subject !== ''"
           @click="
             emit('add');
           "
@@ -70,9 +73,10 @@
 import { storeToRefs } from 'pinia';
 
 import useStore from '@/modules/investigation/stores/index';
+import RegionExportItem from './RegionExportItem.vue';
 
 const store = useStore();
-const { modal, pdfForm } = storeToRefs(store);
+const { modal, archiveForm } = storeToRefs(store);
 const { setModal } = store;
 
 const emit = defineEmits(['add']);

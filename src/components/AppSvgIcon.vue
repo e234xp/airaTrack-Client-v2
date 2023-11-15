@@ -3,6 +3,7 @@
     <use
       :href="symbolId"
       :fill="color"
+      :stroke="stroke === '' ? undefined : stroke"
     />
   </svg>
 </template>
@@ -25,6 +26,10 @@ export default defineComponent({
       type: String,
       default: '#333',
     },
+    stroke: {
+      type: String,
+      default: '',
+    }
   },
   setup(props) {
     const symbolId = computed(() => `#${props.prefix}-${props.name}`);

@@ -229,9 +229,9 @@
                   <div
                     class="my-4 flex flex-col"
                   >
-                    <div class="mx-4 flex justify-center text-white">
+                    <div class="flex justify-center text-white">
                       <div class="pr-4 whitespace-nowrap flex items-center">
-                        {{ `${spiderman.formatDate.parseYMD(videoProgressBarTimeSlot.startTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.startTime).format('HH:mm:ss')}` }}
+                        {{ `${spiderman.formatDate.parseYMD(videoProgressBarTimeSlot.startTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.startTime).format('HH:mm')}` }}
                       </div>
 
                       <div class="w-full flex items-center">
@@ -259,7 +259,7 @@
                       </div>
 
                       <div class="pl-4 whitespace-nowrap flex items-center">
-                        {{ `${spiderman.formatDate.parseYMD(videoProgressBarTimeSlot.endTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.endTime).format('HH:mm:ss')}` }}
+                        {{ `${spiderman.formatDate.parseYMD(videoProgressBarTimeSlot.endTime)} ${spiderman.dayjs(videoProgressBarTimeSlot.endTime).format('HH:mm')}` }}
                       </div>
                     </div>
                   </div>
@@ -399,8 +399,9 @@ const devicesStore = useDevices();
 const { findDevice } = devicesStore;
 
 const store = useStore();
-const { selectedTask, pdfForm, bookmarkForm, fromCase, dataType } = storeToRefs(store);
-const { setModal, setBookmarkForm, getTaskResultAll, addBookmark, addCase, putCase } = store;
+const { selectedTask, pdfForm, bookmarkForm, archiveForm, fromCase, dataType, selectedExport } = storeToRefs(store);
+const { setModal, setBookmarkForm, setPdfForm, setArchiveForm, setSelectedExport, 
+  getTaskResultAll, addBookmark, addCase, putCase } = store;
 const { setPage, setDataType } = store;
 
 const targetStore = useTarget();
@@ -491,18 +492,30 @@ const selectedResults = computed(() => taskResults.value.filter(
   (_, index) => (selectedResultIndexes.value.includes(index)),
 ));
 
-function handlePdfExport() {
-  setModal('pdf');
-}
-
-async function handleVmsBookmark() {
-  setBookmarkForm({
+function handleExportItem() {
+  setSelectedExport({
     firstResult: {
       deviceName: findDevice(selectedResults.value[0].highest.cid).name,
       faceImage: selectedResults.value[0].highest.face_image,
       timestamp: selectedResults.value[0].highest.timestamp,
     },
-    resultLength: selectedResults.value.length,
+    resultLength: selectedResults.value.length
+  })
+}
+
+function handlePdfExport() {
+  handleExportItem();
+  setPdfForm({
+    title: 'Investigation Report',
+    subject: 'Subject',
+    remark: '',
+  });
+  setModal('pdf');
+}
+
+async function handleVmsBookmark() {
+  handleExportItem();
+  setBookmarkForm({
     description: '',
   });
   setModal('bookmark');
@@ -552,6 +565,7 @@ async function handleAddToAlbum(form) {
 }
 
 async function handleAddCase() {
+  handleExportItem();
   setModal('case');
 }
 
@@ -567,11 +581,17 @@ async function onAddCase(param) {
 }
 
 async function handleVideoArchive() {
+  handleExportItem();
+  setArchiveForm({
+    title: 'Investigation Report',
+    subject: 'Subject',
+    remark: '',
+  });
   setModal('archive');
 }
 
 async function onAddVideoArchive() {
-  downloadReport(pdfForm.value, selectedTask.value.task_name, selectedResults.value, selectedTask.value.target.timestamp, selectedTask.value.target_face_image, selectedTask.value.search_start_time, selectedTask.value.search_end_time);
+  downloadReport(archiveForm.value, selectedTask.value.task_name, selectedResults.value, selectedTask.value.target.timestamp, selectedTask.value.target_face_image, selectedTask.value.search_start_time, selectedTask.value.search_end_time);
 }
 
 async function onSnapshot() {

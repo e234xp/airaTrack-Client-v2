@@ -12,19 +12,23 @@
     </template>
 
     <template #default>
-      <AppInput
-        dark
-        type="select"
-        :options="options"
-        v-model:modelInput="form.albumId"
-      />
+
+      <AppLabel :label="$t('Album')">
+        <AppInput
+          dark
+          type="select"
+          :options="options"
+          v-model:modelInput="form.albumId"
+        />
+      </AppLabel>
+      
     </template>
 
     <template #footer>
-      <div class="flex justify-end text-2xl">
+      <div class="flex justify-end text-2xl gap-4">
         <AppButton
           type="secondary"
-          class="ml-6 px-6 py-2"
+          class="px-6 py-2"
           @click="setModal('')"
         >
           {{ $t('Cancel') }}
@@ -32,7 +36,7 @@
 
         <AppButton
           type="primary"
-          class="ml-6 px-6 py-2"
+          class="px-6 py-2"
           @click="handleAdd"
         >
           {{ $t('Add') }}

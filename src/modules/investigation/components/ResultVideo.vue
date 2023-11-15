@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col px-4 pb-4">
+  <div class="h-full flex flex-col pl-4 pb-4 pr-2">
     <div
       class="relative w-full bg-black flex justify-center"
       style="height: calc(100% - 8rem);"
@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <div class="px-4">
+    <div>
       <input
         type="range"
         class="w-full h-2 bg-gray-200
@@ -40,34 +40,40 @@
     <slot name="select-video-bar" />
 
     <!-- background-image: linear-gradient(45deg,#404040 0,#131617 70%) -->
-    <div class="mx-4 flex">
+    <div class="flex">
       <div class="flex-1 flex gap-2 items-center">
         <slot name="video-bar-download" />
       </div>
-      <div class="flex-1 flex justify-center rounded-full border border-white/80 bg-ctrl-secondary gap-6"
-      style="max-width: 18rem;box-shadow: inset 1px 1px 4px rgba(0,0,0,0.6), inset -1px -1px 4px rgba(255,255,255,0.2);">
-        <img
-          src="@/assets/images/btn-prev.png"
-          class="w-12 cursor-pointer"
-          @click="$emit('onPrev')"
-        >
-        <img
-          src="@/assets/images/btn-play.png"
-          v-if="!isPlaying"
-          class="w-12 cursor-pointer"
-          @click="play"
-        >
-        <img
-          src="@/assets/images/btn-pause.png"
-          v-else
-          class="w-12 cursor-pointer"
-          @click="pause"
-        >
-        <img
-          src="@/assets/images/btn-next.png"
-          class="w-12 cursor-pointer"
-          @click="$emit('onNext')"
-        >
+      <div class="flex-1 flex justify-center rounded-full border border-white/80 bg-ctrl-secondary"
+      style="max-width: 18rem; box-shadow: inset 1px 1px 4px rgba(0,0,0,0.6), inset -1px -1px 4px rgba(255,255,255,0.2);">
+        <div class="px-4 cursor-pointer hover:bg-ctrl-secondary-hover">
+          <img
+            src="@/assets/images/btn-prev.png"
+            class="w-12"
+            @click="$emit('onPrev')"
+          >
+        </div>
+        <div class="px-4 cursor-pointer hover:bg-ctrl-secondary-hover" v-if="!isPlaying">
+          <img
+            src="@/assets/images/btn-play.png"
+            class="w-12 cursor-pointer"
+            @click="play"
+          >
+        </div>
+        <div class="px-4 cursor-pointer hover:bg-ctrl-secondary-hover" v-else>
+          <img
+            src="@/assets/images/btn-pause.png"
+            class="w-12 cursor-pointer"
+            @click="pause"
+          >
+        </div>
+        <div class="px-4 cursor-pointer hover:bg-ctrl-secondary-hover">
+          <img
+            src="@/assets/images/btn-next.png"
+            class="w-12 cursor-pointer"
+            @click="$emit('onNext')"
+          >
+        </div>
       </div>
       <div class="flex-1 flex justify-end">
         <slot name="video-bar-turn-page" />
