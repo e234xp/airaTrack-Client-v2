@@ -82,7 +82,7 @@ module.exports = {
         352: '88rem',
         368: '92rem',
         384: '96rem',
-      },
+      }
     },
     minHeight: {
       '2row': '13.5rem',

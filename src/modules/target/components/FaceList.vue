@@ -70,6 +70,7 @@ import { storeToRefs } from 'pinia';
 
 import useStore from '@/modules/target/stores/index';
 import useAlbums from '@/stores/albums';
+import useDebug from '@/stores/debug';
 
 const props = defineProps({
   faces: {
@@ -92,6 +93,9 @@ const {
 
 const albumsStore = useAlbums();
 const { albums, albumColorMap } = storeToRefs(albumsStore);
+
+const debugStore = useDebug();
+const { setAlternate } = debugStore;
 
 const gridStyle = computed({
   get: () => {
@@ -116,6 +120,7 @@ async function handleToggleFace(face) {
     setConfirmingFaces([]);
     setConfirmedFace(null);
   } else {
+    setAlternate({ image: face.data.face_image, feature: face.data.feature });
     setSelectedFace(face);
     setConfirmingFaces([]);
     setConfirmingFacesAll(face);
@@ -143,12 +148,13 @@ async function setConfirmingFacesAll(face) {
 
       tmp = [...tmp, {
         camera_id: face.camera_id,
-        timestamp: face.timestamp,
+        timestamp: f.timestamp,
         data: {
           id: f.id,
           face_file: f.face_file,
           face_image: image.b64,
           feature: f.feature,
+          score: f.score
         },
       }];
       return { id: f.id };

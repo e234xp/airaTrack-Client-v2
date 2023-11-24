@@ -5,7 +5,6 @@ const opt = Intl.DateTimeFormat().resolvedOptions();
 
 function today() {
   return Intl.DateTimeFormat(userLocale, { dateStyle: 'medium'}).format(dayjs().toDate());
-  // return dayjs().toDate().toLocaleDateString(userLocale, opt);
 }
 
 function parseYMD(date) {
@@ -18,14 +17,8 @@ function parseMD(date) {
 }
 
 function parse(date, option) {
-  // console.log(opt);
-  // const option = list ? list.reduce((obj, key) => {
-  //   obj[key] = opt[key];
-  //   return obj;
-  // }, {}) : opt;
   const tempDate = typeof date === 'string' || typeof date === 'number' ? dayjs(date) : date;
   return Intl.DateTimeFormat(userLocale, option).format(tempDate.toDate());
-  // return tempDate.toDate().toLocaleDateString(userLocale, { dateStyle: 'full'});
 }
 
 export default {

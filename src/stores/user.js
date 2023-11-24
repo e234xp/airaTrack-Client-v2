@@ -5,7 +5,7 @@ import spiderman from '@/spiderman';
 export default defineStore('user', () => {
   const user = ref(null);
   const sessionId = ref('');
-
+  
   async function loginUser(form) {
     const {
       sessionId: tmpSessionId, user: tmpUser,

@@ -143,7 +143,8 @@ export async function getTaskResultAll(taskId, score) {
     params: {
       task_id: taskId,
       score,
-      Idx: 0,
+      idx: 0,
+      size: 50
     },
   });
   return result;

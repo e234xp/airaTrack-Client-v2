@@ -33,6 +33,10 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       component: () => import('../views/LoginView.vue'),
     },
+    {
+      path: '/debug',
+      component: () => import('../views/DebugView.vue'),
+    },
   ],
 });
 

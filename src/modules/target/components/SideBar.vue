@@ -19,7 +19,7 @@
               </div>
               <AppButton :type="$route.path !== '/config' ? 'secondary' : 'primary'"
                 @click="clearSelection"
-                class="absolute top-0 right-0 !p-0">
+                class="absolute top-0 -right-2 !p-0">
                 <AppSvgIcon name="icon-close" class="text-white w-6 h-6" />
               </AppButton>
             </div>
@@ -69,6 +69,7 @@
               :src="spiderman.base64Image.getSrc(face?.data.face_image)"
               alt=""
             >
+            <div class="absolute top-0 left-0 bg-gray-900/80 px-1 text-white" v-if="testMode">{{ face.data.score }}</div>
             <template
               v-if="face.data.id === confirmedFace?.data.id"
             >
@@ -144,6 +145,7 @@ import successStore from '@/components/AppSuccess/success';
 import useStore from '@/modules/target/stores/index';
 import useAlbums from '@/stores/albums';
 import useDevices from '@/stores/devices';
+import useDebug from '@/stores/debug';
 
 import ModalSaveToAlbum from '@/modules/target/components/ModalSaveToAlbum.vue';
 import ModalMoveToAlbum from '@/modules/target/components/ModalMoveToAlbum.vue';
@@ -160,6 +162,10 @@ const { getAlbumPhoto, deleteAlbumPhoto } = useAlbums();
 
 const devicesStore = useDevices();
 const { findDevice } = devicesStore;
+
+const debugStore = useDebug();
+const { testMode } = storeToRefs(debugStore);
+const { setAlternate } = debugStore;
 
 const albumIdx = computed({
   get: () => {
@@ -188,8 +194,8 @@ const albumName = computed({
 const albumImage = computed({
   get: () => {
     if (selectedFace.value && selectedFace.value.highest && selectedFace.value.highest.albumId !== '') {
-      const key = `${selectedFace.value.highest.key}.png`;
-      const idx = albumPhotoImage.value.findIndex((image) => image.photoId === key);
+      const key = selectedFace.value.highest.key;
+      const idx = albumPhotoImage.value.findIndex((image) => image.photoId.indexOf(key) >= 0);
       if (idx < 0) return '';
       return albumPhotoImage.value[idx].base64Image;
     }
@@ -225,10 +231,11 @@ const cameraName = computed({
 
 watch(selectedFace, async () => {
   if (selectedFace.value && selectedFace.value.highest && selectedFace.value.highest.albumId !== '') {
-    const key = `${selectedFace.value.highest.key}.png`;
-    const idx = albumPhotoImage.value.findIndex((image) => image.photoId === key);
+    const pkey = `${selectedFace.value.highest.key}.png`;
+    const jkey = `${selectedFace.value.highest.key}.jpeg`;
+    const idx = albumPhotoImage.value.findIndex((image) => image.photoId === pkey || image.photoId === jkey);
     if (idx < 0) {
-      await getAlbumPhoto([key]);
+      await getAlbumPhoto([pkey, jkey]);
     }
   }
 })
@@ -237,6 +244,7 @@ async function handleToggleFace(face) {
   if (confirmedFace.value?.data?.id === face.data.id) {
     setConfirmedFace(null);
   } else {
+    setAlternate({ image: face.data.face_image, feature: face.data.feature });
     setConfirmedFace(face);
   }
 }

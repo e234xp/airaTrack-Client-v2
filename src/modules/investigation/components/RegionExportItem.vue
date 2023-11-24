@@ -8,12 +8,12 @@
         :src="spiderman.base64Image.getSrc(selectedExport.firstResult.faceImage)"
         alt=""
       >
-      <div class="flex flex-col justify-center text-xl">
+      <div class="flex flex-col justify-center text-xl" style="width: calc(100% - 10rem)">
         <div>
           {{ spiderman.dayjs(selectedExport.firstResult.timestamp)
             .format('YYYY/MM/DD HH:mm:ss') }}
         </div>
-        <div>
+        <div class="truncate">
           {{ selectedExport.firstResult.deviceName }}
         </div>
       </div>

@@ -56,12 +56,16 @@
                           <div class="text-base">
                             0.5
                           </div>
-                          <div class="mx-3 flex-grow flex items-center">
+                          <div class="relative mx-3 flex-grow flex items-center">
+                            <div class="absolute text-primary font-bold text-center text-lg" :style="scoreHintStyle">
+                              {{ targetScore === '1' ? targetScore + '.0' : targetScore }}
+                            </div>
                             <input
                               type="range"
                               class="w-full h-1
                                     rounded-full appearance-none cursor-pointer
-                                    bg-panel accent-gray-300"
+                                    accent-gray-300"
+                              :style="inputRangeStyle"
                               v-model="targetScore"
                               :min="0.5"
                               :max="1"
@@ -89,7 +93,7 @@
                     :placeholder="$t('SelectAll')"
                     :checked="selectedResultIndexes.length === taskResults.length"
                     @on-change="handleSelectAll"
-                  >{{ $t('SelectAll') }} ({{ selectedResultIndexes.length }})</AppCheckBox>
+                  >{{ $t('SelectAll') }} ({{ selectedResultIndexes.length }}/{{ scoreResult }})</AppCheckBox>
                 </div>
               </template>
 
@@ -373,7 +377,7 @@
 
 <script setup>
 import {
-  computed, ref, watch, reactive
+  computed, ref, watch, reactive, onMounted
 } from 'vue';
 import { storeToRefs } from 'pinia';
 import spiderman from '@/spiderman';
@@ -388,6 +392,7 @@ import ModalVideoArchiveForm from '@/modules/investigation/components/ModalVideo
 import ModalAddCase from '@/modules/investigation/components/ModalAddCase.vue';
 import ModalSaveToAlbum from '@/modules/investigation/components/ModalSaveToAlbum.vue';
 
+import useConfig from '@/modules/config/stores/index';
 import useStore from '@/modules/investigation/stores/index';
 import useTarget from '@/modules/target/stores/index';
 import useVideo from '@/modules/investigation/composable/video';
@@ -409,6 +414,8 @@ const { addPhotoFeature } = targetStore;
 
 const albumsStore = useAlbums();
 const { albums } = storeToRefs(albumsStore);
+
+const { getTrackConfig } = useConfig();
 
 const {
   videoResultIndex,
@@ -441,6 +448,20 @@ const rangeList = new Map()
 const rangeIndexes = Array.from(rangeList.keys());
 const rangeName = ref('1 hr');
 const range = computed(() => rangeList.get(rangeName.value));
+
+const scoreHintStyle = computed({
+  get: () => {
+    const newVal = ((targetScore.value - 0.5) / 0.5) * 100;
+    const newPos = 8 - (newVal * 0.16);
+    return {
+      top: '-80%',
+      transform: 'translate(-50%, 0)',
+      width: '40px',
+      left: `calc(${newVal}% + (${newPos}px))`
+    }
+  }
+})
+
 function rangeZoomIn() {
   const index = rangeIndexes.findIndex((i) => i === rangeName.value);
   if (index === 0) return;
@@ -452,10 +473,13 @@ function rangeZoomOut() {
   rangeName.value = rangeIndexes[index + 1];
 }
 
+const scoreCount = ref({});
+
 const targetDevice = computed(() => findDevice(selectedTask.value.target.camera_id));
 const taskResults = ref([]);
-const targetScore = ref(0.8);
+const targetScore = ref(0);
 watch(targetScore, async (newScore) => {
+  if (newScore === 0) return;
   await setTaskResults(newScore);
   if (taskResults.value.length !== 0) setVideoResultIndex({ index: 0, results: taskResults.value, range: range.value });
 }, { immediate: true });
@@ -470,12 +494,43 @@ watch(range, (newRange) => {
 
 async function setTaskResults(score) {
   if (!fromCase.value) {
-    ({ result: taskResults.value } = await getTaskResultAll(selectedTask.value.task_id, score));
-
+    ({ result: taskResults.value, score_count: scoreCount.value } = await getTaskResultAll(selectedTask.value.task_id, score));
   } else {
     taskResults.value = selectedTask.value.facesData;
   }
 }
+
+const scoreResult = computed({
+  get: () => {
+    const key = targetScore.value === '1' ? '1.0' : targetScore.value.toString();
+    return scoreCount.value[key];
+  }
+})
+
+const scoreDistributed = computed({
+  get: () => {
+    const list = [];
+    const primary = 'rgba(44, 119, 160, #)';
+    const keys = Object.keys(scoreCount.value);
+    const count = keys.length;
+    const sum = scoreCount.value[keys[0]];
+    Object.keys(scoreCount.value).forEach((key, idx) => {
+      const val = scoreCount.value[key];
+      list.push(`${primary.replace('#', sum === 0 ? 0 : (val / sum))} ${(idx / count) * 100}%`);
+    })
+    return list;
+  }
+})
+
+const inputRangeStyle = computed({
+  get: () => {
+    return {
+      height: '0.5rem',
+      background: '#FFF',
+      backgroundImage: `linear-gradient(to right, ${scoreDistributed.value.join(',')})`
+    }
+  } 
+})
 
 const selectedResultIndexes = ref([]);
 function handleSelectAll() {
@@ -614,6 +669,10 @@ async function onVideoArchive() {
   link.download = `${selectedTask.value.task_name}_${spiderman.formatDate.today().split(' ').join('')}`; //or any other extension
   link.click();
 }
+
+onMounted(async () => {
+  ({ face_merge_score: targetScore.value } = await getTrackConfig());
+})
 </script>
 
 <style lang="scss">

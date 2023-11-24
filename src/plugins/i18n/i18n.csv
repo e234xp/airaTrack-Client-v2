@@ -200,7 +200,7 @@ FaceDetectThreshold,Face Detection Threshold,顔検出のしきい値,人臉檢�
 FaceMaskDetection,Masks are required to pass,通過にはマスク必須,需要戴口罩才能通過
 FaceMaskEnhancement,Face Mask Enhancement,マスク認識強化,增強口罩辨識
 FaceVerifySettings,Recognition Parameters,顔認識パラメータ,辨識參數
-FaceBoard,Face Wall,顔の壁,人臉牆
+FaceBoard,Face Board,フェイスボード,人臉牆
 FactoryDefault,Factory Default,初期化,系統重設
 Fahrenheit,Fahrenheit (°F),華氏 (°F),華氏 (°F)
 FailRecords,Faild Records,失敗履歴,失敗筆數

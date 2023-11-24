@@ -14,12 +14,20 @@
           >
             {{ $t("Upload") }}
           </AppButton>
-          <div class="album h-2/3 p-5 bg-black/40 rounded-lg border-2 border-panel shadow-cus flex flex-col gap-5"
+          <div class="album h-2/3 p-5 bg-black/40 rounded-lg border-2 border-panel cursor-pointer shadow-cus flex flex-col gap-2"
             :style="cardStyle"
+            @click="onRead(album.id)"
             v-for="(album, idx) in albumsList" :key="album.id">
             <div class="text-white text-2xl truncate">{{ album.name }}</div>
-            <div class="w-full h-3 bg-album-1" :style="{ background: albumColorMap.get(idx) }"></div>
-            <div class="w-full bg-black/40 relative" style="padding-top: 100%;" ref="albumImage">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-4/5 h-3" :style="{ background: albumColorMap.get(idx) }"></div>
+              <div class="w-1/5 text-center rounded-2xl text-black/80" :style="{ background: albumColorMap.get(idx) }">
+                {{ getImageCount(album.id) }}
+              </div>
+            </div>
+            <div class="w-full relative mb-2" 
+              :class="[getImageList(album.id).length === 0 ? 'bg-black/20' : 'bg-black/40']"
+              style="padding-top: 100%;" ref="albumImage">
               <div class="absolute top-0 left-0 w-full h-full flex flex-wrap">
                 <AppSvgIcon
                   name="icon-images"
@@ -36,19 +44,19 @@
                 </template>
               </div>
             </div>
-            <div class="h-3 text-white break-words" :style="{ width: `${albumWidth}px` }">{{ album.text }}</div>
+            <div class="h-3 text-white/50 break-words" :style="{ width: `${albumWidth}px` }">{{ album.text }}</div>
             <div class="button mt-auto gap-4 hidden">
               <AppButton
                 type="secondary"
                 class="w-1/2"
-                @click="onEdit(album.id)"
+                @click.stop="onEdit(album.id)"
               >
                 {{ $t("Edit") }}
               </AppButton>
               <AppButton
                 type="secondary"
                 class="w-1/2"
-                @click="onRead(album.id)"
+                @click.stop="onRead(album.id)"
               >
                 {{ $t("Detail") }}
               </AppButton>
@@ -120,6 +128,10 @@ function getImage(id) {
 
 function getImageList(id) {
   return imageList.value.get(id) || [];
+}
+
+function getImageCount(id) {
+  return albumPhotoList.value.get(id)?.length;
 }
 
 function onEdit(id) {

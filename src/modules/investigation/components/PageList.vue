@@ -85,7 +85,7 @@
                     class="px-8"
                     @click="handleCancelTask(item.task_id)"
                   >
-                    {{ $t("Cancel") }}
+                    Stop
                   </AppButton>
                 </div>
               </div>

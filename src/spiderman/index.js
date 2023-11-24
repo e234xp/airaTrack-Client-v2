@@ -13,7 +13,7 @@ import formatDate from './format-date';
 const system = {
   version: '2.0.0 231103',
   apiBaseUrl: import.meta.env.MODE === 'development'
-    ? 'http://211.75.111.228:8083'
+    ? 'http://192.168.10.119:8081'
     : '',
 };
 

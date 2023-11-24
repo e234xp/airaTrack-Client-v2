@@ -16,7 +16,7 @@
   </div>
   <div class="w-1/3 mt-6">
     <AppButton type="primary" class="mx-20 px-6 py-2" @click="onApply">
-      Apply</AppButton>
+      {{ $t('Apply') }}</AppButton>
   </div>
 </template>
 
@@ -26,7 +26,7 @@ import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
 
 const store = useStore();
-const { getTrackConfig, postTrackConfig, getServerConfig, postServerConfig } = store;
+const { getTrackConfig, postTrackConfig } = store;
 
 const folder = ref('');
 
@@ -73,17 +73,14 @@ async function onApply() {
   const trackResult = await postTrackConfig({
     folder: folder.value,
     singleFile: singleFile.value,
-    faceRetention: faceRetention.value
+    faceRetention: faceRetention.value,
+    mergeScore: mergeScore.value
   })
-  const serverResult = await postServerConfig({
-    facemergescore: mergeScore.value
-  })
-  if (trackResult && serverResult) successStore.show();
+  if (trackResult) successStore.show();
 }
 
 onMounted(async () => {
-  ({ db_root_folder: folder.value, single_file_time: singleFile.value, maintain_duration: faceRetention.value } = await getTrackConfig());
-  ({ facemergescore: mergeScore.value } = await getServerConfig());
+  ({ db_root_folder: folder.value, single_file_time: singleFile.value, maintain_duration: faceRetention.value, face_merge_score: mergeScore.value } = await getTrackConfig());
 })
 
 </script>

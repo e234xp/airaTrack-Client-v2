@@ -5,7 +5,7 @@
         <div class="text-white text-xl">{{ $t('Search') }}</div>
         <AppInput v-model:modelInput="searchText" class="w-1/2" :rule="''" :dark="true" />
       </div>
-      <div class="flex items-center gap-4 py-4 px-2 w-3/5">
+      <div class="flex items-center justify-center gap-4 py-4 px-2 w-3/5">
         <AppSwitch :value="selectedType" :list="typeList" @select="onSelect"></AppSwitch>
         <AppDatePicker v-model:modelSelected="selectedDate" :dark="true" :range="true" v-if="selectedType === 'c'">
         </AppDatePicker>

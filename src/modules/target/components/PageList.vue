@@ -215,13 +215,22 @@ async function getLiveFaceHourly({ date, hour }) {
 
   const currentKey = helpers.getCurrentKey();
   // 去同時要每 10 分鐘的資料
-  await Promise.allSettled(hourFaceKeys.value.map(async (key) => {
-    const result = await hourFacePaginations.value[key].onTurnPage(1);
-    if (key !== currentKey) return { result };
+  // await Promise.allSettled(hourFaceKeys.value.map(async (key) => {
+  //   const result = await hourFacePaginations.value[key].onTurnPage(1);
+  //   if (key !== currentKey) return { result };
 
-    performAnimation(hourFaces.value[key]);
-    return { result };
-  }));
+  //   performAnimation(hourFaces.value[key]);
+  //   return { result };
+  // }));
+  hourFaceKeys.value.reduce((chain, key) => {
+    return chain.then(async () => {
+      const result = await hourFacePaginations.value[key].onTurnPage(1);
+      if (key !== currentKey) return { result };
+
+      performAnimation(hourFaces.value[key]);
+      return { result };
+    });
+  }, Promise.resolve())
 }
 
 const timer = setInterval(async () => {

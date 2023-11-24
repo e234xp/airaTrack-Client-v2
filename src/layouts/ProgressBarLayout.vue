@@ -18,25 +18,22 @@
             class="w-1/3 !text-2xl">
             {{ $t("Case") }}
           </AppButton>
+          <AppButton type="transparent" @click="$router.push({ path: '/debug' })" :is-active="$route.path === '/debug'"
+            class="w-1/3 !text-2xl" v-if="testMode">
+            Debug
+          </AppButton>
         </div>
         <div class="w-80 grid grid-flow-col content-center justify-end divide-x-2 divide-gray-500
        text-default">
           <div class="relative flex items-center gap-1 pr-6 text-xl cursor-pointer" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
             <AppSvgIcon name="icon-user" :color="'#b5bec0'" class="w-8 h-8" />
             {{ user.username }}
-            <div class="absolute w-32 z-10 h-12 dialog-hint text-center bg-black py-3 rounded"
-              style="top: 100%; left: 50%; transform: translate(-50%, 0);"
-              @click="onLogout"
-              v-if="hover">
-              <div class="hover:text-primary">{{ $t("Logout") }}</div>
-            </div>
-            <!-- <AppButton type="secondary"
-              class="absolute w-32 z-10 h-12 dialog-hint"
+            <div class="absolute w-32 z-10 h-12 dialog-hint text-center bg-ctrl-secondary py-3 rounded hover:bg-ctrl-secondary-hover"
               style="top: 100%; left: 50%; transform: translate(-50%, 0);"
               @click="onLogout"
               v-if="hover">
               {{ $t("Logout") }}
-            </AppButton> -->
+            </div>
           </div>
           <div class="flex">
             <div class="flex flex-col justify-center items-end pr-6 pl-6 text-xs">
@@ -69,9 +66,11 @@
 <script setup>
 import { ref, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
 import spiderman from '@/spiderman';
 
 import useUserStore from '@/stores/user';
+import useDebugStore from '@/stores/debug';
 import { AppButton, AppDivider } from '../components/app';
 
 import successStore from '@/components/AppSuccess/success';
@@ -80,6 +79,9 @@ const router = useRouter();
 
 const userStore = useUserStore();
 const { user, logout } = userStore;
+
+const debugStore = useDebugStore();
+const { testMode } = storeToRefs(debugStore);
 
 // 定義目前時間
 const current = ref({
@@ -117,7 +119,7 @@ onUnmounted(() => {
 
 <style>
 .dialog-hint::after {
-  border-color: transparent transparent theme('colors.black') transparent;
+  border-color: transparent transparent #404040 transparent;
   border-style: solid solid solid solid;
 
   /* 設定邊框大小可拼湊出任意形狀的三角形 */

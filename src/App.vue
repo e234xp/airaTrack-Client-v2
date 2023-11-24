@@ -29,6 +29,8 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import spiderman from '@/spiderman';
 
 import background from '@/assets/base64-images/background-gray';
@@ -36,5 +38,15 @@ import background from '@/assets/base64-images/background-gray';
 import errorStore from '@/components/AppError/error';
 import successStore from '@/components/AppSuccess/success';
 import modalStore from '@/components/AppModal/modal';
+
+import useDebugStore from '@/stores/debug';
+const store = useDebugStore();
+const { setTestMode } = store;
+
+onMounted(() => {
+  window.test = (flag) => {
+    setTestMode(flag);
+  }
+})
 
 </script>

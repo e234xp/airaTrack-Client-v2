@@ -1,6 +1,5 @@
 import spiderman from '@/spiderman';
 import useUserStore from '@/stores/user';
-import useStore from './index';
 
 let trackConfig = {};
 let serverConfig = {};
