@@ -1,6 +1,6 @@
 <template>
   <label class="switch">
-    <input type="checkbox" v-model="input">
+    <input type="checkbox" v-model="input" :disabled="disabled">
     <span class="slider"></span>
   </label>
 </template>

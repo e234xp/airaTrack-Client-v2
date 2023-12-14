@@ -22,6 +22,18 @@ export async function deleteUsers(payload) {
 // =============================================
 // POST
 // =============================================
+export async function postNxServerInfo(payload) {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/configs/nxServerInfo`,
+    method: 'post',
+    headers: { sessionId: userStore.sessionId },
+    data: {
+      ...payload
+    }
+  })
+}
+
 export async function postNxConfig(payload) {
   const userStore = useUserStore();
   return await spiderman.apiService({

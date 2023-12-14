@@ -3,12 +3,13 @@ import spiderman from '@/spiderman';
 import useAlbums from '@/stores/albums';
 
 const sizeMap = [
-  { range: [1.7, 2.3], row: 2, col: 12 },
+  { range: [1.3, 2.3], row: 2, col: 12 },
   { range: [2.3, 3.5], row: 2, col: 18 },
   { range: [3.5, 10], row: 2, col: 24 },
   { range: [0.43, 0.57], row: 4, col: 6 },
   { range: [0.29, 0.43], row: 5, col: 6 },
-  { range: [0.1, 0.29], row: 6, col: 6 }
+  { range: [0.1, 0.29], row: 6, col: 6 },
+  { range: [0, 999], row: 2, col: 12 },
 ]
 async function getLiveFaces({
   startTime, endTime, page, perPage = 24, cameraList = [], sessionId,

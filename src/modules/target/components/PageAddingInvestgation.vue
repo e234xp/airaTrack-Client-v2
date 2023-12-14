@@ -148,8 +148,6 @@ import { useRouter } from 'vue-router';
 
 import spiderman from '@/spiderman';
 
-import NavigationBar from '@/modules/target/components/NavigationBar.vue';
-
 import useStore from '@/modules/target/stores/index';
 import useDevices from '@/stores/devices';
 

@@ -28,7 +28,7 @@ import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
 
 const store = useStore();
-const { getNxConfig, postNxConfig } = store;
+const { getNxConfig, postNxConfig, postNxServerInfo } = store;
 
 const vmOptions = ref({
   'Network Optix 5.0 or later': 'bearer',
@@ -54,15 +54,23 @@ const isValid = computed({
 })
 
 async function onClick() {
-  const result = await postNxConfig({
+  const [{ id }] = await postNxServerInfo({
     host: connect.ip,
     port: connect.port,
     username: login.username,
     password: login.password,
-    server_id: serverId.value,
-    authorization: selectedVms.value
   });
-  if (result) successStore.show();
+  if (id) {
+    const result = await postNxConfig({
+      host: connect.ip,
+      port: connect.port,
+      username: login.username,
+      password: login.password,
+      server_id: serverId.value,
+      authorization: selectedVms.value
+    });
+    if (result) successStore.show();
+  }
 }
 
 function onValid(val, idx) {

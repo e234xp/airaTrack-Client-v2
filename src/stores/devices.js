@@ -2,17 +2,26 @@ import spiderman from '@/spiderman';
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
+const TIME_OUT = 1000;
+
 export default defineStore('device', () => {
   const devices = ref([]);
 
   async function getDevices(sessionId) {
-    const { data } = await spiderman.apiService({
-      url: `${spiderman.system.apiBaseUrl}/airaTracker/devices`,
-      method: 'get',
-      headers: { sessionId },
+    const apiPromise = new Promise(async (resolve, reject) => {
+      const { data } = await spiderman.apiService({
+        url: `${spiderman.system.apiBaseUrl}/airaTracker/devices`,
+        method: 'get',
+        headers: { sessionId },
+      });
+      resolve(data || []);
     });
 
-    return data;
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => resolve([]), TIME_OUT);
+    });
+
+    return Promise.race([apiPromise, timeoutPromise]);
   }
 
   function setDevices(data) {
@@ -22,13 +31,21 @@ export default defineStore('device', () => {
   const livedevices = ref([]);
 
   async function getLiveDevices(sessionId) {
-    const { data } = await spiderman.apiService({
-      url: `${spiderman.system.apiBaseUrl}/airaTracker/livedevices`,
-      method: 'get',
-      headers: { sessionId },
+    const apiPromise = new Promise(async (resolve, reject) => {
+      const { data } = await spiderman.apiService({
+        url: `${spiderman.system.apiBaseUrl}/airaTracker/livedevices`,
+        method: 'get',
+        headers: { sessionId },
+      });
+      if (data) resolve(data);
+      else reject([]);
     });
 
-    return data;
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => resolve([]), TIME_OUT);
+    });
+
+    return Promise.race([apiPromise, timeoutPromise]);
   }
 
   function setLiveDevices(data) {

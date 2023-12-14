@@ -11,7 +11,9 @@
         <video
           ref="videoRef"
           :key="videoUrl"
+          playsinline="playsinline"
           autoplay
+          controlslist="nodownload"
           @timeupdate="handleTimeUpdate"
           @ended="handleVideoEnded"
           @playing="handleVideoStarted"

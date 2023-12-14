@@ -404,7 +404,7 @@ const devicesStore = useDevices();
 const { findDevice } = devicesStore;
 
 const store = useStore();
-const { selectedTask, pdfForm, bookmarkForm, archiveForm, fromCase, dataType, selectedExport } = storeToRefs(store);
+const { selectedTask, pdfForm, bookmarkForm, archiveForm, fromCase, dataType } = storeToRefs(store);
 const { setModal, setBookmarkForm, setPdfForm, setArchiveForm, setSelectedExport, 
   getTaskResultAll, addBookmark, addCase, putCase } = store;
 const { setPage, setDataType } = store;

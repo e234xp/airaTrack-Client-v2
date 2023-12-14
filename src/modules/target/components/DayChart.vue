@@ -26,10 +26,9 @@
           <div class="select-none w-16 text-right">{{ $t('TimeTitle') }}</div>
           <AppSwitch :value="selectedTimeType" :list="timeTypeList" @select="onSelectTimeType"></AppSwitch>
           <AppDatePicker
-            class="!w-48"
             v-model:modelSelected="selectedDate"
             :dark="true"
-            :style="{ opacity: selectedTimeType === 'custom' ? 1 : 0 }"
+            :style="{ opacity: selectedTimeType === 'custom' ? 1 : 0, width: '9.5rem !important' }"
           />
         </div>
         <div class="flex items-center gap-2 mx-auto">
@@ -509,12 +508,37 @@ onUnmounted(() => {
   clearInterval(renderInterval);
 });
 
+async function appendMockData(data) {
+  const base = {
+    '0': 10,
+    '1': 2,
+    '2': 1,
+    '3': 3,
+    '4': 1,
+    '5': 0,
+  };
+  const hour = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
+
+  hour.forEach((hour) => {
+    const temp = JSON.parse(JSON.stringify(base));
+    const adj = (hour > 12 ? 24 - hour : hour) + (Math.random() * (hour / 3));
+    temp['0'] = Math.floor(base['0'] * adj);
+    temp['1'] = Math.floor(base['1'] * adj);
+    temp['2'] = Math.floor(base['2'] * adj);
+    temp['3'] = Math.floor(base['3'] * adj);
+    temp['4'] = Math.floor(base['4'] * adj);
+    temp['5'] = Math.floor(base['5'] * adj);
+    data[hour] = temp;
+  })
+}
+
 async function renderByDate(date) {
   const today = spiderman.dayjs().format('YYYY-MM-DD');
   const start = spiderman.dayjs(`${date} 00:00:00`).unix();
   const end = today === date ? spiderman.dayjs().unix() : spiderman.dayjs(`${date} 23:59:59`).unix();
   const cList = selectedCameraType.value === 'all' ? livedevices.value.map(({ camera_id: cameraId }) => cameraId) : selectedCamera.value;
   const tempData = await getLiveFaceHourlyCount(start, end, cList);
+  // appendMockData(tempData);
   const template = [0, 1, 2, 3, 4, 5];
   const dataOfDate = template.map((idx) => {
     const aId = albumsList.value[idx].id;

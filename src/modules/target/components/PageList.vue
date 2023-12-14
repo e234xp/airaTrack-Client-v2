@@ -1,6 +1,6 @@
 <template>
   <ProgressBarLayout>
-    <FullLayout style="width: max(83%, calc(100% - 20rem))">
+    <FullLayout style="width: max(83.4%, calc(100% - 20rem))">
       <template #header>
         <NavigationBar />
 
@@ -23,8 +23,8 @@
             v-show="hourFaces[faceKey].length > 0"
             class="flex justify-center"
           >
-            <div class="w-full">
-              <div class="pl-6 flex gap-4">
+            <div class="w-full" style="width: 99%;">
+              <div class="pl-2 flex gap-4">
                 <div class="flex">
                   <div class="grid content-center text-white text-2xl leading-4">
                     {{ spiderman.dayjs(Number(faceKey)).format('HH:mm') }}
@@ -201,7 +201,7 @@ async function getLiveFaceHourly({ date, hour }) {
           cameraList,
           sessionId: sessionId.value,
         });
-        const filter = data.filter((item) => selectedAlbumType.value === 'all' || selectedAlbum.value.indexOf(item.highest.albumId === '' ? '0' : item.highest.albumId) >= 0);
+        const filter = data.filter((item) => selectedAlbumType.value === 'all' || selectedAlbum.value.indexOf((item?.highest?.albumId || '') === '' ? '0' : item.highest.albumId) >= 0);
 
         const dummy = filter.length > 0 ? [...filter, ...new Array(hourFacePerPage.value - filter.length).fill().map(() => ({ data: { id: ''} }))] : filter;
         hourFaces.value[key] = dummy;
@@ -324,27 +324,27 @@ function handleToDetail(faceKey) {
 }
 
 .album-none::before {
-  border: 4px double theme('colors.album-none');
+  border: 6px double theme('colors.album-none');
 }
 
 .album-1::before {
-  border: 4px double theme('colors.album-1');
+  border: 6px double theme('colors.album-1');
 }
 
 .album-2::before {
-  border: 4px double theme('colors.album-2');
+  border: 6px double theme('colors.album-2');
 }
 
 .album-3::before {
-  border: 4px double theme('colors.album-3');
+  border: 6px double theme('colors.album-3');
 }
 
 .album-4::before {
-  border: 4px double theme('colors.album-4');
+  border: 6px double theme('colors.album-4');
 }
 
 .album-5::before {
-  border: 4px double theme('colors.album-5');
+  border: 6px double theme('colors.album-5');
 }
 
 .more {

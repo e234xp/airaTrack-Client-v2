@@ -11,7 +11,7 @@ import formatDate from './format-date';
 // http://192.168.10.119:8081
 // http://211.75.111.228:8083
 const system = {
-  version: '2.0.0 231103',
+  version: '2.0.0 231214',
   apiBaseUrl: import.meta.env.MODE === 'development'
     ? 'http://192.168.10.119:8081'
     : '',

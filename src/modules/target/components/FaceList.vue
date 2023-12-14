@@ -1,5 +1,8 @@
 <template>
-  <div class="gap-3 list-container" :style="gridStyle">
+  <!-- <div class="gap-3 list-container" :style="gridStyle">
+    
+  </div> -->
+  <transition-group name="slide-in" tag="div" class="gap-3 list-container" :style="gridStyle">
     <div
       v-for="face in faces"
       :key="face.data.id"
@@ -60,7 +63,7 @@
         <div class="w-full"></div>
       </template> -->
     </div>
-  </div>
+  </transition-group>
 </template>
 
 <script setup>
@@ -184,4 +187,24 @@ function chunkArray(array, chunkSize) {
   grid-auto-flow: dense;
 }
 
+.slide-in-enter-from {
+  transform: scale(0.6);
+}
+
+.slide-in-leave-from,
+.slide-in-leave-active,
+.slide-in-leave-to {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.slide-in-enter-active {
+  transition: all .5s ease;
+}
+
+.slide-in-move {
+  transition: all .3s ease;
+}
 </style>

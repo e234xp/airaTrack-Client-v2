@@ -1,9 +1,10 @@
 <template>
-  <div class="w-full" style="height: calc(100% - 4rem)">
+  <div class="w-full relative" style="height: calc(100% - 4rem)">
+    <div class="absolute -top-11 right-0 text-white text-xl">License: <span class="text-primary">{{ current }}</span> / {{ licenseCount }}</div>
     <AppDataTable :rowHeight="80" :columns="column" :dataList="pageData" :margin="100">
       <template #open="props">
         <div class="flex justify-center">
-          <AppToggle :value="props.data.live" @change="onChangeLive(props.data.cameraId)"></AppToggle>
+          <AppToggle :value="props.data.live" @change="onChangeLive(props.data.cameraId)" :disabled="isFull && !props.data.live"></AppToggle>
         </div>
       </template>
       <template #camera="props">
@@ -30,14 +31,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import useStore from '@/modules/config/stores/index';
-import successStore from '@/components/AppSuccess/success';
-
 import AppDataTable from '@/components/AppDataTable.vue';
 
 const store = useStore();
-const { getLiveDevices, getDevices, postLiveDevice, deleteLiveDevice } = store;
+const { getLiveDevices, getDevices, postLiveDevice, deleteLiveDevice, getLicense } = store;
 
 const column = ref([
   {
@@ -89,6 +88,18 @@ const sensitivityList = ref({
 })
 
 const pageData = ref([]);
+const licenseCount = ref(0);
+
+const current = computed(() => {
+  return pageData.value.reduce((acc, cur) => {
+    if (cur.live) acc++;
+    return acc;
+  }, 0)
+})
+
+const isFull = computed(() => {
+  return current.value >= licenseCount.value;
+})
 
 function parseDecode(val) {
   return val ? 'iframe' : 'full';
@@ -192,6 +203,12 @@ onMounted(async () => {
   pageData.value = data.map((item) => parseData(item));
   const result = await getLiveDevices();
   updateList(result.data);
+
+  const { license } = await getLicense();
+  licenseCount.value = license.reduce((acc, cur) => {
+    if (!cur.license_is_expired) acc += cur.channel_amount;
+    return acc;
+  }, 0)
 })
 
 </script>

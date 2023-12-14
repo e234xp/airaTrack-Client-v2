@@ -1,7 +1,7 @@
 <template>
   <div
-    :style="{ backgroundImage: spiderman.base64Image.getStyle(background) }"
-    class="h-screen bg-cover font-custom"
+    :style="{ backgroundImage: spiderman.base64Image.getStyle(background), height: `${height}px` }"
+    class="bg-cover font-custom"
   >
     <AppError
       :is-show="errorStore.isShow"
@@ -29,8 +29,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
-import { storeToRefs } from 'pinia';
+import { onMounted, onBeforeUnmount, ref } from 'vue';
 import spiderman from '@/spiderman';
 
 import background from '@/assets/base64-images/background-gray';
@@ -43,10 +42,22 @@ import useDebugStore from '@/stores/debug';
 const store = useDebugStore();
 const { setTestMode } = store;
 
+const height = ref(0);
+
+function documentHeight() {
+  height.value = window.innerHeight;
+}
+
 onMounted(() => {
+  window.addEventListener('resize', documentHeight);
+  documentHeight();
   window.test = (flag) => {
     setTestMode(flag);
   }
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', documentHeight);
 })
 
 </script>

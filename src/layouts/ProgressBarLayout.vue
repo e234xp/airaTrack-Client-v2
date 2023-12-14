@@ -10,7 +10,7 @@
             class="w-1/3 !text-2xl">
             {{ $t("Target") }}
           </AppButton>
-          <AppButton type="transparent" @click="$router.push({ path: '/investigation' })"
+          <AppButton type="transparent" @click="onClickInvest"
             :is-active="$route.path === '/investigation'" class="w-1/3 !text-2xl">
             {{ $t("Investigation") }}
           </AppButton>
@@ -73,6 +73,7 @@ import useUserStore from '@/stores/user';
 import useDebugStore from '@/stores/debug';
 import { AppButton, AppDivider } from '../components/app';
 
+import useStore from '@/modules/investigation/stores/index';
 import successStore from '@/components/AppSuccess/success';
 
 const router = useRouter();
@@ -82,6 +83,8 @@ const { user, logout } = userStore;
 
 const debugStore = useDebugStore();
 const { testMode } = storeToRefs(debugStore);
+
+const { setPage } = useStore();
 
 // 定義目前時間
 const current = ref({
@@ -110,6 +113,12 @@ async function onLogout() {
     successStore.show();
     router.push({ path: '/' })
   }
+}
+
+function onClickInvest() {
+  const { path } = router.currentRoute.value;
+  if (path === '/investigation') setPage('list');
+  else router.push({ path: '/investigation' })
 }
 
 onUnmounted(() => {
