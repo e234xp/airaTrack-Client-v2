@@ -138,7 +138,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
               html {background-color: gray;}
               html, body {margin: 0;padding: 0;}
               #app {position: relative;max-width: 595px;margin-left: auto;margin-right: auto;background-color: #ffffff;box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.4);}
-              #app .navbar {position: relative;height: 34px;margin: 0;padding: 0;background-color: #2475a0;}
+              #app .navbar {position: relative;height: 34px;margin: 0;padding: 0;background-color: #2475a0;display: flex; align-items: center; padding-left: 24px; gap: 8px; color: #fff}
               #app .navbar .img1 {position: absolute;height: 12px;width: 33px;left: 50px;top: 11.5px;background-image: url('./src/assets/image/logo.png');background-position: center;}
               #app .navbar .logo {position: absolute;width: 66px;height: 20px;object-fit: contain;color: #fff;left: 24px;top: 8px;font-size: 17px;font-family: Helvetica;}
               #app .navbar .report-title {position: absolute;top: 8px;left: 95px;height: 20px;margin: 0 0 0 8px;font-family: Helvetica;color: #ffffff;font-size: 17px;font-stretch: normal;line-height: normal;font-weight: 300;font-style: normal;line-height: normal;letter-spacing: normal;}
@@ -219,7 +219,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
           </style>`;
 
   let header = `
-      <div class="navbar"><span class="logo">${document.title.split(' ')[0]}</span><span class="report-title">${reportTitle}</span></div>
+      <div class="navbar"><span>${document.title.split(' ')[0]}</span><span>${reportTitle}</span></div>
       <div class="title">
           <div class="title-left"><span>${form.title}</span></div>
           <div class="title-right">
