@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import spiderman from '@/spiderman';
 
 import useUserStore from '@/stores/user';
+import errorStore from '@/components/AppError/error';
 
 function featureToFArray(feature) {
   const blob = atob(feature);
@@ -76,7 +77,10 @@ export default defineStore('debug', () => {
     let score = 0.0;
     const float1 = fb1024Result[0];
     const float2 = fb1024Result[1];
-    if (float1.length != float2.length) return score;
+    if (float1.length != float2.length) {
+      errorStore.show({error: { message: 'feature length not equal' }});
+      return score;
+    }
 
     let v9 = 0.0;
     for (let k = 0; k < float1.length; k++) {

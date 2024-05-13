@@ -61,6 +61,7 @@ body {
   --dp-font-size: 1rem;
   --tw-gradient-to: 100%;
   overflow: hidden;
+  counter-reset: page;
 }
 
 .dp__theme_dark {

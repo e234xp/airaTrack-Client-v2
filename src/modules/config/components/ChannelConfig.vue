@@ -1,7 +1,7 @@
 <template>
   <div class="w-full relative" style="height: calc(100% - 4rem)">
-    <div class="absolute -top-11 right-0 text-white text-xl">License: <span class="text-primary">{{ current }}</span> / {{ licenseCount }}</div>
-    <AppDataTable :rowHeight="80" :columns="column" :dataList="pageData" :margin="100">
+    <div class="absolute -top-11 right-0 text-white text-xl">{{ $t('License') }}: <span class="text-primary">{{ current }}</span> / {{ licenseCount }}</div>
+    <AppDataTable :rowHeight="rowHeight" :columns="column" :dataList="pageData" :margin="marginHeight" v-if="pageData.length !== 0">
       <template #open="props">
         <div class="flex justify-center">
           <AppToggle :value="props.data.live" @change="onChangeLive(props.data.cameraId)" :disabled="isFull && !props.data.live"></AppToggle>
@@ -26,50 +26,78 @@
           :modelInput="parseSensitivity(props.data.sensitivity)"
           @update:modelInput="onUpdateSensitivity($event, props.data.cameraId)" v-show="props.data.live" />
       </template>
+      <template #threshold="props">
+        <AppInput :dark="true" type="select" class="w-full" :options="thresholdList"
+          :modelInput="props.data.threshold"
+          @update:modelInput="onUpdateThreshold($event, props.data.cameraId)" v-show="props.data.live" />
+      </template>
+      <template #minFaceSize="props">
+        <AppInput :dark="true" type="select" class="w-full" :options="sizeList"
+          :modelInput="props.data.minFaceSize"
+          @update:modelInput="onUpdateMinFaceSize($event, props.data.cameraId)" v-show="props.data.live" />
+      </template>
     </AppDataTable>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onBeforeMount, onMounted, computed, onBeforeUnmount } from 'vue';
+import { useI18n } from 'vue-i18n';
+
 import useStore from '@/modules/config/stores/index';
 import AppDataTable from '@/components/AppDataTable.vue';
+import useDevices from '@/stores/devices';
 
 const store = useStore();
 const { getLiveDevices, getDevices, postLiveDevice, deleteLiveDevice, getLicense } = store;
 
+const devicesStore = useDevices();
+const { setDevices, setLiveDevices } = devicesStore;
+
+const i18n = useI18n();
+
 const column = ref([
   {
-    width: '10%',
+    width: '5%',
     key: 'open',
     align: 'center',
-    text: 'Switch'
+    text: i18n.t('Switch')
   },
   {
-    width: '45%',
+    width: '25%',
     key: 'camera',
-    text: 'Camera'
+    text: i18n.t('Camera')
   },
   {
-    width: '15%',
+    width: '12%',
     key: 'decode',
-    text: 'Decode'
+    text: i18n.t('Decode')
   },
   {
-    width: '15%',
+    width: '12%',
     key: 'interval',
-    text: 'Interval (ms)'
+    text: i18n.t('IntervalMs')
   },
   {
-    width: '15%',
+    width: '12%',
     key: 'sensitivity',
-    text: 'Sensitivity'
+    text: i18n.t('Sensitivity')
+  },
+  {
+    width: '12%',
+    key: 'threshold',
+    text: i18n.t('CaptureThreshold')
+  },
+  {
+    width: '12%',
+    key: 'minFaceSize',
+    text: i18n.t('MinFaceSize')
   }
 ])
 
 const decodeList = ref({
-  'Full frame': 'full',
-  'I-frame only': 'iframe'
+  [`${i18n.t('FullFrame')}`]: 'full',
+  [`${i18n.t('IFrameOnly')}`]: 'iframe'
 })
 
 const intervalList = ref({
@@ -83,12 +111,26 @@ const intervalList = ref({
 })
 
 const sensitivityList = ref({
-  'Normal': 'normal',
-  'High': 'high'
+  [`${i18n.t('Normal')}`]: 'normal',
+  [`${i18n.t('High')}`]: 'high'
+})
+
+const thresholdList = ref({
+  [`${i18n.t('Small')}`]: 0.1,
+  [`${i18n.t('Medium')}`]: 0.5,
+  [`${i18n.t('High')}`]: 0.8
+})
+
+const sizeList = ref({
+  [`${i18n.t('Small')}`]: '50',
+  [`${i18n.t('Medium')}`]: '100',
+  [`${i18n.t('Large')}`]: '150'
 })
 
 const pageData = ref([]);
 const licenseCount = ref(0);
+const rowHeight = ref(0);
+const marginHeight = ref(0);
 
 const current = computed(() => {
   return pageData.value.reduce((acc, cur) => {
@@ -132,7 +174,9 @@ function parseData(item, live = false) {
     cameraId: item.camera_id,
     interval: item.capture_interval_ms || -1,
     decodeKeyOnly: item.decode_key_only || false,
-    sensitivity: item.capture_sensitivity || -1
+    sensitivity: item.capture_sensitivity || -1,
+    threshold: item.capture_threshold || -1,
+    minFaceSize: (item.min_face_size || 50).toString()
   }
 }
 
@@ -142,7 +186,10 @@ async function onChangeLive(id) {
     const camera = pageData.value[cameraIdx];
     if (camera.live) {
       const { message } = await deleteLiveDevice(camera.cameraId);
-      if (message === 'ok') pageData.value[cameraIdx].live = false;
+      if (message === 'ok') {
+        pageData.value[cameraIdx].live = false;
+        updateStore();
+      }
     } else {
       await updateLiveCamera(camera, true);
     }
@@ -173,6 +220,22 @@ async function onUpdateSensitivity(val, id) {
   }
 }
 
+async function onUpdateThreshold(val, id) {
+  const cameraIdx = pageData.value.findIndex((item) => item.cameraId === id);
+  if (cameraIdx >= 0) {
+    pageData.value[cameraIdx].threshold = val;
+    await updateLiveCamera(pageData.value[cameraIdx]);
+  }
+}
+
+async function onUpdateMinFaceSize(val, id) {
+  const cameraIdx = pageData.value.findIndex((item) => item.cameraId === id);
+  if (cameraIdx >= 0) {
+    pageData.value[cameraIdx].minFaceSize = val;
+    await updateLiveCamera(pageData.value[cameraIdx]);
+  }
+}
+
 async function updateLiveCamera(camera, isNew = false) {
   const { message, data } = await postLiveDevice({
     server_ip: camera.server.ip,
@@ -183,20 +246,42 @@ async function updateLiveCamera(camera, isNew = false) {
     name: camera.name,
     capture_interval_ms: isNew ? 1000 : camera.interval,
     capture_sensitivity: isNew ? 0.25 : camera.sensitivity,
-    decode_key_only: isNew ? false : camera.decodeKeyOnly
+    capture_threshold: isNew ? 0.5 : camera.threshold,
+    decode_key_only: isNew ? false : camera.decodeKeyOnly,
+    min_face_size: isNew ? 50 : +camera.minFaceSize
   });
   if (message === 'ok') updateList(data);
 }
 
-function updateList(data) {
+async function updateList(data) {
   data.forEach((live) => {
     const idx = pageData.value.findIndex((item) => item.cameraId === live.camera_id);
     if (idx >= 0) pageData.value[idx] = {
       ...pageData.value[idx],
-      ...parseData(live, true)
+      live: true,
+      interval: live.capture_interval_ms || -1,
+      decodeKeyOnly: live.decode_key_only || false,
+      sensitivity: live.capture_sensitivity || -1,
+      threshold: live.capture_threshold || -1,
+      minFaceSize: (live.min_face_size || 50).toString()
     };
   })
+  updateStore();
 }
+
+async function updateStore() {
+  const { data } = await getLiveDevices();
+  setLiveDevices(data);
+}
+
+onBeforeMount(() => {
+  const rootElement = document.documentElement;
+  const rootStyles = window.getComputedStyle(rootElement);
+  const baseFontSize = rootStyles.fontSize;
+  const baseFontSizeValue = parseFloat(baseFontSize);
+  rowHeight.value = baseFontSizeValue * 4.65;
+  marginHeight.value = baseFontSizeValue * 6.25;
+}),
 
 onMounted(async () => {
   const { data } = await getDevices();

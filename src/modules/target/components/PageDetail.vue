@@ -30,7 +30,7 @@
       </template>
 
       <template #footer>
-        <div class="flex justify-center my-12 text-white text-2xl">
+        <div class="flex justify-center mt-4 mb-16 text-white text-2xl">
           <div
             class="flex items-center cursor-pointer mx-2"
             :class="{
@@ -40,7 +40,7 @@
           >
             <AppSvgIcon
               name="icon-chevron-to-end"
-              class="w-8 h-8 rotate-180"
+              class="w-4 h-4 rotate-180"
             />
           </div>
           <div
@@ -52,11 +52,11 @@
           >
             <AppSvgIcon
               name="icon-chevron-left"
-              class="w-8 h-8"
+              class="w-4 h-4"
             />
           </div>
           <div
-            class="mx-8 text-3xl"
+            class="mx-8 text-2xl"
           >
             {{ currentPage }} / {{ totalPages }}
           </div>
@@ -69,7 +69,7 @@
           >
             <AppSvgIcon
               name="icon-chevron-right"
-              class="w-8 h-8"
+              class="w-4 h-4"
             />
           </div>
           <div
@@ -81,7 +81,7 @@
           >
             <AppSvgIcon
               name="icon-chevron-to-end"
-              class="w-8 h-8"
+              class="w-4 h-4"
             />
           </div>
         </div>
@@ -100,6 +100,7 @@ import spiderman from '@/spiderman';
 
 import useUserStore from '@/stores/user';
 import useDevices from '@/stores/devices';
+import useAlbums from '@/stores/albums';
 
 import SideBar from '@/modules/target/components/SideBar.vue';
 import FaceList from '@/modules/target/components/FaceList.vue';
@@ -108,7 +109,7 @@ import useStore from '@/modules/target/stores/index';
 import helpers from '@/modules/target/helpers';
 
 const store = useStore();
-const { selectedFaceKey } = storeToRefs(store);
+const { selectedFaceKey, faceListRow, faceListCol, selectedCamera, selectedAlbum, selectedCameraType, selectedAlbumType } = storeToRefs(store);
 const { setPage } = store;
 
 const userStore = useUserStore();
@@ -117,22 +118,47 @@ const { sessionId } = storeToRefs(userStore);
 const devicesStore = useDevices();
 const { livedevices } = storeToRefs(devicesStore);
 
+const albumsStore = useAlbums();
+const { albums } = storeToRefs(albumsStore);
+
 // API 參數準備
 const startTime = selectedFaceKey.value;
 const endTime = (() => {
   const TEN_MINUTES_MS = 600000;
   return startTime + TEN_MINUTES_MS;
 })();
-const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
+// const cameraList = livedevices.value.map(({ camera_id: cameraId }) => cameraId);
+// const albumIdList = ['', ...albums.value.map(({ albumId }) => albumId)];
 
 const currentPage = ref(1);
 const totalItems = ref(null);
-const hourFacePerPage = ref(80);
+// const hourFacePerPage = ref(80);
+
+const hourFacePerPage = computed(() => {
+  return (faceListRow.value * 2.5) * faceListCol.value;
+})
 
 const totalPages = computed(() => helpers.getTotalPages({
   totalItems: totalItems.value,
   numberPerPage: hourFacePerPage.value,
 }));
+
+// const cameraList = selectedCameraType.value === 'all' ? livedevices.value.map(({ camera_id: cameraId }) => cameraId) : selectedCamera.value;
+// const albumIdList = selectedAlbumType.value === 'all' ? ['', ...albums.value.map(({ albumId }) => albumId)] : selectedAlbum.value;
+
+const cameraList = computed(() => {
+  if (selectedCameraType.value === 'all') {
+    return livedevices.value.map(({ camera_id: cameraId }) => cameraId);
+  }
+  return selectedCamera.value;
+});
+
+const albumIdList = computed(() => {
+  if (selectedAlbumType.value === 'all') {
+    return ['', ...albums.value.map(({ albumId }) => albumId)];
+  }
+  return selectedAlbum.value;
+});
 
 const faces = ref([]);
 
@@ -144,7 +170,8 @@ onMounted(async () => {
     endTime,
     page: 1,
     perPage: hourFacePerPage.value,
-    cameraList,
+    cameraList: cameraList.value,
+    albumIdList: albumIdList.value,
     sessionId: sessionId.value,
   }));
 
@@ -163,7 +190,8 @@ async function handleTurnPage(pageNumber) {
     endTime,
     page: currentPage.value,
     perPage: hourFacePerPage.value,
-    cameraList,
+    cameraList: cameraList.value,
+    albumIdList: albumIdList.value,
     sessionId: sessionId.value,
   }));
 }

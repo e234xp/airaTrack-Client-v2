@@ -23,6 +23,8 @@
       :header="modalStore.header"
       :body="modalStore.body"
       :buttons="modalStore.buttons"
+      :cancel="modalStore.cancel"
+      :confirm="modalStore.confirm"
       @close="modalStore.close"
     />
   </div>

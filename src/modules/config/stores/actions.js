@@ -60,6 +60,7 @@ export async function postUsers(payload) {
 
 export async function postTrackConfig(payload) {
   trackConfig.face_merge_score = payload.mergeScore;
+  trackConfig.watch_list_score = payload.watchScore;
   trackConfig.db.db_root_folder = payload.folder;
   trackConfig.db.single_file_time = payload.singleFile;
   trackConfig.db.maintain_duration = payload.faceRetention;
@@ -112,6 +113,18 @@ export async function activateLicense(key) {
   })
 }
 
+export async function postUserGroup(payload) {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/UserGroups`,
+    method: 'post',
+    headers: { sessionId: userStore.sessionId },
+    data: {
+      ...payload
+    }
+  })
+}
+
 // =============================================
 // PUT
 // =============================================
@@ -119,6 +132,18 @@ export async function putUsers(payload) {
   const userStore = useUserStore();
   return await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/Users`,
+    method: 'put',
+    headers: { sessionId: userStore.sessionId },
+    data: {
+      ...payload
+    }
+  })
+}
+
+export async function putUserGroup(payload) {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/UserGroups`,
     method: 'put',
     headers: { sessionId: userStore.sessionId },
     data: {
@@ -148,13 +173,24 @@ export async function getTrackConfig() {
     headers: { sessionId: userStore.sessionId }
   })
   trackConfig = JSON.parse(JSON.stringify(result.face_capture));
-  return { ...result?.face_capture?.db || {}, face_merge_score: result?.face_capture?.face_merge_score || -1 };
+  return { ...result?.face_capture?.db || {},
+    face_merge_score: result?.face_capture?.face_merge_score || -1,
+    watch_list_score: result?.face_capture?.watch_list_score || -1 };
 }
 
 export async function getUsers() {
   const userStore = useUserStore();
   return await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/Users`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  })
+}
+
+export async function getUserGroup() {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/UserGroups`,
     method: 'get',
     headers: { sessionId: userStore.sessionId }
   })

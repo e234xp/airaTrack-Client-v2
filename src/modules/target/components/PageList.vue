@@ -5,11 +5,11 @@
         <NavigationBar />
 
         <DayChart
-          v-model:modelSelectedDate="selectedDate"
-          v-model:modelSelectedHour="selectedHour"
-          v-model:modelSelectedTimeType="selectTimeType"
-          v-model:modelSelectedCameraType="selectedCameraType"
-          v-model:modelSelectedAlbumType="selectedAlbumType"
+          v-model:modelSelectedDate="parseDate"
+          v-model:modelSelectedHour="parseHour"
+          v-model:modelSelectedTimeType="parseTimeType"
+          v-model:modelSelectedCameraType="parseCameraType"
+          v-model:modelSelectedAlbumType="parseAlbumType"
           @updateData="onUpdateData"
         />
       </template>
@@ -115,6 +115,7 @@ import FaceList from '@/modules/target/components/FaceList.vue';
 
 import useUserStore from '@/stores/user';
 import useDevices from '@/stores/devices';
+import useAlbums from '@/stores/albums';
 
 import useStore from '@/modules/target/stores/index';
 import helpers from '@/modules/target/helpers';
@@ -125,9 +126,12 @@ const { sessionId } = storeToRefs(userStore);
 const devicesStore = useDevices();
 const { livedevices } = storeToRefs(devicesStore);
 
-const selectedDate = ref(spiderman.dayjs().format('YYYY-MM-DD'));
-const selectedHour = ref(parseInt(spiderman.dayjs().format('HH'), 10));
-const selectTimeType = ref('now');
+const albumsStore = useAlbums();
+const { albums } = storeToRefs(albumsStore);
+
+// const selectedDate = ref(spiderman.dayjs().format('YYYY-MM-DD'));
+// const selectedHour = ref(parseInt(spiderman.dayjs().format('HH'), 10));
+// const selectTimeType = ref('now');
 
 const hourFaceKeys = ref([]);
 const hourFaces = ref({});
@@ -135,11 +139,47 @@ const hourFacePaginations = ref({});
 const hourFacePerPage = ref(0);
 
 const store = useStore();
-const { setPage, setSelectedFaceKey, setFaceListSize } = store;
-const { selectedCamera, selectedAlbum } = storeToRefs(store);
+const { setPage, setSelectedFaceKey, setFaceListSize, setSelectedCameraType, setSelectedAlbumType,
+setSelectedTimeType, setSelectedHour, setSelectedDate } = store;
+const { 
+  selectedCamera, selectedAlbum, selectedCameraType, selectedAlbumType,
+  selectedTimeType, selectedDate, selectedHour,
+} = storeToRefs(store);
 
-const selectedCameraType = ref('all');
-const selectedAlbumType = ref('all');
+const parseCameraType = computed({
+  get: () => selectedCameraType.value,
+  set: (value) => {
+    setSelectedCameraType(value);
+  },
+});
+
+const parseAlbumType = computed({
+  get: () => selectedAlbumType.value,
+  set: (value) => {
+    setSelectedAlbumType(value);
+  },
+});
+
+const parseTimeType = computed({
+  get: () => selectedTimeType.value,
+  set: (value) => {
+    setSelectedTimeType(value);
+  },
+});
+
+const parseHour = computed({
+  get: () => selectedHour.value,
+  set: (value) => {
+    setSelectedHour(value);
+  },
+});
+
+const parseDate = computed({
+  get: () => selectedDate.value,
+  set: (value) => {
+    setSelectedDate(value);
+  },
+});
 
 watch([selectedCamera, selectedAlbum, selectedCameraType, selectedAlbumType], async () => {
   const currentKey = helpers.getCurrentKey();
@@ -192,6 +232,7 @@ async function getLiveFaceHourly({ date, hour }) {
         const startTime = key;
         const endTime = startTime + TEN_MINUTES_MS;
         const cameraList = selectedCameraType.value === 'all' ? livedevices.value.map(({ camera_id: cameraId }) => cameraId) : selectedCamera.value;
+        const albumIdList = selectedAlbumType.value === 'all' ? ['', ...albums.value.map(({ albumId }) => albumId)] : selectedAlbum.value;
 
         const { totalItems, data } = await helpers.getLiveFaces({
           startTime,
@@ -199,15 +240,16 @@ async function getLiveFaceHourly({ date, hour }) {
           page: pageNumber,
           perPage: hourFacePerPage.value,
           cameraList,
+          albumIdList,
           sessionId: sessionId.value,
         });
-        const filter = data.filter((item) => selectedAlbumType.value === 'all' || selectedAlbum.value.indexOf((item?.highest?.albumId || '') === '' ? '0' : item.highest.albumId) >= 0);
+        // const filter = data.filter((item) => selectedAlbumType.value === 'all' || selectedAlbum.value.indexOf((item?.highest?.albumId || '') === '' ? '0' : item.highest.albumId) >= 0);
 
-        const dummy = filter.length > 0 ? [...filter, ...new Array(hourFacePerPage.value - filter.length).fill().map(() => ({ data: { id: ''} }))] : filter;
+        const dummy = data.length > 0 ? [...data, ...new Array(hourFacePerPage.value - data.length).fill().map(() => ({ data: { id: ''} }))] : data;
         hourFaces.value[key] = dummy;
         hourFacePaginations.value[key].totalItems = totalItems;
 
-        return filter;
+        return data;
       },
     };
     return acc;
@@ -235,7 +277,7 @@ async function getLiveFaceHourly({ date, hour }) {
 
 const timer = setInterval(async () => {
   const currentKey = helpers.getCurrentKey();
-  if (selectTimeType.value !== 'now') return;
+  if (selectedTimeType.value !== 'now') return;
   if (!hourFaceKeys.value.includes(currentKey)) return;
 
   await hourFacePaginations.value[currentKey].onTurnPage(
@@ -291,7 +333,7 @@ function handleToDetail(faceKey) {
   }
 }
 
-@keyframes pulse {
+@keyframes pulse-hint {
   0% {
     transform: scale(1);
     opacity: 1;
@@ -319,32 +361,32 @@ function handleToDetail(faceKey) {
   left: 0;
   right: 0;
   bottom: 0;
-  animation: pulse 1.2s ease;
+  animation: pulse-hint 1.2s ease;
   border-radius: 1rem;
 }
 
 .album-none::before {
-  border: 6px double theme('colors.album-none');
+  border: 0.375rem double theme('colors.album-none');
 }
 
 .album-1::before {
-  border: 6px double theme('colors.album-1');
+  border: 0.375rem double theme('colors.album-1');
 }
 
 .album-2::before {
-  border: 6px double theme('colors.album-2');
+  border: 0.375rem double theme('colors.album-2');
 }
 
 .album-3::before {
-  border: 6px double theme('colors.album-3');
+  border: 0.375rem double theme('colors.album-3');
 }
 
 .album-4::before {
-  border: 6px double theme('colors.album-4');
+  border: 0.375rem double theme('colors.album-4');
 }
 
 .album-5::before {
-  border: 6px double theme('colors.album-5');
+  border: 0.375rem double theme('colors.album-5');
 }
 
 .more {

@@ -24,7 +24,7 @@ export default defineComponent({
     },
     color: {
       type: String,
-      default: '#333',
+      default: 'white',
     },
     stroke: {
       type: String,

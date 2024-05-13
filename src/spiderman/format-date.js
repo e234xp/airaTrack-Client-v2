@@ -21,9 +21,15 @@ function parse(date, option) {
   return Intl.DateTimeFormat(userLocale, option).format(tempDate.toDate());
 }
 
+function dateStamp() {
+  return `${Intl.DateTimeFormat(userLocale, { dateStyle: 'short'}).format(dayjs().toDate()).split('/').join('')}-${dayjs().format('HHmm')}`;
+}
+
 export default {
   today,
   parseYMD,
   parseMD,
-  parse
+  parse,
+
+  dateStamp
 };

@@ -24,15 +24,18 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
 
 const store = useStore();
 const { getNxConfig, postNxConfig, postNxServerInfo } = store;
 
+const i18n = useI18n();
+
 const vmOptions = ref({
-  'Network Optix 5.0 or later': 'bearer',
-  'Network Optix 4 or earlier': 'basic',
+  [`${i18n.t('Nx5Later')}`]: 'bearer',
+  [`${i18n.t('Nx4Before')}`]: 'basic',
   // 'Lilin Navigator': 'lilin',
   // 'Milstone XProtect': 'milestone',
   // 'Genetec Omnicast': 'genetec'
@@ -46,7 +49,6 @@ const login = reactive({
   username: '',
   password: ''
 });
-const serverId = ref('');
 
 const valid = ref([true, true, true, true]);
 const isValid = computed({
@@ -66,7 +68,7 @@ async function onClick() {
       port: connect.port,
       username: login.username,
       password: login.password,
-      server_id: serverId.value,
+      server_id: id,
       authorization: selectedVms.value
     });
     if (result) successStore.show();
@@ -78,7 +80,7 @@ function onValid(val, idx) {
 }
 
 onMounted(async () => {
-  ({ host: connect.ip, password: login.password, port: connect.port, username: login.username, server_id: serverId.value, authorization: selectedVms.value } = await getNxConfig())
+  ({ host: connect.ip, password: login.password, port: connect.port, username: login.username, authorization: selectedVms.value } = await getNxConfig())
 })
 
 </script>

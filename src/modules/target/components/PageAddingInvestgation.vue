@@ -38,12 +38,13 @@
                     <AppDatePicker
                       v-model:modelSelected="form.search_end_time"
                       :dark="true"
+                      :limit="form.search_start_time"
                       mode="date-time"
                     />
                   </AppLabel>
                 </div>
                 <div class="flex gap-2 mb-8" style="height: calc(100% - 20rem)">
-                  <div class="w-1/2 pr-2">
+                  <div class="w-1/2">
                     <div class="text-white text-xl">
                       {{ $t('LiveChannel') }}
                       ({{ form.livechannels.length }}/{{ liveChannelAmount }})
@@ -79,7 +80,7 @@
                     </div>
                   </div>
 
-                  <div class="w-1/2 pr-2">
+                  <div class="w-1/2 pl-2">
                     <div class="text-white text-xl">
                       {{ $t('NxVideoArchive') }}
                       <!-- ({{ form.archchannels.length }}/{{ archiveAmount }}) -->
@@ -142,7 +143,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch, reactive } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 
@@ -177,7 +178,7 @@ onMounted(async () => {
   archiveAmount.value = validLicenses.some((frs) => frs) ? 999 : 0;
 });
 
-const form = ref({
+const form = reactive({
   target: {
     camera_id: confirmedFace.value.camera_id,
     timestamp: confirmedFace.value.timestamp,
@@ -197,9 +198,25 @@ const form = ref({
     .add(11, 'minute')
     .subtract(1, 'hour')
     .format('YYYY-MM-DD HH:mm'),
-  task_name: `task-${spiderman.dayjs().format('YYYYMMDD')}`,
+  task_name: `task-${spiderman.formatDate.dateStamp()}`,
   livechannels: [],
   archchannels: [],
+});
+
+watch(() => form.search_start_time, () => {
+  const start = spiderman.dayjs(form.search_start_time);
+  const end = spiderman.dayjs(form.search_end_time);
+  if (start.isAfter(end)) {
+    form.search_end_time = start.add(1, 'hour').format('YYYY-MM-DD HH:mm');
+  }
+});
+
+watch(() => form.search_end_time, () => {
+  const start = spiderman.dayjs(form.search_start_time);
+  const end = spiderman.dayjs(form.search_end_time);
+  if (end.isBefore(start)) {
+    form.search_start_time = end.subtract(1, 'hour').format('YYYY-MM-DD HH:mm');
+  }
 });
 
 async function handleAddTask(theForm) {

@@ -169,6 +169,14 @@ const validators = {
       const placeholder = props.placeholder !== '' ? props.placeholder : i18n.t('field');
       return i18n.t('InvalidPort');
     }
+  },
+  email: {
+    valid: (val) => val && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+    isPassed: () => validators.email.valid(input.value),
+    generateMessage: () => {
+      const placeholder = props.placeholder !== '' ? props.placeholder : i18n.t('field');
+      return i18n.t('InvalidEmail');
+    }
   }
 };
 

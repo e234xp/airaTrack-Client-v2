@@ -1,3 +1,4 @@
+import { storeToRefs } from 'pinia';
 import JSZip from 'jszip';
 import fetchTimeout from 'fetch-timeout';
 import { saveAs } from 'file-saver';
@@ -5,6 +6,7 @@ import spiderman from '@/spiderman';
 import useUserStore from '@/stores/user';
 import useDevices from '@/stores/devices';
 import useVideo from '@/modules/investigation/composable/video';
+import useStore from '@/modules/investigation/stores/index';
 
 function formatDataTime(timestamp) {
   if (timestamp == '')
@@ -50,6 +52,10 @@ export default async function downloadReport(form, taskName, faceDataList, times
   const { user } = userStore;
 
   const { getVideoUrl } = useVideo();
+
+  const store = useStore();
+  const { downloadList } = storeToRefs(store);
+  const { finishDownload, setModal } = useStore();
 
   const { username } = user;
   const reportTitle = 'Investigation Report';
@@ -213,9 +219,9 @@ export default async function downloadReport(form, taskName, faceDataList, times
           </style>`;
 
   let header = `
-      <div class="navbar"><span class="logo">airaTrack</span><span class="report-title">${reportTitle}</span></div>
+      <div class="navbar"><span class="logo">${document.title.split(' ')[0]}</span><span class="report-title">${reportTitle}</span></div>
       <div class="title">
-          <div class="title-left"><span>${reportTitle}</span></div>
+          <div class="title-left"><span>${form.title}</span></div>
           <div class="title-right">
               <h5 class="name">${username}</h5>
               <h5 class="date">${DataTime(investigationTime)}</h5>
@@ -245,7 +251,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
       <div class="summary">
           <div class="face"><img src="data:image/jpeg;base64,${investigationFace}" style="height: 88px; width: 88px;"/></div>
           <div class="right">
-              <span class="subject">Subject : ${reportsubject}</span>
+              <span class="subject">Subject : ${form.subject}</span>
               <div class="detail"> <span>Report by :</span><h4>${username}</h4></div>
               <div class="detail"> <span>Create Date :</span><h4>${DataTime(investigationTime)}</h4></div>
               <div class="detail"> <span>Investigation period :</span><h4>${formatDataTime(startTime)} - ${formatDataTime(endTime)}</h4></div>
@@ -317,20 +323,24 @@ export default async function downloadReport(form, taskName, faceDataList, times
           imagesFolder.file(_item.highest.id + '.png', _item.highest.face_image, { base64: true });
           console.log('LayoutInvestigation', 'doJobWithThrottle', 'takeOne', 'batchAddFileContent', _item.highest.id + '.png');
           // add video
-          const url = getVideoUrl({
-            starttime: _item.starttime, 
-            endtime: _item.endtime,
-            highest: { cid: _item.highest.cid },
-          });
+        //   const url = getVideoUrl({
+        //     starttime: _item.starttime, 
+        //     endtime: _item.endtime,
+        //     highest: { cid: _item.highest.cid },
+        //   });
 
-          _item.videoUrl = url;
+        //   _item.videoUrl = url;
 
-          let blob = await fetchVideoResource(_item);
-          console.log(videoFilenameFormat, blob.size);
-          if (blob.size <= 102400) {
-              var txtFile =  videoFilenameFormat.replace('.webm', '.txt') ;
-              videosFolder.file(txtFile, 'doenload video file error. please download again');       
-          }
+        //   let blob = await fetchVideoResource(_item);
+        //   console.log(videoFilenameFormat, blob.size);
+        //   if (blob.size <= 102400) {
+        //       var txtFile =  videoFilenameFormat.replace('.webm', '.txt') ;
+        //       videosFolder.file(txtFile, 'doenload video file error. please download again');       
+        //   }
+        
+          const download =  downloadList.value.find((item) => item.ids[0] === _item.ids[0]);
+          if (!download) return;
+          const blob = download.video;
           videosFolder.file(videoFilenameFormat, blob, { binary: true });
           console.log('LayoutInvestigation', 'doJobWithThrottle', 'takeOne', 'batchAddFileContent', videoFilename);
       } catch (err) {
@@ -378,6 +388,8 @@ export default async function downloadReport(form, taskName, faceDataList, times
   try {
     zip.generateAsync({ type: 'blob' }).then((blob) => {
       saveAs(blob, `${taskName}.zip`);
+      finishDownload();
+      setModal('');
           //   this.isDownloadingReport = false;
           //   this.$store.state.isDownloadingReport = this.isDownloadingReport;
     })

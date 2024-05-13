@@ -6,6 +6,7 @@
       'bg-ctrl-secondary hover:bg-ctrl-secondary-hover border border-white rounded leading-4': type === 'secondary',
       'bg-ctrl-danger hover:bg-ctrl-danger-hover border border-white rounded leading-4': type === 'danger',
       'hover:text-primary-hover': type === 'transparent',
+      'opacity-30': type === 'transparent' && !isEnable,
 
       'text-default font-normal': !isActive,
       'relative text-white hover:text-white after:block after:w-full after:border-2 after:border-solid after:border-primary after:absolute after:-bottom-1': isActive && activeType === 'baseline',

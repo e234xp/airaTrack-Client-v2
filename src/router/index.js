@@ -37,6 +37,10 @@ const router = createRouter({
       path: '/debug',
       component: () => import('../views/DebugView.vue'),
     },
+    {
+      path: '/initial',
+      component: () => import('../views/InitialView.vue'),
+    },
   ],
 });
 

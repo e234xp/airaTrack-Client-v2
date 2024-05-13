@@ -8,14 +8,14 @@
         <div class="grid content-start text-white text-xl mx-6 mt-5">
           {{ $t('MobileUploadStep1') }}
         </div>
-        {{flag_aaa}}
+        <!-- {{flag_aaa}} -->
         <input type="file" id="fileSelecter" accept="image/*" @change="fileOnChange" style="display: none;" />
         <AppButton type="secondary" class="mx-6 my-3 py-3" @click="clickOnPickUploadPhoto()">
           {{ $t("Select") }}
         </AppButton>
         <div class="grid justify-center content-center">
           <img class="mx-6 my-8" :src="spiderman.base64Image.getUnknowSrc(value_imageB64)"
-            style='width: 300px; height: 300px;' />
+            style='width: 300px; height: 300px; object-fit: contain;' />
           <span class="grid justify-center content-center text-red-600">{{ flag_faceDetectedFail }}</span>
         </div>
 
@@ -30,7 +30,7 @@
 
         <div class="grid content-start text-white text-xl mx-6 mt-5">
           {{ $t('MobileUploadStep2') }}
-          <span class="grid justify-center content-center text-green-600">{{ flag_faceUploadSuccess }}</span>
+          <!-- <span class="grid justify-center content-center text-green-600">{{ flag_faceUploadSuccess }}</span> -->
         </div>
 
         <AppButton type="secondary" class="mx-6 my-3 py-3" :isEnable=flag_faceDetected @click="clickOnPhotoUpload()">
@@ -49,6 +49,10 @@
 
   import useAlbums from '@/stores/albums';
   import useStore from '@/modules/uploadMobile/stores/index';
+  import { useI18n } from 'vue-i18n';
+
+  import successStore from '@/components/AppSuccess/success';
+  import errorStore from '@/components/AppError/error';
 
   import * as faceapi from 'face-api.js';
 
@@ -71,6 +75,8 @@
   const form = ref({
     albumId: ''
   });
+
+  const i18n = useI18n();
 
   onMounted(async () => {
     options.value = albums.value.reduce((obj, album) => {
@@ -171,31 +177,114 @@
       const img = new Image();
       img.src = readerEvent.target.result;
       img.onload = () => {
-        if (file.size > maxWidth * maxHeight) {
-          let width = img.width;
-          let height = img.height;
-          if (width / maxWidth > height / maxHeight) {
-            width = maxWidth;
-            height = (img.height * maxWidth) / img.width;
+        EXIF.getData(img, async function() {
+          try {
+            const isPortrait = img.height > img.width;
+         
+            // alert(JSON.stringify(EXIF.getAllTags(this)));
+          const orientation = EXIF.getTag(this, 'Orientation');
+          const make = EXIF.getTag(this, 'Make');
+          const model = EXIF.getTag(this, 'Model');
+          // alert(orientation);
+          // alert(make);
+          // alert(model);
+          const box = await spiderman.faceApi.detectFaceAndGetHeadBox(img);
+          if (!box) {
+            errorStore.show({ error: { message: i18n.t('NoFace') }});
+            return;
+          }
+          const minRes = box.width < 500 || box.height < 500;
+
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          if (minRes) {
+            canvas.width = img.width;
+            canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
           } else {
-            height = maxHeight;
-            width = (img.width * maxHeight) / img.height;
+            canvas.width = 500;
+            canvas.height = 500;
+            ctx.drawImage(img, box.x, box.y, box.width, box.height, 0, 0, 500, 500);
           }
           
-          // 创建一个新 Canvas 元素来绘制调整大小后的图片
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
+          const imgUrl = canvas.toDataURL('image/jpeg');
+          value_imageB64.value = imgUrl;
+          faceDetectionOnPhoto(img);
+          return;
+          
+          if (isPortrait) {
+              // 橫放
+              canvas.width = img.width;
+              canvas.height = img.height;
+          } else {
+              // 直放
+              canvas.width = img.height;
+              canvas.height = img.width;
+          }
+          if (orientation && orientation !== 1 && false) {
+            // canvas.width = img.height;
+            // canvas.height = img.width;
+            if (orientation === 6) {
+              ctx.rotate(Math.PI / 2);
+              ctx.drawImage(img, 0, -canvas.width);
+            } else if (orientation === 8) {
+              ctx.rotate(-Math.PI / 2);
+              ctx.drawImage(img, -canvas.height, 0);
+            } else if (orientation === 3) {
+              ctx.rotate(Math.PI);
+              ctx.drawImage(img, -canvas.width, -canvas.height);
+            } else {
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            }
+          } else {
+            // canvas.width = img.width;
+            // canvas.height = img.height;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          }
+        
+          const resizedCanvas = document.createElement('canvas');
+          const resizedCtx = resizedCanvas.getContext('2d');
+          let width = canvas.width;
+          let height = canvas.height;
+          if (file.size > maxWidth * maxHeight) {
+            //     var targetWidth = 300; // 你想要的寬度
+            //     var targetHeight = (canvas.height / canvas.width) * targetWidth;
+            //     resizedCanvas.width = targetWidth;
+            //     resizedCanvas.height = targetHeight;
+            //     resizedCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, targetWidth, targetHeight);
+            if (width / maxWidth > height / maxHeight) {
+              width = maxWidth;
+              height = (img.height * maxWidth) / img.width;
+            } else {
+              height = maxHeight;
+              width = (img.width * maxHeight) / img.height;
+            }
+            
+            // 创建一个新 Canvas 元素来绘制调整大小后的图片
+            // const canvas = document.createElement('canvas');
+            // canvas.width = width;
+            // canvas.height = height;
+            // const ctx = canvas.getContext('2d');
+            
 
-          // 将 Canvas 上的图像转换为 Base64 数据URL
-          const resizedImageDataUrl = canvas.toDataURL('image/jpeg');
+            // 将 Canvas 上的图像转换为 Base64 数据URL
+            
 
-          // 在预览中显示调整大小后的图片
+            // 在预览中显示调整大小后的图片
+          }
+
+          resizedCanvas.width = width;
+          resizedCanvas.height = height;
+          resizedCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, width, height);
+          const resizedImageDataUrl = resizedCanvas.toDataURL('image/jpeg');
           value_imageB64.value = resizedImageDataUrl;
-        } else value_imageB64.value = readerEvent.target.result;
-        faceDetectionOnPhoto(img);
+          faceDetectionOnPhoto(img);
+          } catch (error) {
+            alert(error);
+          }
+          
+          
+        });
       }
     };
   }
@@ -220,62 +309,13 @@
     }
   }
 
-  // async function detectFaceAndGetHeadBox(img, cb) {
-  //   try {
-  //     flag_aaa.value += faceapi == undefined;
-  //   }
-  //   catch( ex) {
-  //     flag_aaa.value += ex.message;
-  //   }
-
-  //   const detection = null;
-  //   try {
-  //     detection = await faceapi.detectSingleFace(
-  //       img,
-  //       new faceapi.TinyFaceDetectorOptions()
-  //     );
-  //   }
-  //   catch( ex) {
-  //     flag_aaa.value += ex.message;
-  //   }
-
-  //   return new Promise((resolve) => {
-  //     let box = null;
-  //     if (detection) {
-  //       let rangeRatio = 2;
-  //       let headWidthToHunt =
-  //         (detection.box.width < detection.box.height
-  //           ? detection.box.width
-  //           : detection.box.height) * rangeRatio;
-  //       let headX = detection.box.x - detection.box.height / 2;
-  //       let headY = detection.box.y - detection.box.height / 1.2;
-  //       if (headX < 0) headX = 0;
-  //       if (headY < 0) headY = 0;
-  //       while (
-  //         headWidthToHunt + headX > img.width ||
-  //         headWidthToHunt + headY > img.height
-  //       ) {
-  //         headWidthToHunt--;
-  //       }
-
-  //       box = {
-  //         x: headX,
-  //         y: headY,
-  //         width: headWidthToHunt,
-  //         height: headWidthToHunt,
-  //       };
-  //     }
-  //     if (cb) cb(box);
-  //     resolve(box);
-  //   });
-  // }
-
   async function clickOnPhotoUpload() {
 
     const result = await uploadPhoto(value_imageB64.value, form.value.albumId);
 
-    flag_faceUploadSuccess.value = 'upload successfully!';
-
-    console.log(result);
+    if (result) {
+      successStore.show('UploadSuccess');
+    }
+    // flag_faceUploadSuccess.value = 'upload successfully!';
   }
 </script>

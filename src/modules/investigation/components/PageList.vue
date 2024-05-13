@@ -7,15 +7,14 @@
 
       <template #grow>
         <div
-          v-for="item in list"
-          v-show="dataType === 'all' || item.data_type === dataType"
+          v-for="item in filterList"
           :key="item.task_id"
           class="ml-4"
         >
           <div class="flex py-4 pl-8">
             <img
               class="w-60 h-60 mr-2 object-cover"
-              :src="spiderman.base64Image.getSrc(item.target_face_image)"
+              v-lazy="spiderman.base64Image.getSrc(item.target_face_image)"
               alt=""
             >
 
@@ -85,7 +84,7 @@
                     class="px-8"
                     @click="handleCancelTask(item.task_id)"
                   >
-                    Stop
+                    {{ $t('Stop') }}
                   </AppButton>
                 </div>
               </div>
@@ -102,12 +101,12 @@
                   {{ $t("RunningTime") }}:
                 </div>
                 <div class="flex">
-                  <template v-if="!item.running_start_time">
+                  <template v-if="!item.running_start_time && !item.running_end_time">
                     -
                   </template>
                   <template v-else>
                     <div>
-                      {{ `${spiderman.formatDate.parseYMD(item.running_start_time)} ${spiderman.dayjs(item.running_start_time).format('HH:mm:ss')}` }}
+                      {{ parseExeTime(item.running_start_time, item.running_end_time) }}
                     </div>
                   </template>
                 </div>
@@ -121,7 +120,7 @@
                     -
                   </template>
                   <template v-else>
-                    &lt; {{ parseTime(item.running_end_time - item.running_start_time) }}
+                    &lt; {{ parseTime(item.running_end_time, item.running_start_time) }}
                   </template>
                 </div>
               </div>
@@ -192,6 +191,11 @@
       </template>
     </FullLayout>
   </ProgressBarLayout>
+
+  <ModalDeleteTask 
+    :image="deletedTask.target_face_image" :name="deletedTask.task_name" 
+    :time="!deletedTask.running_start_time && !deletedTask.running_end_time ? '' : parseExeTime(deletedTask.running_start_time, deletedTask.running_end_time)"
+    @delete="onDeleteTask" />
 </template>
 
 <script setup>
@@ -201,17 +205,22 @@ import {
 import { storeToRefs } from 'pinia';
 import spiderman from '@/spiderman';
 import NavigationBar from '@/modules/investigation/components/NavigationBar.vue';
+import ModalDeleteTask from './ModalDeleteTask.vue';
+
+import successStore from '@/components/AppSuccess/success';
+import modalStore from '@/components/AppModal/modal';
 
 import useStore from '@/modules/investigation/stores/index';
 import { useI18n } from 'vue-i18n';
 
 const store = useStore();
 const { dataType, page } = storeToRefs(store);
-const { setPage, setSelectedTask, getTaskListWithoutResult, startTask, removeTask, getTask, modifyTask, stopTask } = store;
+const { setPage, setSelectedTask, getTaskListWithoutResult, startTask, removeTask, getTask, modifyTask, stopTask, setModal } = store;
 
 const i18n = useI18n();
 
 const isProgress = ref(false);
+const deletedTask = ref({});
 
 const list = ref([]);
 async function refreshList() {
@@ -222,7 +231,6 @@ async function refreshList() {
 
 let refreshIntervalID;
 async function setRefreshInterval(taskId) {
-
   refreshIntervalID = setInterval(
     async () => {
       await refreshList();
@@ -239,8 +247,20 @@ async function setRefreshInterval(taskId) {
   );
 }
 
-function parseTime(timestamp) {
-  const sec = Math.floor(timestamp / 1000);
+const filterList = computed(() => {
+  if (dataType.value === 'all') return list.value;
+  if (dataType.value === 'progress') return list.value.filter((item) => (item.progress < 100));
+  if (dataType.value === 'finish') return list.value.filter((item) => (item.data_type === 'finish'));
+  return [];
+});
+
+function parseExeTime(start, end) {
+  return `${spiderman.formatDate.parseYMD(start || end)} ${spiderman.dayjs(start || end).format('HH:mm:ss')}`;
+}
+
+function parseTime(end, start) {
+  const timestamp = end - (start || end);
+  const sec = Math.floor(timestamp / 1000) || 1;
   const timeList = ['', '', '', '']; // day / hr / min / sec
   const timeMap = [i18n.t('UnitDay'), i18n.t('UnitHour'), i18n.t('UnitMin'), i18n.t('UnitSec')];
   let temp = sec;
@@ -282,8 +302,19 @@ async function handleStartTask(taskId) {
 }
 
 async function handleRemoveTask(taskId) {
+  const task = list.value.find((item) => (item.task_id === taskId));
+  if (task) {
+    deletedTask.value = task;
+    setModal('delete');
+  }
+}
+
+async function onDeleteTask() {
+  const taskId = deletedTask.value.task_id;
   await removeTask(taskId);
   list.value = list.value.filter((item) => (item.task_id !== taskId));
+  setModal('');
+  successStore.show();
 }
 
 async function handleCancelTask(taskId) {

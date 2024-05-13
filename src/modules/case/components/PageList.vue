@@ -1,13 +1,13 @@
 <template>
   <div class="w-full max-w-screen-xl mx-auto" ref="panel">
     <div class="flex justify-center h-18">
-      <div class="flex items-center justify-center gap-4 py-4 px-2 w-2/5">
+      <div class="flex items-center gap-4 py-4 w-1/4">
         <div class="text-white text-xl">{{ $t('Search') }}</div>
-        <AppInput v-model:modelInput="searchText" class="w-1/2" :rule="''" :dark="true" />
+        <AppInput v-model:modelInput="searchText" class="w-3/5" :rule="''" :dark="true" />
       </div>
-      <div class="flex items-center justify-center gap-4 py-4 px-2 w-3/5">
-        <AppSwitch :value="selectedType" :list="typeList" @select="onSelect"></AppSwitch>
-        <AppDatePicker v-model:modelSelected="selectedDate" :dark="true" :range="true" v-if="selectedType === 'c'">
+      <div class="flex items-center justify-center gap-4 py-4 w-3/4">
+        <AppSwitch :value="selectedType" :list="typeList" @select="onSelect" style="width: 70%"></AppSwitch>
+        <AppDatePicker v-model:modelSelected="selectedDate" :dark="true" :range="true" style="width: 30%" v-if="selectedType === 'c'">
         </AppDatePicker>
       </div>
     </div>
@@ -25,9 +25,9 @@
       <tbody>
         <tr v-for="data in pageData">
           <td>
-            <img :src="spiderman.base64Image.getSrc(data.target.faceImage)" class="face-image object-cover">
+            <img :src="spiderman.base64Image.getSrc(data.target.faceImage)" @click="onDetail(data.caseId)" class="face-image object-cover cursor-pointer">
           </td>
-          <td>{{ data.timestamp }}</td>
+          <td>{{ parseTime(data.timestamp) }}</td>
           <td>{{ data.caseName }}</td>
           <td>{{ data.description }}</td>
           <td>{{ data.byuser }}</td>
@@ -51,40 +51,50 @@
       {{ $t('CaseHint') }}
     </div>
   </div>
+
+  <ModalDeleteCase :data="selectedCase" @delete="hanldeDelete"></ModalDeleteCase>
 </template>
 <script setup>
 import { computed, ref, reactive, onMounted, onBeforeUnmount } from 'vue';
 import spiderman from '@/spiderman';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import useStore from '../stores';
 import useInvestStore from '../../investigation/stores/index';
+import ModalDeleteCase from './ModalDeleteCase.vue';
+
+import successStore from '@/components/AppSuccess/success';
 
 const router = useRouter();
 
 const store = useStore();
-const { getCase, deleteCase, getCaseDetail } = store;
+const { getCase, deleteCase, getCaseDetail, setModal } = store;
 
 const investStore = useInvestStore();
 const { setCaseData } = investStore;
+
+const i18n = useI18n();
+
+const selectedCase = ref(null);
 
 const searchText = ref('');
 const selectedType = ref('');
 const typeList = ref([
   {
     value: '',
-    text: 'All'
+    text: i18n.t('All')
   }, {
     value: 'd',
-    text: 'Day'
+    text: i18n.t('InDay')
   }, {
     value: 'w',
-    text: 'Week'
+    text: i18n.t('InWeek')
   }, {
     value: 'M',
-    text: 'Month'
+    text: i18n.t('InMonth')
   }, {
     value: 'c',
-    text: 'Custom'
+    text: i18n.t('InCustom')
   }
 ]);
 const dataList = ref([]);
@@ -115,13 +125,13 @@ const containerObserver = new ResizeObserver(() => {
 
 const filterData = computed({
   get: () => {
-    const tempList = dataList.value.filter((item) => item.caseName.toLowerCase().indexOf(searchText.value.toLowerCase()) >= 0);
+    const tempList = dataList.value.filter((item) => item.caseName.toLowerCase().indexOf(searchText.value.toLowerCase()) >= 0 || item.description.toLowerCase().indexOf(searchText.value.toLowerCase()) >= 0);
     let list = [];
     if (selectedType.value === '') list = tempList;
     else if (selectedType.value === 'c') {
       list = tempList.filter((item) => spiderman.dayjs(item.timestamp).isSame(selectedDate.value[0]) || spiderman.dayjs(item.timestamp).isSame(selectedDate.value[1]) || (spiderman.dayjs(item.timestamp).isAfter(selectedDate.value[0]) && spiderman.dayjs(item.timestamp).isBefore(selectedDate.value[1])));
     } else {
-      list = tempList.filter((item) => spiderman.dayjs().diff(item.timestamp, selectedType.value) === 1);
+      list = tempList.filter((item) => spiderman.dayjs().diff(item.timestamp, selectedType.value) <= 1);
     }
     return list;
   }
@@ -133,6 +143,10 @@ const pageData = computed({
   }
 })
 
+function parseTime(time) {
+  return `${spiderman.formatDate.parseYMD(time)} ${spiderman.dayjs(time).format('HH:mm:ss')}`;
+}
+
 function onSelect(val) {
   selectedType.value = val;
 }
@@ -143,15 +157,28 @@ function onTurnPage(val) {
 
 async function onDetail(id) {
   const { fileData: data } = await getCaseDetail(id);
+  const list = JSON.parse(JSON.stringify(data.facesData));
+  list.sort((a, b) => a.highest.timestamp - b.highest.timestamp);
+  data.facesData = list;
   setCaseData(data);
   router.push({ path: '/investigation' });
 }
 
-async function onDelete(id) {
-  const { message } = await deleteCase(id);
+function onDelete(id) {
+  const item = dataList.value.find((item) => item.caseId === id);
+  if (item) {
+    selectedCase.value = item;
+    setModal('delete');
+  }
+}
+
+async function hanldeDelete() {
+  const { message } = await deleteCase(selectedCase.value.caseId);
   if (message === 'ok') {
-    const idx = dataList.value.findIndex((item) => item.caseId === id);
+    const idx = dataList.value.findIndex((item) => item.caseId === selectedCase.value.caseId);
     if (idx >= 0) dataList.value.splice(idx, 1);
+    setModal('');
+    successStore.show();
   }
 }
 
@@ -161,8 +188,7 @@ function sizeAdjust() {
 }
 
 onMounted(async () => {
-  const { data: tempData } = await getCase();
-  dataList.value = tempData;
+  ({ data: dataList.value } = await getCase());
   containerObserver.observe(panel.value);
 })
 

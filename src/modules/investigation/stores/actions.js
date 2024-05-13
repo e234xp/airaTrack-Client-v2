@@ -2,6 +2,14 @@ import spiderman from '@/spiderman';
 import useUserStore from '@/stores/user';
 import useStore from './index';
 
+function chineseToAscii(text) {
+  let asciiText = '';
+  for (let i = 0; i < text.length; i++) {
+    asciiText += '&#' + text.charCodeAt(i) + ';';
+  }
+  return asciiText;
+}
+
 // =============================================
 // POST
 // =============================================
@@ -10,12 +18,15 @@ export async function addBookmark(timestamp, cid, description) {
   return await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/addBookmark`,
     method: 'post',
-    headers: { sessionId: userStore.sessionId },
+    headers: { 
+      sessionId: userStore.sessionId,
+      'Content-Type': 'application/json; charset=utf-8'
+    },
     data: {
       datatime: timestamp,
       camera_id: cid,
-      caption: 'airaTracker Event',
-      description: description,
+      caption: `${document.title.split(' ')[0]} Event`,
+      description: chineseToAscii(description),
     },
   });
 }
@@ -91,8 +102,8 @@ export async function addCase(data) {
     caseName: data.name,
     description: data.description,
     byuser: userStore.user.username,
-    timestamp: spiderman.dayjs(selectedTask.target.timestamp).format('YYYY/MM/DD HH:mm:ss'),
-    savecasetimestamp: spiderman.dayjs().format('YYYY/MM/DD HH:mm:ss'),
+    timestamp: selectedTask.target.timestamp,
+    savecasetimestamp: spiderman.dayjs().valueOf(),
     media_list_live: selectedTask.livechannels.map((item) => item.camera_id),
     media_list_arch: selectedTask.archchannels.map((item) => item.camera_id),
     search_end_time: selectedTask.search_end_time,
@@ -103,7 +114,7 @@ export async function addCase(data) {
       camera_id: selectedTask.target.camera_id,
       cameraName: selectedTask.livechannels.find((item) => item.camera_id === selectedTask.target.camera_id)?.name || '',
       score: data.score,
-      accompany: 1
+      accompany: 0
     }
   };
   return await spiderman.apiService({
@@ -134,7 +145,7 @@ export async function putCase(payload) {
 // =============================================
 // GET
 // =============================================
-export async function getTaskResultAll(taskId, score) {
+export async function getTaskResultAll(taskId, score, idx = 0) {
   const userStore = useUserStore();
   const result = await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/v2/gettaskresultAll`,
@@ -143,10 +154,11 @@ export async function getTaskResultAll(taskId, score) {
     params: {
       task_id: taskId,
       score,
-      idx: 0,
+      idx,
       size: 50
     },
   });
+  console.log(result);
   return result;
 }
 
@@ -172,5 +184,12 @@ export async function getSnapshotUrl(payload) {
     data: {
       ...payload
     },
+  });
+}
+
+export async function getNonce(server) {
+  return await spiderman.apiService({
+    url: `${server}/api/getNonce`,
+    method: 'get',
   });
 }

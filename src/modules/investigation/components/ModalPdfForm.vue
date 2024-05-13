@@ -59,14 +59,13 @@
           class="px-6"
           v-print="{
             id: 'printPdf',
-            popTitle: 'airaTrack Investigation Report'
           }"
           :isEnable="pdfForm.title !== '' && pdfForm.subject !== ''"
           @click="
             setModal('');
           "
         >
-          {{ $t('Yes') }}
+          {{ $t('Export') }}
         </AppButton>
       </div>
     </template>

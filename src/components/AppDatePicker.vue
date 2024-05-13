@@ -35,6 +35,8 @@ import { storeToRefs } from 'pinia';
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
+import spiderman from '@/spiderman';
+
 import useLanguageStore from '@/stores/language';
 
 const props = defineProps({
@@ -53,6 +55,10 @@ const props = defineProps({
   range: {
     type: Boolean,
     default: false,
+  },
+  limit: {
+    type: String,
+    default: ''
   }
 });
 const emit = defineEmits(['update:modelSelected']);

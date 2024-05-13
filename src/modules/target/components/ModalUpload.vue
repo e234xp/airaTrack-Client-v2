@@ -55,9 +55,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useI18n } from 'vue-i18n';
 
+import spiderman from '@/spiderman';
 import useStore from '@/modules/target/stores/index';
 import successStore from '@/components/AppSuccess/success';
+import errorStore from '@/components/AppError/error';
 
 const store = useStore();
 const { modal } = storeToRefs(store);
@@ -69,6 +72,9 @@ const props = defineProps({
     default: []
   },
 })
+
+const i18n = useI18n();
+
 const emit = defineEmits(['add']);
 
 const image = ref('');
@@ -105,7 +111,29 @@ function fileOnChange(e) {
   reader.onload = async (readerEvent) => {
     const img = new Image();
     img.src = readerEvent.target.result;
-    img.onload = () => {
+    img.onload = async () => {
+      const box = await spiderman.faceApi.detectFaceAndGetHeadBox(img);
+      if (!box) {
+        errorStore.show({ error: { message: i18n.t('NoFace') }});
+        return;
+      }
+      const minRes = box.width < 500 || box.height < 500;
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (minRes) {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+      } else {
+        canvas.width = 500;
+        canvas.height = 500;
+        ctx.drawImage(img, box.x, box.y, box.width, box.height, 0, 0, 500, 500);
+      }
+      
+      const imgUrl = canvas.toDataURL('image/jpeg');
+      image.value = imgUrl;
+      return;
       if (file.size > maxWidth * maxHeight) {
         let width = img.width;
         let height = img.height;

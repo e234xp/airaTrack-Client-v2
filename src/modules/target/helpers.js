@@ -12,7 +12,7 @@ const sizeMap = [
   { range: [0, 999], row: 2, col: 12 },
 ]
 async function getLiveFaces({
-  startTime, endTime, page, perPage = 24, cameraList = [], sessionId,
+  startTime, endTime, page, perPage = 24, cameraList = [], albumIdList = [], sessionId,
 }) {
   const data = {
     start_time: startTime,
@@ -21,6 +21,7 @@ async function getLiveFaces({
     duration: endTime - startTime,
     slice_length: perPage,
     slice_shift: (page - 1) * perPage,
+    albumIdList
   };
 
   const {

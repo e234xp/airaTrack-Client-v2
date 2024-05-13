@@ -6,8 +6,7 @@
       ref="panelRef"
     >
       <div class="absolute"
-        style="top: 50%; left: 50%; transform: translate(-50%, -50%);"
-        :style="{ width: `${width}px`, height: `${height}px` }">
+        style="top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%; height: 100%;">
         <video
           ref="videoRef"
           :key="videoUrl"
@@ -20,9 +19,18 @@
           class="absolute w-full h-full"
         >
           <source
-            :src="videoUrl"
+            :src="parseUrl"
+            v-if="!isIos"
+          >
+          <source
+            :src="parseUrl"
+            type="application/x-mpegurl"
+            v-else
           >
         </video>
+      </div>
+      <div class="absolute right-2 top-1 text-white text-xl">
+        <slot name="timestamp" />
       </div>
     </div>
 
@@ -85,9 +93,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, defineExpose } from 'vue';
+import { ref, onMounted, onBeforeUnmount, onBeforeMount, watch, computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import useStore from '@/modules/investigation/stores/index';
 
-defineProps({
+const store = useStore();
+const { modal } = storeToRefs(store);
+
+const props = defineProps({
   videoUrl: {
     type: String,
     default: '',
@@ -107,6 +120,8 @@ const height = ref(0);
 const videoRef = ref(null);
 const panelRef = ref(null);
 
+const isIos = ref(false);
+
 // 處理開始暫停
 const isPlaying = ref(true);
 function play() {
@@ -119,6 +134,11 @@ function pause() {
   video.pause();
   isPlaying.value = false;
 }
+
+const parseUrl = computed(() => {
+  if (!props.videoUrl) return '';
+  return isIos.value ? props.videoUrl.replace('webm', 'ts') : props.videoUrl;
+})
 
 // 處理時間條的客製化
 const currentTime = ref(0);
@@ -133,6 +153,7 @@ function handleSliderInput() {
 
 // 處理結束的時候
 function handleVideoEnded() {
+  if (isIos.value) return;
   isPlaying.value = false;
   currentTime.value = 0;
   emit('onNext');
@@ -156,25 +177,46 @@ function sizeAdjust() {
 }
 defineExpose({
   getCurrentTime,
-  getSize,
-  getContent
+  getSize
 })
 
 function getCurrentTime() {
-  return videoRef.value.currentTime;
+  return currentTime.value;
 }
 
 function getSize() {
   return { width: videoRef.value.clientWidth, height: videoRef.value.clientHeight };
 }
 
-function getContent() {
-  return videoRef.value;
-}
+watch(currentTime, async (time) => {
+  if (!isIos.value) return;
+  if (time >= props.duration) {
+    isPlaying.value = false;
+    currentTime.value = 0;
+    emit('onNext');
+  }
+});
+
+const tempPlayStatus = ref(false);
+watch(modal, (value) => {
+  if (value === '') {
+    if (tempPlayStatus.value) {
+      play();
+    }
+  } else {
+    tempPlayStatus.value = isPlaying.value;
+    pause();
+  }
+});
 
 const containerObserver = new ResizeObserver(() => {
   sizeAdjust();
 })
+
+onBeforeMount(() => {
+  isIos.value = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  // isIos.value = true;
+}),
 
 onMounted(async () => {
   containerObserver.observe(panelRef.value);

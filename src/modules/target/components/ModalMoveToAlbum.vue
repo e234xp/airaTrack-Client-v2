@@ -70,7 +70,7 @@ const props = defineProps({
   }
 })
 
-const options = ref(null);
+// const options = ref(null);
 const form = ref({
   albumId: ''
 });
@@ -82,16 +82,16 @@ const currentAlbumName = computed({
   }
 })
 
-watch(() => props.current, () => {
+const options = computed(() => {
+  if (props.list.length === 0) return {};
   const filter = props.list.filter((item) => item.albumId !== props.current);
-  options.value = filter.reduce((obj, album) => {
+  if (filter.length !== 0) form.value.albumId = filter[0].albumId;
+  return filter.reduce((obj, album) => {
     const tmp = obj;
 
     tmp[album.albumName] = album.albumId;
     return tmp;
   }, {});
-
-  if (filter.length !== 0) form.value.albumId = filter[0].albumId;
 })
 
 function handleMove() {

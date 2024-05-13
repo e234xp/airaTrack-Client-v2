@@ -1,11 +1,14 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
+import spiderman from '@/spiderman';
 import useDevices from '@/stores/devices';
 import useAlbums from '@/stores/albums';
 
 import * as actions from './actions';
 
 export default defineStore('module-target', () => {
+  const isInit = ref(false);
+
   const initialState = {
     selectedFace: null,
     selectedFaceKey: null,
@@ -14,6 +17,11 @@ export default defineStore('module-target', () => {
     selectedAlbum: [],
     selectedAlbumDetail: '',
     selectedCamera: [],
+    selectedCameraType: 'all',
+    selectedAlbumType: 'all',
+    selectedTimeType: 'now',
+    selectedHour: parseInt(spiderman.dayjs().format('HH'), 10),
+    selectedDate: spiderman.dayjs().format('YYYY-MM-DD'),
     page: 'list',
     faceListRow: 0,
     faceListCol: 0,
@@ -73,6 +81,31 @@ export default defineStore('module-target', () => {
     modal.value = data;
   }
 
+  const selectedCameraType = ref(initialState.selectedCameraType);
+  function setSelectedCameraType(data) {
+    selectedCameraType.value = data;
+  }
+
+  const selectedAlbumType = ref(initialState.selectedAlbumType);
+  function setSelectedAlbumType(data) {
+    selectedAlbumType.value = data;
+  }
+
+  const selectedTimeType = ref(initialState.selectedTimeType);
+  function setSelectedTimeType(data) {
+    selectedTimeType.value = data;
+  }
+
+  const selectedHour = ref(initialState.selectedHour);
+  function setSelectedHour(data) {
+    selectedHour.value = data;
+  }
+
+  const selectedDate = ref(initialState.selectedDate);
+  function setSelectedDate(data) {
+    selectedDate.value = data;
+  }
+
   function initStore() {
     setPage(initialState.page);
     setModal(initialState.modal);
@@ -81,13 +114,16 @@ export default defineStore('module-target', () => {
     setSelectedFaceKey(initialState.selectedFaceKey);
     setConfirmingFaces(initialState.confirmingFaces);
     setConfirmedFace(initialState.confirmedFace);
-    // setSelectedAlbum(initialState.selectedAlbum);
 
+    if (isInit.value) return;
+    
     const albumStore = useAlbums();
-    setSelectedAlbum(['0', ...albumStore.albums.map(({ albumId }) => albumId)]);
+    setSelectedAlbum(['', ...albumStore.albums.map(({ albumId }) => albumId)]);
 
     const deviceStore = useDevices();
     setSelectedCamera(deviceStore.livedevices.map(({ camera_id: cameraId }) => cameraId));
+
+    isInit.value = true;
   }
 
   return {
@@ -121,6 +157,21 @@ export default defineStore('module-target', () => {
 
     selectedAlbumDetail,
     setSelectedAlbumDetail,
+
+    selectedCameraType,
+    setSelectedCameraType,
+
+    selectedAlbumType,
+    setSelectedAlbumType,
+
+    selectedTimeType,
+    setSelectedTimeType,
+
+    selectedHour,
+    setSelectedHour,
+
+    selectedDate,
+    setSelectedDate,
 
     faceListRow,
     faceListCol,

@@ -22,27 +22,27 @@
     </div>
     <div class="rounded-lg border border-white/40 bg-black/20 p-4 cursor-pointer" style="width: calc(100% - 15.5rem)">
       <div class="flex text-white gap-4 h-10">
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2" style="width: 40%;">
           <div class="select-none w-16 text-right">{{ $t('TimeTitle') }}</div>
-          <AppSwitch :value="selectedTimeType" :list="timeTypeList" @select="onSelectTimeType"></AppSwitch>
+          <AppSwitch :value="selectedTimeType" :list="timeTypeList" @select="onSelectTimeType" style="width: 30%"></AppSwitch>
           <AppDatePicker
             v-model:modelSelected="selectedDate"
             :dark="true"
             :style="{ opacity: selectedTimeType === 'custom' ? 1 : 0, width: '9.5rem !important' }"
           />
         </div>
-        <div class="flex items-center gap-2 mx-auto">
+        <div class="flex items-center gap-2" style="width: 30%;">
           <div class="select-none w-16 text-right">{{ $t('Camera') }}</div>
-          <AppSwitch :value="selectedCameraType" :list="cameraTypeList" @select="onSelectCameraType"></AppSwitch>
+          <AppSwitch :value="selectedCameraType" :list="cameraTypeList" @select="onSelectCameraType" style="width: 40%"></AppSwitch>
           <div class="bg-ctrl-secondary w-5 h-5 p-0.5 rounded-md hover:bg-ctrl-secondary-hover" 
             @click="handleOpenCameraFilter"
             :style="{ opacity: selectedCameraType === 'select' ? 1 : 0 }">
             <AppSvgIcon name="icon-chevron-botton" class="text-white w-4 h-4"/>
           </div>
         </div>
-        <div class="flex items-center gap-2 ml-auto">
+        <div class="flex items-center justify-end gap-2" style="width: 30%;">
           <div class="select-none w-16 text-right">{{ $t('Album') }}</div>
-          <AppSwitch :value="selectedAlbumType" :list="albumTypeList" @select="onSelectAlbumType"></AppSwitch>
+          <AppSwitch :value="selectedAlbumType" :list="albumTypeList" @select="onSelectAlbumType" style="width: 40%"></AppSwitch>
           <div class="bg-ctrl-secondary w-5 h-5 p-0.5 rounded-md hover:bg-ctrl-secondary-hover" 
             @click="handleOpenAlbumFilter"
             :style="{ opacity: selectedAlbumType === 'select' ? 1 : 0 }">
@@ -257,7 +257,7 @@ const albumTypeList = ref([
 const albumsList = computed({
   get: () => {
     return [
-      { id: '0', name: 'Unclassified' },
+      { id: '', name: 'Unclassified' },
       ...albums.value.map(({ albumId, albumName }) => ({ id: albumId, name: albumName }))
     ];
   }
@@ -354,7 +354,8 @@ onMounted(() => {
             return albumColorMap.value.get(idx - 1);
           }
           return idx === 0 ? '#027CBC' : unSelectAlbum[idx - 1];
-        }
+        },
+        minBarLength: 4
       }))
     },
     options: {
@@ -491,14 +492,18 @@ onMounted(() => {
   renderByDate(selectedDate.value);
   renderInterval = setInterval(
     () => {
-      if (spiderman.dayjs(selectedDate.value).format('YYYYMMDD') !== spiderman.dayjs().format('YYYYMMDD')) return;
-      if (selectedTimeType.value === 'now' 
-        && spiderman.dayjs().format('YYYY-MM-DD H') !== `${selectedDate.value} ${selectedHour.value}`) {
-        setCurrent();
+      if (selectedTimeType.value === 'now') {
+        if (spiderman.dayjs().format('YYYY-MM-DD H') !== `${selectedDate.value} ${selectedHour.value}`) setCurrent();
         renderByDate(spiderman.dayjs().format('YYYY-MM-DD'));
-      } else {
-        renderByDate(selectedDate.value);  
-      }
+      } else return;
+      // if (spiderman.dayjs(selectedDate.value).format('YYYYMMDD') !== spiderman.dayjs().format('YYYYMMDD')) return;
+      // if (selectedTimeType.value === 'now' 
+      //   && spiderman.dayjs().format('YYYY-MM-DD H') !== `${selectedDate.value} ${selectedHour.value}`) {
+      //   setCurrent();
+      //   renderByDate(spiderman.dayjs().format('YYYY-MM-DD'));
+      // } else {
+      //   renderByDate(selectedDate.value);  
+      // }
     },
     10 * 1000,
   );
@@ -552,13 +557,13 @@ async function renderByDate(date) {
 
   // 設定 data
   template.forEach((idx) => {
-    chart.data.datasets[idx].data = dataOfDate[idx];
+    chart.data.datasets[idx].data = dataOfDate[idx].map((d) => d === 0 ? null : d);
   })
 
   // 設定 最大高度
   const maxY = (() => {
     if (maxOfData < 20) return 20;
-    const tmp = Math.floor(maxOfData * 1.1);
+    const tmp = Math.floor(maxOfData * 1.3);
 
     return tmp;
   })();

@@ -1,9 +1,10 @@
 <template>
-  <div class="flex items-center bg-ctrl-secondary rounded-full text-white text-base border border-white shadow-btn">
+  <div class="flex items-center bg-ctrl-secondary rounded-full text-white text-base border border-white shadow-btn" style="width: 8rem">
     <div class="relative h-full py-2 cursor-pointer text-base leading-4 text-center hover:bg-ctrl-secondary-hover"
-      :class="[item.value === value ? '!bg-ctrl-primary' : '', idx === 0 ? 'rounded-s-full' : '', idx === list.length - 1 ? 'rounded-e-full' : '']"
+      :class="[item.value === value ? '!bg-ctrl-primary' : '']"
       @click="$emit('select', item.value)"
-      style="min-width: 5rem"
+      :style="{ 'border-radius': borderRaiusStyle(idx) }"
+      style="width: 100%;"
       v-for="(item, idx) in list" :key="idx">
       <template v-if="item.text">
         {{ item.text }}
@@ -20,7 +21,7 @@
 
 <script setup>
 
-defineProps({
+const props = defineProps({
   value: {
     type: String,
     default: ''
@@ -32,6 +33,16 @@ defineProps({
 });
 
 defineEmits(['select']);
+
+function borderRaiusStyle(idx) {
+  if (idx === 0) {
+    return '9999px 0 0 9999px';
+  }
+  if (idx === props.list.length - 1) {
+    return '0 9999px 9999px 0';
+  }
+  return '';
+}
 
 </script>
 

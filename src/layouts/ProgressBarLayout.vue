@@ -44,7 +44,7 @@
                 {{ current.time }}
               </div>
             </div>
-            <div class="pr-4 grid content-center">
+            <div class="pr-4 grid content-center" v-if="admin">
               <AppButton :type="$route.path !== '/config' ? 'secondary' : 'primary'"
                 @click="$router.push({ path: '/config' })"
                 class="!p-0">
@@ -79,7 +79,7 @@ import successStore from '@/components/AppSuccess/success';
 const router = useRouter();
 
 const userStore = useUserStore();
-const { user, logout } = userStore;
+const { user, logout, admin } = userStore;
 
 const debugStore = useDebugStore();
 const { testMode } = storeToRefs(debugStore);

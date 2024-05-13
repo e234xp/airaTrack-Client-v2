@@ -2,14 +2,14 @@
   <div class="w-full flex flex-col" style="height: calc(100% - 4rem)">
     <div class="mt-2">
       <AppInput :dark="true" class="w-1/3 float-left mr-4" :rule="''" v-model:modelInput="license" />
-      <AppButton :type="'primary'" class="px-5 float-left mt-1 mr-4" @click="onActivate">
+      <AppButton :type="'primary'" :isEnable="license !== ''" class="px-5 float-left mt-1 mr-4" @click="onActivate">
         {{ $t('Activate') }}
       </AppButton>
-      <AppButton :type="'primary'" class="px-5 float-left mt-1" @click="onRestart">
+      <AppButton :type="'primary'" class="px-5 float-left mt-1" @click="setModal('restart')">
         {{ $t('Restart') }}
       </AppButton>
     </div>
-    <AppDataTable :columns="column" :dataList="pageData">
+    <AppDataTable :columns="column" :dataList="pageData" v-if="pageData.length !== 0">
       <template #trial="props">
         {{ props.data.trial > 0 ? props.data.trial : '' }}
       </template>
@@ -31,18 +31,25 @@
       </template>
     </AppDataTable>
   </div>
+
+  <ModalRestart @confirm="onRestart"></ModalRestart>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+
 import spiderman from '@/spiderman';
 import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
-
+import modalStore from '@/components/AppModal/modal';
 import AppDataTable from '@/components/AppDataTable.vue';
+import ModalRestart from './ModalRestart.vue';
 
 const store = useStore();
-const { getLicense, restartLicense, activateLicense } = store;
+const { getLicense, restartLicense, activateLicense, setModal } = store;
+
+const i18n = useI18n();
 
 const license = ref('');
 const pageData = ref([]);
@@ -51,35 +58,36 @@ const column = ref([
   {
     width: '35%',
     key: 'license',
-    text: 'License key'
+    text: i18n.t('LicenseKey')
   },
   {
-    width: '10%',
+    width: '15%',
     key: 'status',
-    text: 'Status'
+    align: 'center',
+    text: i18n.t('Status')
   },
   {
     width: '10%',
     key: 'trial',
     align: 'center',
-    text: 'Trial days'
+    text: i18n.t('TrialDays')
   },
   {
     width: '15%',
     key: 'expire',
-    text: 'Expire date'
+    text: i18n.t('ExpireDate')
   },
   {
     width: '15%',
     key: 'live',
     align: 'center',
-    text: '# of LIVE'
+    text: i18n.t('NumOfLive')
   },
   {
-    width: '15%',
+    width: '10%',
     key: 'archive',
     align: 'center',
-    text: 'Archive'
+    text: i18n.t('Archive')
   }
 ])
 
@@ -106,14 +114,17 @@ async function onActivate() {
   const { message } = await activateLicense(license.value);
   if (message === 'ok') {
     license.value = '';
-    successStore.show();
+    successStore.show('ActiveHint');
     await updateLicense();
   }
 }
 
 async function onRestart() {
   const { message } = await restartLicense();
-  if (message === 'ok') successStore.show();
+  if (message === 'ok') {
+    successStore.show();
+    setModal('restart');
+  }
 }
 
 async function updateLicense() {

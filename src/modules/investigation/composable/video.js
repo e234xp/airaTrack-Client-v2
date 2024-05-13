@@ -38,10 +38,10 @@ export default () => {
     const element = document.getElementById(`result-${index}`);
     if (!element) return;
 
-    element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
+    // element.scrollIntoView({
+    //   behavior: 'smooth',
+    //   block: 'start',
+    // });
   }
 
   function getVideoUrl(result) {
@@ -51,7 +51,7 @@ export default () => {
       starttime: startTime, endtime: endTime,
       highest: { cid: cameraId },
     } = result;
-    return `${spiderman.system.apiBaseUrl}/airaTracker/viewmedia?sessionId=${sessionId.value}&camera_id=${cameraId}&start_time=${startTime}&end_time=${endTime}`;
+    return `${spiderman.system.apiBaseUrl}/airaTracker/viewmedia?sessionId=${sessionId.value}&camera_id=${cameraId}&start_time=${startTime}&end_time=${endTime}&mediaType=webm`;
   }
 
   function getSnapshotUrl(result) {

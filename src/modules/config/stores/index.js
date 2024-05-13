@@ -6,8 +6,13 @@ import * as actions from './actions';
 export default defineStore('module-config', () => {
 
   function initStore() {}
-  const page = ref('video');
 
+  const modal = ref('');
+  function setModal(data) {
+    modal.value = data;
+  }
+
+  const page = ref('video');
   function setPage(val) {
     page.value = val;
   }
@@ -15,7 +20,11 @@ export default defineStore('module-config', () => {
   return {
     ...actions,
     initStore,
+
     page,
-    setPage
+    setPage,
+
+    modal,
+    setModal,
   };
 });

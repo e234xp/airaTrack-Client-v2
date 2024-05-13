@@ -1,3 +1,4 @@
+import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import spiderman from '@/spiderman';
 import useUserStore from '@/stores/user';
@@ -5,6 +6,11 @@ import useUserStore from '@/stores/user';
 export default defineStore('module-case', () => {
 
   function initStore() {}
+
+  const modal = ref('');
+  function setModal(data) {
+    modal.value = data;
+  }
 
   async function getCase() {
     const userStore = useUserStore();
@@ -40,6 +46,9 @@ export default defineStore('module-case', () => {
   }
 
   return {
+    modal,
+    setModal,
+
     initStore,
     getCase,
     getCaseDetail,

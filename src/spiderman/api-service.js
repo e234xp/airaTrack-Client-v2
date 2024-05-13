@@ -24,6 +24,7 @@ const axiosInstance = (() => {
 
     return response.data;
   }, (error) => {
+    console.log(error);
     errorStore.show({ error });
 
     return Promise.reject(error);

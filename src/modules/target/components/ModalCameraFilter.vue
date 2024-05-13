@@ -16,8 +16,8 @@
         <AppInput v-model:modelInput="searchText" class="w-full" :rule="''" :dark="true" />
         <AppSvgIcon name="icon-search" class="text-white w-6 h-6 mr-2" />
       </div>
-      <div class="bg-third p-4 flex flex-col gap-2 rounded-lg h-60">
-        <div class="flex items-center gap-2" v-for="(item, idx) in filterList">
+      <div class="bg-third p-4 flex flex-col gap-2 rounded-lg h-60 overflow-y-auto">
+        <div class="flex items-center gap-2" v-for="item in filterList">
           <AppCheckBox :placeholder="item.name" :modelInput="isChecked(item.id)" @onChange="onCheck(item.id)">
             <div class="truncate">{{ item.name }}</div>
           </AppCheckBox>

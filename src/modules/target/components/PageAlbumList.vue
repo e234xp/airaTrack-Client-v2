@@ -31,7 +31,7 @@
               <div class="absolute top-0 left-0 w-full h-full flex flex-wrap">
                 <AppSvgIcon
                   name="icon-images"
-                  class="w-2/3 h-2/3 m-auto"
+                  class="w-2/3 h-2/3 m-auto opacity-80"
                   v-if="getImageList(album.id).length === 0"
                 />
                 <template v-if="getImageList(album.id).length === 1">
@@ -123,11 +123,11 @@ const albumsList = computed({
 })
 
 function getImage(id) {
-  return albumPhotoImage.value.find((item) => item.photoId === id).base64Image || '';
+  return albumPhotoImage.value.find((item) => item.photoId === id)?.base64Image || '';
 }
 
 function getImageList(id) {
-  return imageList.value.get(id) || [];
+  return (albumPhotoList.value.get(id) || []).slice(0, 4).filter((id) => albumPhotoImage.value.findIndex((img) => img.photoId === id) >= 0);
 }
 
 function getImageCount(id) {
@@ -164,16 +164,17 @@ function onUpload() {
 }
 
 async function handleUploadAlbum(payload) {
-  uploadAlbumPhoto(payload);
-  await refreshList(payload.id);
+  await getAlbumPhoto([payload.file]);
+  await uploadAlbumPhoto(payload);
+  // await refreshList(payload.id);
 }
 
-async function refreshList(albumId) {
-  const list = albumPhotoList.value.get(albumId).slice(0, 4);
-  const filter = list.filter((id) => albumPhotoImage.value.findIndex((img) => img.photoId === id) < 0);
-  if (filter.length !== 0) await getAlbumPhoto(filter);
-  imageList.value.set(albumId, list);
-}
+// async function refreshList(albumId) {
+//   const list = albumPhotoList.value.get(albumId).slice(0, 4);
+//   const filter = list.filter((id) => albumPhotoImage.value.findIndex((img) => img.photoId === id) < 0);
+//   if (filter.length !== 0) await getAlbumPhoto(filter);
+//   imageList.value.set(albumId, list);
+// }
 
 function handleResize() {
   const width = window.innerWidth;
@@ -194,7 +195,10 @@ onMounted(async () => {
   containerObserver.observe(albumImage.value[0]);
   await Promise.allSettled(albums.value.map(async (item) => {
     await getAlbumData(item.albumId);
-    refreshList(item.albumId);
+    // refreshList(item.albumId);
+    const list = albumPhotoList.value.get(item.albumId).slice(0, 4);
+    const filter = list.filter((id) => albumPhotoImage.value.findIndex((img) => img.photoId === id) < 0);
+    if (filter.length !== 0) await getAlbumPhoto(filter);
   }));
 })
 

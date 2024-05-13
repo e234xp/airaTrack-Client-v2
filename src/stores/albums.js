@@ -105,6 +105,26 @@ export default defineStore('album', () => {
     albumPhotoList.value.set(id, list);
   }
 
+  function updateAlbumPhoto(payload) {
+    const { id, file, image, feature } = payload;
+    const list = albumPhotoList.value.get(id);
+    if (list) {
+      const idx = list.findIndex((item) => item === file);
+      if (idx < 0) {
+        list.push(file);
+        albumPhotoList.value.set(id, list);
+      }
+    }
+    const idx = albumPhotoImage.value.findIndex((item) => item.photoId === file);
+    if (idx < 0) {
+      albumPhotoImage.value.push({
+        photoId: file,
+        base64Image: image,
+        faceFeature: feature
+      })
+    }
+  }
+
   return {
     albumColorMap,
     albums,
@@ -120,6 +140,7 @@ export default defineStore('album', () => {
     editAlbum,
     deleteAlbumPhoto,
 
-    uploadAlbumPhoto
+    uploadAlbumPhoto,
+    updateAlbumPhoto
   };
 })

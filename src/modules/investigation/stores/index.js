@@ -1,7 +1,11 @@
 import { ref } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
+import fetchTimeout from 'fetch-timeout';
 import spiderman from '@/spiderman';
 import useDevices from '@/stores/devices';
+import useVideo from '@/modules/investigation/composable/video';
+
+import downloadReport from '@/modules/investigation/composable/archive';
 
 import * as actions from './actions';
 
@@ -112,6 +116,76 @@ export default defineStore('module-investigation', () => {
     fromCase.value = true;
   }
 
+  const isDownload = ref(false);
+  function startDownload() {
+    isDownload.value = true;
+  }
+  function finishDownload() {
+    isDownload.value = false;
+    downloadList.value = [];
+  }
+
+  const downloadList = ref([]);
+
+  async function fetchVideoResource(item) {
+    try {
+      const response = await fetchTimeout(`${item.videoUrl}`, {
+          method: 'GET',
+          mode: 'cors',
+          credentials: 'omit',
+      })
+
+      return await response.blob();
+    } catch { err => console.log(err) }
+  }
+
+  const { getVideoUrl } = useVideo();
+  async function execDownloadVideo(item) {
+    try {
+        const url = getVideoUrl({
+          starttime: item.starttime, 
+          endtime: item.endtime,
+          highest: { cid: item.highest.cid },
+        });
+
+        item.videoUrl = url;
+
+        const blob = await fetchVideoResource(item);
+        if (blob.size > 102400) {
+          const idx = downloadList.value.findIndex((i) => i.ids[0] === item.ids[0]);
+          if (idx >= 0) {
+            downloadList.value[idx].success = true;
+            downloadList.value[idx].video = blob;
+          }
+        }
+    } catch (err) {
+        console.log(err);
+    }
+  }
+
+  async function batchDownloadVideo(data, retry, callback) {
+    if (!retry) {
+      downloadList.value = data.map((item) => ({
+        ...item,
+        success: false,
+        video: null
+      }))
+    }
+
+    for(const item of downloadList.value.filter((item) => !item.success)) {
+      if (modal.value !== 'archive') return;
+      await execDownloadVideo(item);
+    }
+    if (downloadList.value.length !== 0 && downloadList.value.filter((item) => !item.success).length === 0) {
+      callback();
+    } else isDownload.value = false;
+  }
+
+  async function deleteDownloadVideo(id) {
+    const idx = downloadList.value.findIndex((item) => item.ids[0] === id);
+    downloadList.value.splice(idx, 1);
+  }
+
   function initStore() {
     setPage(initialState.page);
     setDataType(initialState.dataType);
@@ -152,6 +226,14 @@ export default defineStore('module-investigation', () => {
     fromCase,
     caseData,
     setCaseData,
-    switchCaseData
+    switchCaseData,
+
+    isDownload,
+    startDownload,
+    finishDownload,
+    downloadList,
+    batchDownloadVideo,
+    execDownloadVideo,
+    deleteDownloadVideo,
   };
 });

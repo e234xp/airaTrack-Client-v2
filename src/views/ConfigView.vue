@@ -5,7 +5,7 @@
         <NavigationBar></NavigationBar>
       </template>
       <template #grow>
-        <div class="max-w-screen-xl w-full h-full mx-auto pt-4">
+        <div class="max-w-7xl w-full h-full mx-auto pt-4">
           <div class="text-2xl text-white pl-6">{{ title }}</div>
           <component :is="{
             video: VideoSourceConfig,
@@ -23,6 +23,7 @@
 <script setup>
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useI18n } from 'vue-i18n';
 
 import VideoSourceConfig from '@/modules/config/components/VideoSourceConfig.vue';
 import ChannelConfig from '@/modules/config/components/ChannelConfig.vue';
@@ -38,19 +39,21 @@ const { page } = storeToRefs(store);
 const { initStore } = store;
 initStore();
 
+const i18n = useI18n();
+
 const title = computed({
   get: () => {
     switch (page.value) {
       case 'video':
-        return 'Video source settings';
+        return i18n.t('VideoSourceTitle');
       case 'channel':
-        return 'Channels';
+        return i18n.t('ChannelTitle');
       case 'user':
-        return 'Users';
+        return i18n.t('UserTitle');
       case 'license':
-        return 'License';
+        return i18n.t('License');
       case 'system':
-        return 'System';
+        return i18n.t('System');
       default:
         return '';
     }

@@ -33,8 +33,8 @@ const input = computed({
 .switch {
   position: relative;
   display: inline-block;
-  width: 50px;
-  height: 24px;
+  width: 3rem;
+  height: 1.5rem;
 }
 
 .switch input {
@@ -59,10 +59,10 @@ const input = computed({
 .slider:before {
   position: absolute;
   content: "";
-  height: 20px;
-  width: 20px;
-  left: 2px;
-  top: 2px;
+  height: 1.25rem;
+  width: 1.25rem;
+  left: 0.125rem;
+  top: 0.125rem;
   background-color: white;
   -webkit-transition: .4s;
   transition: .4s;
@@ -74,8 +74,8 @@ input:checked+.slider {
 }
 
 input:checked+.slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
+  -webkit-transform: translateX(1.625rem);
+  -ms-transform: translateX(1.625rem);
+  transform: translateX(1.625rem);
 }
 </style>

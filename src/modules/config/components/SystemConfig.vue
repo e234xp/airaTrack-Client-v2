@@ -13,6 +13,9 @@
     <AppLabel :label="$t('MergeScore')">
       <AppInput :dark="true" class="w-1/3" v-model:modelInput="mergeScoreParse" />
     </AppLabel>
+    <AppLabel :label="$t('WatchListScore')">
+      <AppInput :dark="true" class="w-1/3" v-model:modelInput="watchScoreParse" />
+    </AppLabel>
   </div>
   <div class="w-1/3 mt-6">
     <AppButton type="primary" class="mx-20 px-6 py-2" @click="onApply">
@@ -22,6 +25,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+
 import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
 
@@ -69,18 +73,33 @@ const mergeScoreParse = computed({
   }
 })
 
+const watchScore = ref(0);
+const watchScoreParse = computed({
+  get: () => (watchScore.value).toString(),
+  set: (val) => {
+    watchScore.value = +val;
+  }
+})
+
 async function onApply() {
   const trackResult = await postTrackConfig({
     folder: folder.value,
     singleFile: singleFile.value,
     faceRetention: faceRetention.value,
-    mergeScore: mergeScore.value
+    mergeScore: mergeScore.value,
+    watchScore: watchScore.value
   })
   if (trackResult) successStore.show();
 }
 
 onMounted(async () => {
-  ({ db_root_folder: folder.value, single_file_time: singleFile.value, maintain_duration: faceRetention.value, face_merge_score: mergeScore.value } = await getTrackConfig());
+  ({ 
+    db_root_folder: folder.value,
+    single_file_time: singleFile.value,
+    maintain_duration: faceRetention.value,
+    face_merge_score: mergeScore.value,
+    watch_list_score: watchScore.value
+  } = await getTrackConfig());
 })
 
 </script>

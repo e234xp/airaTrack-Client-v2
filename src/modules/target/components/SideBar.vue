@@ -6,6 +6,7 @@
           <div
             v-if="selectedFace"
             class="aira-row-auto-1 gap-4"
+            style="grid-template-columns: repeat(auto-fill, minmax(6rem, calc(50% - 0.5rem)));"
           >
 
             <div class="relative text-default pr-8" style="grid-column: 1 / span 2">
@@ -24,11 +25,14 @@
               </AppButton>
             </div>
 
-            <img
-              class="w-full h-full"
-              :src="spiderman.base64Image.getSrc(selectedFace?.data.face_image)"
-              alt=""
-            >
+            <div class="w-full" style="position: relative; padding-top: 100%;">
+              <img
+                class="w-full h-full"
+                style="position: absolute; top: 0; left: 0;"
+                :src="spiderman.base64Image.getSrc(selectedFace?.data.face_image)"
+                alt=""
+              >
+            </div>
 
             <div class="relative w-full h-full">
               <div class="flex gap-1 items-center">
@@ -158,7 +162,7 @@ const {
 
 const albumsStore = useAlbums();
 const { albums, albumPhotoList, albumPhotoImage, albumColorMap } = storeToRefs(albumsStore);
-const { getAlbumPhoto, deleteAlbumPhoto } = useAlbums();
+const { getAlbumPhoto, deleteAlbumPhoto, updateAlbumPhoto } = useAlbums();
 
 const devicesStore = useDevices();
 const { findDevice } = devicesStore;
@@ -261,7 +265,13 @@ async function handleAddToAlbum(form) {
   const data = {
     albumId, id, face_image: faceImage, feature,
   };
-  await addPhotoFeature(data);
+  const { fileNames } = await addPhotoFeature(data);
+  updateAlbumPhoto({
+    id: albumId,
+    file: fileNames,
+    image: faceImage,
+    feature
+  });
   setModal('');
   successStore.show();
 }
@@ -278,6 +288,12 @@ async function handleMoveToAlbum(form) {
   };
 
   await deleteAlbumPhoto(deleteData);
+  updateAlbumPhoto({
+    id: albumId,
+    file: selectedFace.value.photoId,
+    image: faceImage,
+    feature
+  })
   setModal('');
   successStore.show();
 }

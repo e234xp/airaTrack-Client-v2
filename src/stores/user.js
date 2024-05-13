@@ -46,9 +46,38 @@ export default defineStore('user', () => {
     }, 60 * 1000);
   }
 
+  const admin = ref(false);
+  function setRole(list) {
+    admin.value = (list.find((item) => item.id === user.value.groups[0])?.code || '') === '001';
+  }
+
   const path = ref('');
   function setPath(val) {
     path.value = val;
+  }
+
+  const isAdding = ref(false);
+  function startAddtoCase() {
+    isAdding.value = true;
+  }
+  function finishAddtoCase() {
+    isAdding.value = false;
+  }
+
+  async function resetLicensePassword(payload) {
+    return await spiderman.apiService({
+      url: `${spiderman.system.apiBaseUrl}/airaTracker/password/license`,
+      method: 'post',
+      data: payload,
+    });
+  }
+
+  async function changePassword(payload) {
+    return await spiderman.apiService({
+      url: `${spiderman.system.apiBaseUrl}/airaTracker/password/change`,
+      method: 'post',
+      data: payload,
+    });
   }
 
   return {
@@ -60,6 +89,16 @@ export default defineStore('user', () => {
     startMaintainUser,
 
     path,
-    setPath
+    setPath,
+
+    isAdding,
+    startAddtoCase,
+    finishAddtoCase,
+
+    admin,
+    setRole,
+
+    resetLicensePassword,
+    changePassword
   };
 });

@@ -9,9 +9,9 @@
        bg-red-100 border border-red-400 text-red-700 mt-3 px-4 py-3 rounded fixed z-50"
       >
         <div class="flex justify-start">
-          <div class="whitespace-nowrap font-bold mr-4">
+          <!-- <div class="whitespace-nowrap font-bold mr-4">
             {{ title }}
-          </div>
+          </div> -->
           <div class="mr-6">
             {{ body }}
           </div>

@@ -24,7 +24,13 @@ export default defineStore('device', () => {
     return Promise.race([apiPromise, timeoutPromise]);
   }
 
-  function setDevices(data) {
+  function setDevices(data, vms) {
+    const { host, password, username, authorization } = vms;
+    data.forEach((item) => {
+      if (item.server.ip === host && item.server.pass === password && item.server.user === username) {
+        item.server.authorization = authorization;
+      }
+    })
     devices.value = data;
   }
 
@@ -53,10 +59,8 @@ export default defineStore('device', () => {
   }
 
   function findDevice(cameraId) {
-    return cameraId
-      ? livedevices.value.find((device) => device.camera_id === cameraId)
-      ?? devices.value.find((device) => device.camera_id === cameraId)
-      : { name: 'Album photo' };
+    if (!cameraId) return { name: '--' };
+    return [ ...devices.value, ...livedevices.value ].find((device) => device.camera_id === cameraId) || { name: '--' };
   }
 
   return {

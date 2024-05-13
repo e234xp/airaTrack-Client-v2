@@ -5,6 +5,8 @@ const modalObject = reactive({
   header: '',
   body: '',
   buttons: [],
+  cancel: () => {},
+  confirm: () => {},
 
   show,
   close,

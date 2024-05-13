@@ -36,7 +36,7 @@
                   {{ $t('Cancel') }}
                 </AppButton>
                 <AppButton
-                  type="primary"
+                  type="danger"
                   class="w-40"
                   :is-enable="selectedFaces.length>0"
                   @click="handleDelete"
@@ -61,12 +61,12 @@
               :key="face.data.id"
               class="select-none relative cursor-pointer w-full min-h-24 border-4 border-transparent"
               style="padding-top: 100%;"
+              @click="selectFace(face)"
             >
               <img
                 class="absolute top-0 left-0 w-full h-full object-cover rounded"
                 :src="spiderman.base64Image.getSrc(face.data.face_image)"
                 alt=""
-                @click="selectFace(face)"
               >
               <AppCheckBox
                 :checked="findIndex(face) !== -1"
@@ -99,8 +99,8 @@ const { albums, albumPhotoList, albumColorMap, albumPhotoImage } = storeToRefs(a
 const { getAlbumPhoto, deleteAlbumPhoto } = useAlbums();
 
 const store = useStore();
-const { selectedAlbumDetail } = storeToRefs(store);
-const { setPage } = store;
+const { selectedAlbumDetail, selectedFace } = storeToRefs(store);
+const { setPage, setSelectedFace, setConfirmingFaces, setConfirmedFace } = store;
 
 const albumName = computed({
   get: () => { 
@@ -194,6 +194,15 @@ async function handleDelete() {
     albumId: selectedAlbumDetail.value.albumId,
     albumData: selectedFaces.value.map(({ photoId }) => photoId),
   };
+
+  if (selectedFace.value) {
+    const idx = selectedFaces.value.findIndex((face) => face.data.photoId === selectedFace.value.data.photoId);
+    if (idx >= 0) {
+      setSelectedFace(null);
+      setConfirmingFaces([]);
+      setConfirmedFace(null);
+    }
+  }
 
   await deleteAlbumPhoto(data);
 

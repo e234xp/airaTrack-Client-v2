@@ -6,8 +6,8 @@
     </AppButton>
 
     <div class="absolute right-4 text-sm text-default h-full flex flex-col justify-center">
-      <div class="text-right">{{ $t('Version') }}: {{ spiderman.system.version }}</div>
-      <div class="text-right">{{ $t('EngVersion') }}: {{ devVersion }}</div>
+      <div class="text-right"><span style="user-select: none;">{{ $t('Version') }}: </span>{{ spiderman.system.version }}</div>
+      <div class="text-right"><span style="user-select: none;">{{ $t('EngVersion') }}: </span>{{ devVersion }}</div>
     </div>
   </div>
   <AppDivider />
@@ -21,30 +21,34 @@ import spiderman from '@/spiderman';
 import useStore from '@/modules/config/stores/index';
 import { AppDivider } from '../../../components/app';
 
+import { useI18n } from 'vue-i18n';
+
 const store = useStore();
 const { page } = storeToRefs(store);
 const { setPage } = store;
 
+const i18n = useI18n();
+
 const optList = ref([
   {
     value: 'video',
-    text: 'Video Source'
+    text: i18n.t('VideoSource')
   },
   {
     value: 'channel',
-    text: 'Channel'
+    text: i18n.t('Channel')
   },
   {
     value: 'user',
-    text: 'User'
+    text: i18n.t('User')
   },
   {
     value: 'license',
-    text: 'License'
+    text: i18n.t('License')
   },
   {
     value: 'system',
-    text: 'System'
+    text: i18n.t('System')
   }
 ])
 

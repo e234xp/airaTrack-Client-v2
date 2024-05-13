@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+import VueLazyload from 'vue-lazyload'
 import 'virtual:svg-icons-register';
 
 import './assets/scss/main.scss';
@@ -29,4 +30,5 @@ app
   .use(router)
   .use(i18n)
   .use(print)
+  .use(VueLazyload)
   .mount('#app');

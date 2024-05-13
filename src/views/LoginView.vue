@@ -8,8 +8,8 @@
           class="h-6"
         >
       </div>
-      <div class="grid content-end text-white text-xl">
-        {{ $t('Version') }}: {{ spiderman.system.version }}
+      <div class="flex content-end text-white text-xl">
+        <span v-if="path === '/m'">Mobile</span><span v-else>{{ $t('Version') }}</span>: {{ spiderman.system.version }}
       </div>
     </div>
     <div class="sm:w-full md:w-112 bg-panel shadow-cus rounded mb-4 py-8 px-6">
@@ -53,6 +53,9 @@
           :options="{
             English: 'en',
             繁體中文: 'zh',
+            日本語: 'ja',
+            'Bahasa Indonesia': 'id',
+            'Tiếng Việt': 'vi'
           }"
           v-model:modelInput="language"
           rule="required"
@@ -77,6 +80,7 @@
 
       <AppButton
         class="mx-10 mb-4 py-2 px-20"
+        :is-Enable="form.username !== '' && form.password !== ''"
         @click="handleLogin"
       >
         {{ $t("Login") }}
@@ -92,6 +96,8 @@
         <AppButton
           type="transparent"
           class="underline"
+          :is-Enable="form.username !== ''"
+          @click="() => openReset = true"
         >
           {{ $t("ForgotPassword") }}
         </AppButton>
@@ -109,6 +115,7 @@
       >
     </div>
   </div>
+  <ModalResetPassword :name="form.username" @close="() => openReset = false" v-if="openReset"></ModalResetPassword>
 </template>
 
 <script setup>
@@ -125,11 +132,15 @@ import useLanguageStore from '@/stores/language';
 import useDevices from '@/stores/devices';
 import useAlbums from '@/stores/albums';
 
+import useConfigStore from '@/modules/config/stores';
+
+import ModalResetPassword from './ModalResetPassword.vue';
+
 const router = useRouter();
 
 const userStore = useUserStore();
 const { sessionId, path } = storeToRefs(userStore);
-const { loginUser, setUser, startMaintainUser } = userStore;
+const { loginUser, setUser, startMaintainUser, setRole } = userStore;
 
 const languageStore = useLanguageStore();
 const { language } = storeToRefs(languageStore);
@@ -140,32 +151,46 @@ const {
 } = devicesStore;
 
 const albumsStore = useAlbums();
-const { getAlbums, setAlbums } = albumsStore;
+const { getAlbums, setAlbums, getAlbumData } = albumsStore;
+const { albums } = storeToRefs(albumsStore);
 
 const { hasSubmitted, generateSubmit } = useSubmit();
 
+const { getUserGroup, getLicense, getNxConfig } = useConfigStore();
+
 // FIXME: 拿掉 帳號密碼
 const form = ref({
-  username: 'Admin',
-  password: '123456',
-  mode: 'general',
+  username: '',
+  password: '',
+  mode: '',
 });
+
+const openReset = ref(false);
 
 const handleLogin = generateSubmit(async () => {
   setUser(await loginUser(form.value));
+  setRole(await getUserGroup());
   startMaintainUser();
+  const { host, password, username, authorization } = await getNxConfig();
 
-  await setupResources();
+  await setupResources({ host, password, username, authorization });
 
-  if (path.value === '/m' || path.value === '/upload-mobile') router.push({ path: '/upload-mobile' });
-  else router.push({ path: '/target' });
-  // if (form.value.mode === 'general') router.push({ path: '/target' });
-  // if (form.value.mode === 'upload') router.push({ path: '/upload-mobile' });
+  const { license } = await getLicense();
+  // const { host, password, username } = await getNxConfig();
+  if (license.length === 0 && host === '127.0.0.1' && password === '' && username === '' && false) {
+    router.push({ path: '/initial' });
+  } else {
+    if (path.value === '/m' || path.value === '/upload-mobile') router.push({ path: '/upload-mobile' });
+    else router.push({ path: '/target' });
+  }
 });
 
-async function setupResources() {
-  setDevices(await getDevices(sessionId.value));
+async function setupResources(vms) {
+  setDevices(await getDevices(sessionId.value), vms);
   setLiveDevices(await getLiveDevices(sessionId.value));
   setAlbums(await getAlbums(sessionId.value));
+  await Promise.allSettled(albums.value.map(async (item) => {
+    await getAlbumData(item.albumId);
+  }));
 }
 </script>

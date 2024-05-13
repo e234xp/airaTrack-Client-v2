@@ -9,7 +9,7 @@
       class="select-none relative cursor-pointer w-full rounded border-4"
       :class="{ 'pointer-events-none': face.data.id === '' }"
       style="padding-top: 100%;"
-      :style="{ 'border-color': getAlbumBorder(face.highest) }"
+      :style="{ 'border-color': getAlbumBorder(face.highest), 'border-style': getAlbumBorderStyle(face.highest) }"
       @click="handleToggleFace(face)"
     >
       <template v-if="face.data.face_image">
@@ -95,16 +95,20 @@ const {
 } = store;
 
 const albumsStore = useAlbums();
-const { albums, albumColorMap } = storeToRefs(albumsStore);
+const { albums, albumColorMap, albumPhotoList } = storeToRefs(albumsStore);
 
 const debugStore = useDebug();
 const { setAlternate } = debugStore;
+
+const detail = computed(() => {
+  return props.type === 'detail';
+});
 
 const gridStyle = computed({
   get: () => {
     return {
       'grid-template-columns': `repeat(${faceListCol.value}, 1fr)`,
-      'grid-template-rows': `repeat(${faceListRow.value}, 1fr)`
+      'grid-template-rows': `repeat(${detail.value ? faceListRow.value * 2.5 : faceListRow.value}, 1fr)`
     }
   }
 })
@@ -115,6 +119,14 @@ function getAlbumBorder(highest) {
   const idx = albums.value.findIndex((item) => item.albumId === albumId);
   if (idx < 0) return 'transparent';
   return  albumColorMap.value.get(idx) || 'transparent';
+}
+
+function getAlbumBorderStyle(highest) {
+  if (!highest) return 'solid';
+  const { key, albumId } = highest;
+  if (albumId === '') return 'solid';
+  const list = albumPhotoList.value.get(albumId) || [];
+  if (list.findIndex((png) => png.indexOf(key) >= 0) < 0) return 'dashed';
 }
 
 async function handleToggleFace(face) {

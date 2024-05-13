@@ -43,7 +43,7 @@ export async function addTask(data) {
 
 export async function addPhotoFeature(data) {
   const userStore = useUserStore();
-  await spiderman.apiService({
+  return await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/albums/photoFeature`,
     method: 'post',
     headers: { sessionId: userStore.sessionId },

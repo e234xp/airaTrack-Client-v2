@@ -70,6 +70,7 @@ function onTurnPage(val) {
 function sizeAdjust() {
   const height = panel.value.clientHeight;
   pagination.perItems = Math.floor((height - prop.margin) / prop.rowHeight);
+  if (pagination.pages < pagination.current) pagination.current = pagination.pages;
 }
 
 const panel = ref(null);       // DOM ref

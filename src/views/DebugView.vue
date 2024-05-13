@@ -51,7 +51,7 @@ const resultScore = ref(-1);
 const imgStyle = ref([]);
 
 function parseScore(val) {
-  return val < 0 ? '--' : (val).toFixed(2);
+  return val < 0 ? '--' : (val).toFixed(3);
 }
 
 function drag(idx) {
