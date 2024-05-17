@@ -54,7 +54,7 @@ module.exports = {
         'ctrl-primary': 'linear-gradient(180deg, #4FADDF 0%, #3186B4 44.79%, #2475A0 47.4%, #3186B4 100%)',
         'ctrl-primary-hover': 'radial-gradient(50% 31.25% at 50% 100%, rgba(255, 255, 255, 0.50) 0%, rgba(255, 255, 255, 0.00) 100%), linear-gradient(180deg, #4FADDF 0%, #3186B4 44.79%, #2475A0 47.4%, #3186B4 100%)',
         'ctrl-secondary': 'linear-gradient(180deg, #404040 0%, #232323 44.79%, #000 47.4%, #232323 100%)',
-        'ctrl-secondary-hover': 'radial-gradient(50% 31.25% at 50% 100%, #67CAFF 0%, rgba(103, 202, 255, 0.00) 100%), linear-gradient(180deg, #404040 0%, #232323 44.79%, #000 47.4%, #232323 100%)',
+        'ctrl-secondary-hover': 'radial-gradient(50% 31.25% at 50% 100%, #67CAFF 0%, rgba(103, 202, 255, 0.00) 100%)',
         'ctrl-danger': 'linear-gradient(180deg, #B0342C 0%, #97231A 44.79%, #7D1810 47.4%, #96221A 100%)',
         'ctrl-danger-hover': 'radial-gradient(50% 31.25% at 50% 100%, rgba(255, 255, 255, 0.50) 0%, rgba(255, 255, 255, 0.00) 100%), linear-gradient(180deg, #B0342C 0%, #97231A 44.79%, #7D1810 47.4%, #96221A 100%)',
         'ctrl-secondary-lg': 'linear-gradient(180deg, #404040 0%, #000 100%)',

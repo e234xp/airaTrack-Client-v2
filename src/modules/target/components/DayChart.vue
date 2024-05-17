@@ -23,7 +23,7 @@
     <div class="rounded-lg border border-white/40 bg-black/20 p-4 cursor-pointer" style="width: calc(100% - 15.5rem)">
       <div class="flex text-white gap-4 h-10">
         <div class="flex items-center gap-2" style="width: 40%;">
-          <div class="select-none w-16 text-right">{{ $t('TimeTitle') }}</div>
+          <div class="select-none w-18 text-right">{{ $t('TimeTitle') }}</div>
           <AppSwitch :value="selectedTimeType" :list="timeTypeList" @select="onSelectTimeType" style="width: 30%"></AppSwitch>
           <AppDatePicker
             v-model:modelSelected="selectedDate"

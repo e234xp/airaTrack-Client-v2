@@ -20,7 +20,7 @@
 
             <div class="text-white text-xl" style="width: calc(100% - 15rem)">
               <div class="flex justify-around pl-4">
-                <div class="w-32 mr-8 flex items-center content-center">
+                <div class="w-36 mr-8 flex items-center content-center">
                   <template v-if="item.data_type === 'stop'">
                     {{ $t('Init') }}
                   </template>
@@ -31,7 +31,7 @@
                     {{ $t('Completed') }}
                   </template>
                 </div>
-                <div class="flex items-center" style="width: calc(100% - 32rem)">
+                <div class="flex items-center" style="width: calc(100% - 34rem)">
                   <div class="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700">
                     <div
                       class="h-3.5 rounded-full"
