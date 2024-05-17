@@ -182,7 +182,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
               #app .footer .totalpage { position: relative; font-size: 14px; letter-spacing: 0px; font-family: Helvetica; color: #b8b8b8; z-index: 2; }
 
               #app2 {position: relative;min-height: 842px;max-width: 595px;width: 595px;margin-top: 40px;margin-left: auto;margin-right: auto;background-color: #ffffff;box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.4);page-break-after: always;}
-              #app2 .navbar {position: relative;height: 34px;margin: 0;padding: 0;background-color: #2475a0;}
+              #app2 .navbar {position: relative;height: 34px;margin: 0;padding: 0;background-color: #2475a0;display: flex; align-items: center; padding-left: 24px; gap: 8px; color: #fff}
               #app2 .navbar img {position: absolute;height: 12px;width: 33px;left: 50px;top: 11.5px;}
               #app2 .navbar .logo {position: absolute;width: 66px;height: 20px;object-fit: contain;color: #fff;left: 24px;top: 8px;font-size: 17px;font-family: Helvetica;}
               #app2 .navbar .report-title {position: absolute;top: 8px;left: 95px;height: 20px;margin: 0 0 0 8px;font-family: Helvetica;color: #ffffff;font-size: 17px;font-stretch: normal;line-height: normal;font-weight: 300;font-style: normal;letter-spacing: normal;}
