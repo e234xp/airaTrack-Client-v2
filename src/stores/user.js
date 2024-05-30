@@ -6,14 +6,21 @@ export default defineStore('user', () => {
   const user = ref(null);
   const sessionId = ref('');
   
+  const timeshift = ref(0);
+  
   async function loginUser(form) {
     const {
-      sessionId: tmpSessionId, user: tmpUser,
+      sessionId: tmpSessionId, user: tmpUser, timezone
     } = await spiderman.apiService({
       url: `${spiderman.system.apiBaseUrl}/airaTracker/login`,
       method: 'post',
       data: form,
     });
+
+    const severTimezone = +(timezone.split(":")[0]);
+    const timezoneOffset = new Date().getTimezoneOffset();
+    const offsetHours = -(Math.floor(timezoneOffset / 60));
+    timeshift.value = offsetHours - severTimezone;
 
     return { sessionId: tmpSessionId, user: tmpUser };
   }
@@ -28,7 +35,7 @@ export default defineStore('user', () => {
     });
   }
 
-  function setUser(data) {
+  function setUser(data) {    
     ({ user: user.value, sessionId: sessionId.value } = data);
   }
 
@@ -99,6 +106,8 @@ export default defineStore('user', () => {
     setRole,
 
     resetLicensePassword,
-    changePassword
+    changePassword,
+
+    timeshift
   };
 });
