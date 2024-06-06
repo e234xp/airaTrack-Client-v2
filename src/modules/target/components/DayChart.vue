@@ -547,8 +547,7 @@ async function renderByDate(date) {
   const end = today === date ? spiderman.dayjs().unix() : spiderman.dayjs(`${date} 23:59:59`).unix();
   const cList = selectedCameraType.value === 'all' ? livedevices.value.map(({ camera_id: cameraId }) => cameraId) : selectedCamera.value;
   const tempData = await getLiveFaceHourlyCount(start, end, cList);
-  // appendMockData(tempData);
-  console.log(timeshift.value)
+  // appendMockData(tempData); 
   const template = [0, 1, 2, 3, 4, 5];
   const dataOfDate = template.map((idx) => {
     const aId = albumsList.value[idx].id;

@@ -1,11 +1,11 @@
 <template>
   <div class="h-full grid justify-center content-center">
-    <div class="mb-2 flex justify-between">
+    <div class="mb-2 flex justify-between items-center">
       <div>
         <img
           src="@/assets/images/logo-track.png"
           alt=""
-          class="h-6"
+          class="h-8"
         >
       </div>
       <div class="flex content-end text-white text-xl">
@@ -104,7 +104,7 @@
       </div>
     </div>
 
-    <div class="mb-2 flex justify-center text-xl text-white">
+    <div class="mb-2 flex justify-center items-center text-xl text-white">
       <div class="grid content-center mx-2">
         Powered by
       </div>

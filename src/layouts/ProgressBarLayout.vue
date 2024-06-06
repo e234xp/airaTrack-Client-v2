@@ -3,7 +3,7 @@
     <div>
       <div class="bg-header py-1 flex justify-between">
         <div class="flex items-center">
-          <img src="@/assets/images/logo-track.png" alt="" class="h-6 px-5">
+          <img src="@/assets/images/logo-track.png" alt="" class="h-8 px-5">
         </div>
         <div class="w-1/3 flex justify-center items-center text-gray-800 text-2xl font-bold">
           <AppButton type="transparent" @click="$router.push({ path: '/target' })" :is-active="$route.path === '/target'"
