@@ -185,5 +185,6 @@
   "InvestigationPeriod": "Período de investigación",
   "InvestigationCamera": "Cámara de Investigación",
   "InvestigationReport": "Informe de Investigación",
-  "CaptureThreshold": "Umbral de Captura"
+  "CaptureThreshold": "Umbral de Captura",
+  "Unlimited": "Ilimitado"
 }

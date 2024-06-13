@@ -185,5 +185,6 @@
   "InvestigationPeriod": "Investigation Period",
   "InvestigationCamera": "Investigation Camera",
   "InvestigationReport": "Investigation Report",
-  "CaptureThreshold": "Capture Threshold"
+  "CaptureThreshold": "Capture Threshold",
+  "Unlimited": "Unlimited"
 }

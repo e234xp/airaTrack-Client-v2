@@ -13,6 +13,7 @@
           playsinline="playsinline"
           autoplay
           controlslist="nodownload"
+          @stalled="handleVideoStalled"
           @timeupdate="handleTimeUpdate"
           @ended="handleVideoEnded"
           @playing="handleVideoStarted"
@@ -161,6 +162,10 @@ function handleVideoEnded() {
 
 function handleVideoStarted() {
   isPlaying.value = true;
+}
+
+function handleVideoStalled() {
+  emit('onNext');
 }
 
 function sizeAdjust() {
