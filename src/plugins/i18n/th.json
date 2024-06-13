@@ -185,5 +185,6 @@
   "InvestigationPeriod": "ช่วงเวลาการสืบสวน",
   "InvestigationCamera": "กล้องสำรวจ",
   "InvestigationReport": "รายงานการสืบสวน",
-  "CaptureThreshold": "ค่าเกณฑ์การจับภาพ"
+  "CaptureThreshold": "ค่าเกณฑ์การจับภาพ",
+  "Unlimited": "ไม่จำกัด"
 }

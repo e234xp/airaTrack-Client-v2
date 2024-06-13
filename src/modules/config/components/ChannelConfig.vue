@@ -122,9 +122,10 @@ const thresholdList = ref({
 })
 
 const sizeList = ref({
-  [`${i18n.t('Small')}`]: '50',
-  [`${i18n.t('Medium')}`]: '100',
-  [`${i18n.t('Large')}`]: '150'
+  [`${i18n.t('Unlimited')}`]: 0,
+  [`${i18n.t('Small')}`]: 50,
+  [`${i18n.t('Medium')}`]: 100,
+  [`${i18n.t('Large')}`]: 150
 })
 
 const pageData = ref([]);
@@ -176,7 +177,7 @@ function parseData(item, live = false) {
     decodeKeyOnly: item.decode_key_only || false,
     sensitivity: item.capture_sensitivity || -1,
     threshold: item.capture_threshold || -1,
-    minFaceSize: (item.min_face_size || 50).toString()
+    minFaceSize: item.min_face_size === undefined ? 50 : item.min_face_size
   }
 }
 
@@ -248,7 +249,7 @@ async function updateLiveCamera(camera, isNew = false) {
     capture_sensitivity: isNew ? 0.25 : camera.sensitivity,
     capture_threshold: isNew ? 0.5 : camera.threshold,
     decode_key_only: isNew ? false : camera.decodeKeyOnly,
-    min_face_size: isNew ? 50 : +camera.minFaceSize
+    min_face_size: isNew ? 50 : camera.minFaceSize
   });
   if (message === 'ok') updateList(data);
 }
@@ -263,7 +264,7 @@ async function updateList(data) {
       decodeKeyOnly: live.decode_key_only || false,
       sensitivity: live.capture_sensitivity || -1,
       threshold: live.capture_threshold || -1,
-      minFaceSize: (live.min_face_size || 50).toString()
+      minFaceSize: live.min_face_size === undefined ? 50 : live.min_face_size
     };
   })
   updateStore();

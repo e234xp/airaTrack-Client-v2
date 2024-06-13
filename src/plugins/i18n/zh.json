@@ -185,5 +185,6 @@
   "InvestigationPeriod": "調查區間",
   "InvestigationCamera": "調查攝影機",
   "InvestigationReport": "調查報告",
-  "CaptureThreshold": "抓拍閾值"
+  "CaptureThreshold": "抓拍閾值",
+  "Unlimited": "不限"
 }

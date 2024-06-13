@@ -185,5 +185,6 @@
   "InvestigationPeriod": "調査期間",
   "InvestigationCamera": "調査カメラ",
   "InvestigationReport": "調査報告",
-  "CaptureThreshold": "キャプチャ閾値"
+  "CaptureThreshold": "キャプチャ閾値",
+  "Unlimited": "無制限"
 }

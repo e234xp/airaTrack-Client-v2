@@ -185,5 +185,6 @@
   "InvestigationPeriod": "Khoảng thời gian điều tra",
   "InvestigationCamera": "Máy ảnh điều tra",
   "InvestigationReport": "Báo cáo điều tra",
-  "CaptureThreshold": "Ngưỡng Chụp Ảnh"
+  "CaptureThreshold": "Ngưỡng Chụp Ảnh",
+  "Unlimited": "Không giới hạn"
 }
