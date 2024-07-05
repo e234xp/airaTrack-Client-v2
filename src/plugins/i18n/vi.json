@@ -186,5 +186,7 @@
   "InvestigationCamera": "Máy ảnh điều tra",
   "InvestigationReport": "Báo cáo điều tra",
   "CaptureThreshold": "Ngưỡng Chụp Ảnh",
-  "Unlimited": "Không giới hạn"
+  "Unlimited": "Không giới hạn",
+  "Using": "Đang sử dụng",
+  "ReloginHint": "Bạn có cần đăng nhập lại vào airaTrack không?"
 }

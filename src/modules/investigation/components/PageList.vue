@@ -65,7 +65,7 @@
                     v-if="item.data_type === 'stop'"
                     type="primary"
                     class="px-8"
-                    :is-enable="!isProgress"
+                    :is-enable="!processing"
                     @click="handleStartTask(item.task_id)"
                   >
                     {{ $t("Start") }}
@@ -84,6 +84,12 @@
                     class="px-8"
                     @click="handleCancelTask(item.task_id)"
                   >
+                    <AppSvgIcon
+                      name="icon-loading"
+                      color="#FFFFFF"
+                      class="animate-spin w-4 h-4 mr-2"
+                      v-if="isDelete"
+                    />
                     {{ $t('Stop') }}
                   </AppButton>
                 </div>
@@ -208,7 +214,6 @@ import NavigationBar from '@/modules/investigation/components/NavigationBar.vue'
 import ModalDeleteTask from './ModalDeleteTask.vue';
 
 import successStore from '@/components/AppSuccess/success';
-import modalStore from '@/components/AppModal/modal';
 
 import useStore from '@/modules/investigation/stores/index';
 import { useI18n } from 'vue-i18n';
@@ -220,6 +225,7 @@ const { setPage, setSelectedTask, getTaskListWithoutResult, startTask, removeTas
 const i18n = useI18n();
 
 const isProgress = ref(false);
+const isDelete = ref(false);
 const deletedTask = ref({});
 
 const list = ref([]);
@@ -234,14 +240,14 @@ async function setRefreshInterval(taskId) {
   refreshIntervalID = setInterval(
     async () => {
       await refreshList();
-      const isFinish = (list.value
-        .find((item) => (item.task_id === taskId)))
-        .progress === 100;
+      // const isFinish = (list.value
+      //   .find((item) => (item.task_id === taskId)))
+      //   .progress === 100;
 
-      if (isFinish) {
-        isProgress.value = false;
-        clearInterval(refreshIntervalID);
-      }
+      // if (isFinish) {
+      //   isProgress.value = false;
+      //   clearInterval(refreshIntervalID);
+      // }
     },
     5 * 1000,
   );
@@ -253,6 +259,8 @@ const filterList = computed(() => {
   if (dataType.value === 'finish') return list.value.filter((item) => (item.data_type === 'finish'));
   return [];
 });
+
+const processing = computed(() => list.value.filter((item) => (item.data_type === 'progress')).length > 0);
 
 function parseExeTime(start, end) {
   return `${spiderman.formatDate.parseYMD(start || end)} ${spiderman.dayjs(start || end).format('HH:mm:ss')}`;
@@ -279,26 +287,35 @@ function parseTime(end, start) {
 
 onMounted(async () => {
   await refreshList();
-  const progressItem = list.value.find((item) => (item.data_type === 'progress'));
+  setRefreshInterval();
+  // await refreshList();
+  // const progressItem = list.value.find((item) => (item.data_type === 'progress'));
 
-  if (progressItem) setRefreshInterval(progressItem.task_id);
+  // if (progressItem) setRefreshInterval(progressItem.task_id);
 });
 
 onUnmounted(() => {
+  // console.log('unmounted');
   clearInterval(refreshIntervalID);
 });
 
 async function handleStartTask(taskId) {
-  isProgress.value = true;
+  // isProgress.value = true;
+  isDelete.value = false;
   const idx = list.value.findIndex((item) => (item.task_id === taskId));
   list.value[idx].data_type = 'progress';
-  const { message } = await startTask(taskId);
-  if (message === 'ok') {
-    setRefreshInterval(taskId);
-  } else {
-    isProgress.value = false;
-    list.value[idx].data_type = 'stop';
-  }
+  const { message } = await startTask(taskId)
+    .catch((err) => {
+      // isProgress.value = false;
+      // list.value[idx].data_type = 'stop';
+    });
+
+  // if (message === 'ok') {
+  //   setRefreshInterval(taskId);
+  // } else {
+  //   isProgress.value = false;
+  //   list.value[idx].data_type = 'stop';
+  // }
 }
 
 async function handleRemoveTask(taskId) {
@@ -318,20 +335,26 @@ async function onDeleteTask() {
 }
 
 async function handleCancelTask(taskId) {
+  isDelete.value = true;
   const data = await getTask(taskId);
   const result = [];
+
+  // const idx = list.value.findIndex((item) => (item.task_id === taskId));
+  // clearInterval(refreshIntervalID);
+  // list.value[idx].data_type = 'stop';
+
   for (const sub of data.task.subtasks) {
     const { message } = await stopTask(sub.task_id)
     result.push(message === 'ok');
   }
   if (result.filter((item) => item).length === data.task.subtasks.length) {
     const { message } = await modifyTask(taskId, 'stop');
-    if (message === 'ok') {
-      isProgress.value = false;
-      const idx = list.value.findIndex((item) => (item.task_id === taskId));
-      list.value[idx].data_type = 'stop';
-      clearInterval(refreshIntervalID);
-    }
+    // if (message === 'ok') {
+    //   isProgress.value = false;
+    //   const idx = list.value.findIndex((item) => (item.task_id === taskId));
+    //   clearInterval(refreshIntervalID);
+    //   list.value[idx].data_type = 'stop';
+    // }
   }
 }
 

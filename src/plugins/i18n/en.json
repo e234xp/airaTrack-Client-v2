@@ -186,5 +186,7 @@
   "InvestigationCamera": "Investigation Camera",
   "InvestigationReport": "Investigation Report",
   "CaptureThreshold": "Capture Threshold",
-  "Unlimited": "Unlimited"
+  "Unlimited": "Unlimited",
+  "Using": "In Use",
+  "ReloginHint": "Do you need to log in to airaTrack again?"
 }

@@ -359,7 +359,6 @@ onMounted(async () => {
       role: item.groups[0]
     }
   })
-  console.log(pageData.value);
   
   if (groupData.value.findIndex((item) => item.code === '002') === -1) {
     const opet = {

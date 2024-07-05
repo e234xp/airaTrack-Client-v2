@@ -80,10 +80,16 @@
 
       <AppButton
         class="mx-10 mb-4 py-2 px-20"
-        :is-Enable="form.username !== '' && form.password !== ''"
+        :is-Enable="form.username !== '' && form.password !== '' && !isLoading"
         @click="handleLogin"
       >
-        {{ $t("Login") }}
+        <AppSvgIcon
+          name="icon-loading"
+          color="#FFFFFF"
+          class="animate-spin w-4 h-4"
+          v-if="isLoading"
+        />
+        <template v-else>{{ $t("Login") }}</template>
       </AppButton>
 
       <div class="flex justify-center">
@@ -166,28 +172,39 @@ const form = ref({
 });
 
 const openReset = ref(false);
+const isLoading = ref(false);
 
 const handleLogin = generateSubmit(async () => {
-  setUser(await loginUser(form.value));
-  setRole(await getUserGroup());
-  startMaintainUser();
-  const { host, password, username, authorization } = await getNxConfig();
+  isLoading.value = true;
+  try {
+    setUser(await loginUser(form.value));
+    setRole(await getUserGroup());
+    startMaintainUser();
+    const { host, password, username, authorization } = await getNxConfig();
 
-  await setupResources({ host, password, username, authorization });
+    const device = (username === '' || password === '') ? [] : await getDevices(sessionId.value)
+    const live = (username === '' || password === '') ? [] : await getLiveDevices(sessionId.value)
+    
+    setDevices(device, { host, password, username, authorization });
+    setLiveDevices(live);
 
-  const { license } = await getLicense();
-  // const { host, password, username } = await getNxConfig();
-  if (license.length === 0 && host === '127.0.0.1' && password === '' && username === '' && false) {
-    router.push({ path: '/initial' });
-  } else {
-    if (path.value === '/m' || path.value === '/upload-mobile') router.push({ path: '/upload-mobile' });
-    else router.push({ path: '/target' });
+    await setupResources();
+
+    const { license } = await getLicense();
+    // const { host, password, username } = await getNxConfig();
+    if (license.length === 0 && host === '127.0.0.1' && password === '' && username === '' && false) {
+      router.push({ path: '/initial' });
+    } else {
+      if (path.value === '/m' || path.value === '/upload-mobile') router.push({ path: '/upload-mobile' });
+      else router.push({ path: '/target' });
+    }
+  } catch (error) {
+    isLoading.value = false;
+    console.error(error);
   }
 });
 
-async function setupResources(vms) {
-  setDevices(await getDevices(sessionId.value), vms);
-  setLiveDevices(await getLiveDevices(sessionId.value));
+async function setupResources() {
   setAlbums(await getAlbums(sessionId.value));
   await Promise.allSettled(albums.value.map(async (item) => {
     await getAlbumData(item.albumId);

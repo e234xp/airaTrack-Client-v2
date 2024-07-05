@@ -186,5 +186,7 @@
   "InvestigationCamera": "Cámara de Investigación",
   "InvestigationReport": "Informe de Investigación",
   "CaptureThreshold": "Umbral de Captura",
-  "Unlimited": "Ilimitado"
+  "Unlimited": "Ilimitado",
+  "Using": "En uso",
+  "ReloginHint": "¿Necesita iniciar sesión en airaTrack nuevamente?"
 }

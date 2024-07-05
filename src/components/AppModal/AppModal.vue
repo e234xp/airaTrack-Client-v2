@@ -73,7 +73,7 @@ import ModalLayout from '@/layouts/ModalLayout.vue';
 defineProps({
   isOpen: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   header: {
     type: String,
@@ -81,7 +81,7 @@ defineProps({
   },
   body: {
     type: String,
-    default: '',
+    default: 'restart',
   },
   buttons: {
     type: Array,

@@ -186,5 +186,7 @@
   "InvestigationCamera": "Kamera Investigasi",
   "InvestigationReport": "Laporan Investigasi",
   "CaptureThreshold": "Ambang Penangkapan",
-  "Unlimited": "Tidak terbatas"
+  "Unlimited": "Tidak terbatas",
+  "Using": "Sedang digunakan",
+  "ReloginHint": "Apakah Anda perlu masuk lagi ke airaTrack?"
 }

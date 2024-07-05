@@ -2,7 +2,7 @@ import spiderman from '@/spiderman';
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 
-const TIME_OUT = 1000;
+const TIME_OUT = 180000;
 
 export default defineStore('device', () => {
   const devices = ref([]);

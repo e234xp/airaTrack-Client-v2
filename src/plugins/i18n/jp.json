@@ -162,7 +162,7 @@
   "TrialDays": "試用日",
   "UnitDay": "日",
   "UnitHour": "時",
-  "UnitMin": "分。",
+  "UnitMin": "分",
   "UnitSec": "秒",
   "Upload": "アップロード",
   "UploadDialog": "ユーザーはアルバムに画像をアップロードし、他の機能で手軽に利用できるようにシステムに統合できます。",
@@ -186,5 +186,7 @@
   "InvestigationCamera": "調査カメラ",
   "InvestigationReport": "調査報告",
   "CaptureThreshold": "キャプチャ閾値",
-  "Unlimited": "無制限"
+  "Unlimited": "無制限",
+  "Using": "使用中",
+  "ReloginHint": "再度 airaTrack にログインしますか？"
 }

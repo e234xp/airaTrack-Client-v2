@@ -64,20 +64,20 @@ export default () => {
     return `${spiderman.system.apiBaseUrl}/airaTracker/viewsnapshot?sessionId=${sessionId.value}&camera_id=${cameraId}&time=${time}`;
   }
 
-  function prevVideo() {
+  function prevVideo(range) {
     if (videoResultIndex.value === 0) {
-      setVideoResultIndex({ index: taskResults.length - 1, results: taskResults });
+      setVideoResultIndex({ index: taskResults.length - 1, results: taskResults, range });
       return;
     }
-    setVideoResultIndex({ index: videoResultIndex.value - 1, results: taskResults });
+    setVideoResultIndex({ index: videoResultIndex.value - 1, results: taskResults, range });
   }
 
-  function nextVideo() {
+  function nextVideo(range) {
     if (videoResultIndex.value === taskResults.length - 1) {
-      setVideoResultIndex({ index: 0, results: taskResults });
+      setVideoResultIndex({ index: 0, results: taskResults, range });
       return;
     }
-    setVideoResultIndex({ index: videoResultIndex.value + 1, results: taskResults });
+    setVideoResultIndex({ index: videoResultIndex.value + 1, results: taskResults, range });
   }
 
   function setProgressBarInfo({ results, range }) {
