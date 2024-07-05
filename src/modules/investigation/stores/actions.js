@@ -13,7 +13,7 @@ function chineseToAscii(text) {
 // =============================================
 // POST
 // =============================================
-export async function addBookmark(timestamp, cid, description) {
+export async function addBookmark(timestamp, sid, cid, description) {
   const userStore = useUserStore();
   return await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/addBookmark`,
@@ -26,7 +26,9 @@ export async function addBookmark(timestamp, cid, description) {
       datatime: timestamp,
       camera_id: cid,
       caption: `${document.title.split(' ')[0]} Event`,
-      description: chineseToAscii(description),
+      description,
+      duration: 10,
+      server_id: sid
     },
   });
 }
@@ -158,7 +160,6 @@ export async function getTaskResultAll(taskId, score, idx = 0) {
       size: 50
     },
   });
-  console.log(result);
   return result;
 }
 

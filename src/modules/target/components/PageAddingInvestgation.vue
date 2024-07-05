@@ -93,6 +93,7 @@
                         class="pb-2 mb-2 text-xl text-white border-b-2 border-dashed border-panel"
                         :placeholder="$t('All')"
                         :checked="form.archchannels.length===devices.length"
+                        :disabled="archiveAmount === 0"
                         @on-change="()=>{
                           if(form.archchannels.length===devices.length){
                             form.archchannels = [];
@@ -175,7 +176,8 @@ onMounted(async () => {
   // 找出兩個 channel 的 limit
   liveChannelAmount.value = validLicenses
     .reduce((accumulator, current) => accumulator + current.channel_amount, 0);
-  archiveAmount.value = validLicenses.some((frs) => frs) ? 999 : 0;
+
+  archiveAmount.value = validLicenses.some(({frs}) => frs) ? 999 : 0;
 });
 
 const form = reactive({
@@ -183,8 +185,9 @@ const form = reactive({
     camera_id: confirmedFace.value.camera_id,
     timestamp: confirmedFace.value.timestamp,
   },
+  target_face_id: confirmedFace.value.data.id || '',
   target_face_image: confirmedFace.value.data.face_image,
-  feature: confirmedFace.value.data.feature,
+  feature: confirmedFace.value.data.feature || '',
   target_score: 0.5,
   search_motion: true,
   subtasks: [],

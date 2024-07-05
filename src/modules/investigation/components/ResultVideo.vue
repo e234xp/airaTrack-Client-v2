@@ -13,6 +13,7 @@
           playsinline="playsinline"
           autoplay
           controlslist="nodownload"
+          @stalled="handleVideoStalled"
           @timeupdate="handleTimeUpdate"
           @ended="handleVideoEnded"
           @playing="handleVideoStarted"
@@ -121,14 +122,19 @@ const videoRef = ref(null);
 const panelRef = ref(null);
 
 const isIos = ref(false);
+const isStalled = ref(false);
 
 // 處理開始暫停
 const isPlaying = ref(true);
 function play() {
   const video = videoRef.value;
-  video.play();
+
   isPlaying.value = true;
+  if (isStalled.value) {
+    emit('onNext');
+  } else video.play();
 }
+
 function pause() {
   const video = videoRef.value;
   video.pause();
@@ -154,13 +160,23 @@ function handleSliderInput() {
 // 處理結束的時候
 function handleVideoEnded() {
   if (isIos.value) return;
-  isPlaying.value = false;
   currentTime.value = 0;
-  emit('onNext');
+  if (!isStalled.value) {
+    emit('onNext');
+  }
+  isStalled.value = false;
 }
 
 function handleVideoStarted() {
   isPlaying.value = true;
+  isStalled.value = false;
+}
+
+function handleVideoStalled() {
+  isStalled.value = true;
+  if (isPlaying.value) {
+    emit('onNext');
+  }
 }
 
 function sizeAdjust() {

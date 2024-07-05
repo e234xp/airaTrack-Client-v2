@@ -42,7 +42,6 @@ import { useI18n } from 'vue-i18n';
 import spiderman from '@/spiderman';
 import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
-import modalStore from '@/components/AppModal/modal';
 import AppDataTable from '@/components/AppDataTable.vue';
 import ModalRestart from './ModalRestart.vue';
 

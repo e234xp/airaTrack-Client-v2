@@ -38,6 +38,8 @@
             class="bg-primary"
           >
             {{ key }}
+            <template v-if="value === 'asc'">&darr;</template>
+            <template v-if="value === 'desc'">&uarr;</template>
           </option>
         </select>
         <div

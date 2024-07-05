@@ -23,7 +23,7 @@
     <div class="rounded-lg border border-white/40 bg-black/20 p-4 cursor-pointer" style="width: calc(100% - 15.5rem)">
       <div class="flex text-white gap-4 h-10">
         <div class="flex items-center gap-2" style="width: 40%;">
-          <div class="select-none w-16 text-right">{{ $t('TimeTitle') }}</div>
+          <div class="select-none w-18 text-right">{{ $t('TimeTitle') }}</div>
           <AppSwitch :value="selectedTimeType" :list="timeTypeList" @select="onSelectTimeType" style="width: 30%"></AppSwitch>
           <AppDatePicker
             v-model:modelSelected="selectedDate"
@@ -99,6 +99,7 @@ import errorStore from '@/components/AppError/error';
 
 import useDevices from '@/stores/devices';
 import useAlbums from '@/stores/albums';
+import useUser from '@/stores/user';
 import useStore from '@/modules/target/stores/index';
 
 import BadgeList from './BadgeList.vue';
@@ -115,6 +116,9 @@ const { albums, albumColorMap } = storeToRefs(albumsStore);
 const store = useStore();
 const { getLiveFaceHourlyCount, setSelectedCamera, setSelectedAlbum, setModal } = store;
 const { selectedCamera, selectedAlbum } = storeToRefs(store);
+
+const user = useUser();
+const { timeshift } = storeToRefs(user);
 
 const i18n = useI18n();
 
@@ -543,11 +547,21 @@ async function renderByDate(date) {
   const end = today === date ? spiderman.dayjs().unix() : spiderman.dayjs(`${date} 23:59:59`).unix();
   const cList = selectedCameraType.value === 'all' ? livedevices.value.map(({ camera_id: cameraId }) => cameraId) : selectedCamera.value;
   const tempData = await getLiveFaceHourlyCount(start, end, cList);
-  // appendMockData(tempData);
+  // appendMockData(tempData); 
   const template = [0, 1, 2, 3, 4, 5];
   const dataOfDate = template.map((idx) => {
     const aId = albumsList.value[idx].id;
-    if (selectedAlbumType.value === 'all' || selectedAlbum.value.indexOf(aId) >= 0) return tempData.map((list) => list[idx]);
+    if (selectedAlbumType.value === 'all' || selectedAlbum.value.indexOf(aId) >= 0) {
+      const list = tempData.map((list) => list[idx])
+      const result = new Array(24).fill(0);
+      list.forEach((d, i) => {
+        let ts = i + timeshift.value;
+        if (ts < 0) ts += 24;
+        else if (ts >= 24) ts -= 24;
+        result[ts] = d;
+      })
+      return result;
+    }
     return new Array(24).fill(0);
   })
   sumData.value = new Array(24).fill(1).map((_, idx) => {

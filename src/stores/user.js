@@ -1,21 +1,44 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import spiderman from '@/spiderman';
+import router from '@/router';
 
 export default defineStore('user', () => {
+  const dataForm = ref(null);
   const user = ref(null);
   const sessionId = ref('');
   
+  const timeshift = ref(0);
+  
   async function loginUser(form) {
     const {
-      sessionId: tmpSessionId, user: tmpUser,
+      sessionId: tmpSessionId, user: tmpUser, timezone
     } = await spiderman.apiService({
       url: `${spiderman.system.apiBaseUrl}/airaTracker/login`,
       method: 'post',
       data: form,
     });
 
+    const severTimezone = +(timezone.split(":")[0]);
+    const timezoneOffset = new Date().getTimezoneOffset();
+    const offsetHours = -(Math.floor(timezoneOffset / 60));
+    timeshift.value = offsetHours - severTimezone;
+    dataForm.value = form;
+
     return { sessionId: tmpSessionId, user: tmpUser };
+  }
+
+  async function reloginUser() {
+    const {
+      sessionId, user
+    } = await spiderman.apiService({
+      url: `${spiderman.system.apiBaseUrl}/airaTracker/login`,
+      method: 'post',
+      data: dataForm.value,
+    });
+
+    setUser({ sessionId, user });
+    router.push({ path: '/target' })
   }
 
   async function logout() {
@@ -28,7 +51,7 @@ export default defineStore('user', () => {
     });
   }
 
-  function setUser(data) {
+  function setUser(data) {    
     ({ user: user.value, sessionId: sessionId.value } = data);
   }
 
@@ -85,6 +108,7 @@ export default defineStore('user', () => {
     user,
     logout,
     loginUser,
+    reloginUser,
     setUser,
     startMaintainUser,
 
@@ -99,6 +123,8 @@ export default defineStore('user', () => {
     setRole,
 
     resetLicensePassword,
-    changePassword
+    changePassword,
+
+    timeshift
   };
 });
