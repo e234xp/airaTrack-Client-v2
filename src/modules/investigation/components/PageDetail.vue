@@ -283,8 +283,8 @@
               <ResultVideo
                 :video-url="videoUrl"
                 :duration="videoDuration"
-                @on-prev="prevVideo"
-                @on-next="nextVideo"
+                @on-prev="prevVideo(range)"
+                @on-next="nextVideo(range)"
                 ref="video"
               >
                 <template #timestamp>
@@ -710,7 +710,8 @@ async function addVmsBookmark() {
   setModal('');
 
   const results = await Promise.allSettled(selectedResults.value.map(async (result) => {
-    const { message } = await addBookmark(result.highest.timestamp, result.highest.cid, `${findDevice(result.highest.cid).name}\n${bookmarkForm.value.description}`);
+    const { preferred_server_id, name } = findDevice(result.highest.cid)
+    const { message } = await addBookmark(result.highest.timestamp, preferred_server_id, result.highest.cid, `${name}\n${bookmarkForm.value.description}`);
     return { message };
   }));
 

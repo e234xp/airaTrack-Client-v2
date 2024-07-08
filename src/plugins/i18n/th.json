@@ -186,5 +186,7 @@
   "InvestigationCamera": "กล้องสำรวจ",
   "InvestigationReport": "รายงานการสืบสวน",
   "CaptureThreshold": "ค่าเกณฑ์การจับภาพ",
-  "Unlimited": "ไม่จำกัด"
+  "Unlimited": "ไม่จำกัด",
+  "Using": "กำลังใช้งาน",
+  "ReloginHint": "คุณต้องการเข้าสู่ระบบ airaTrack อีกครั้งหรือไม่?"
 }

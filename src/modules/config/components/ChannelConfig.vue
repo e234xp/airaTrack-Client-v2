@@ -1,7 +1,17 @@
 <template>
   <div class="w-full relative" style="height: calc(100% - 4rem)">
     <div class="absolute -top-11 right-0 text-white text-xl">{{ $t('License') }}: <span class="text-primary">{{ current }}</span> / {{ licenseCount }}</div>
-    <AppDataTable :rowHeight="rowHeight" :columns="column" :dataList="pageData" :margin="marginHeight" v-if="pageData.length !== 0">
+    <div class="flex items-center justify-between my-2 w-full">
+      <div class="flex items-center gap-2 w-1/3">
+        <AppInput v-model:modelInput="searchText" class="w-full" :rule="''" :dark="true" />
+        <AppSvgIcon name="icon-search" class="text-white w-6 h-6 mr-2" />
+      </div>
+      <div class="flex items-center gap-4 w-1/3">
+        <AppSwitch :value="searchOnlyLive" :list="searchList" @select="onSwitch" class="!w-1/2"></AppSwitch>
+        <AppInput :dark="true" type="select" class="w-full !w-1/2" :options="sortList" v-model:modelInput="searchSort" />
+      </div>
+    </div>
+    <AppDataTable :rowHeight="rowHeight" :columns="column" :dataList="filterData" :margin="marginHeight" style="height: calc(100% - 3rem);" v-if="pageData.length !== 0">
       <template #open="props">
         <div class="flex justify-center">
           <AppToggle :value="props.data.live" @change="onChangeLive(props.data.cameraId)" :disabled="isFull && !props.data.live"></AppToggle>
@@ -128,10 +138,34 @@ const sizeList = ref({
   [`${i18n.t('Large')}`]: 150
 })
 
+const searchList = ref([
+  { text: i18n.t('All'), value: false },
+  { text: i18n.t('Using'), value: true }
+])
+
+const sortList = ref({
+  [`${i18n.t('Camera')}`]: 'asc',
+  [`${i18n.t('Camera')} `]: 'desc'
+})
+
 const pageData = ref([]);
 const licenseCount = ref(0);
 const rowHeight = ref(0);
 const marginHeight = ref(0);
+const searchText = ref('');
+const searchOnlyLive = ref(false);
+const searchSort = ref('asc');
+
+const filterData = computed(() => {
+  return pageData.value
+    .filter((item) => item.name.toLowerCase().indexOf(searchText.value.toLowerCase()) >= 0
+      || item.cameraId.toLowerCase().indexOf(searchText.value.toLowerCase()) >= 0)
+    .filter((item) => !searchOnlyLive.value || item.live)
+    .sort((a, b) => {
+      if (searchSort.value === 'asc') return a.name.localeCompare(b.name);
+      return b.name.localeCompare(a.name);
+    })
+})
 
 const current = computed(() => {
   return pageData.value.reduce((acc, cur) => {
@@ -179,6 +213,10 @@ function parseData(item, live = false) {
     threshold: item.capture_threshold || -1,
     minFaceSize: item.min_face_size === undefined ? 50 : item.min_face_size
   }
+}
+
+function onSwitch(val) {
+  searchOnlyLive.value = val;
 }
 
 async function onChangeLive(id) {
