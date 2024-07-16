@@ -243,6 +243,15 @@ export async function restartLicense() {
   })
 }
 
+export async function syncDevices() {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/syncdevices`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  })
+}
+
 // =============================================
 // DELETE
 // =============================================

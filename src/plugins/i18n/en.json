@@ -188,5 +188,6 @@
   "CaptureThreshold": "Capture Threshold",
   "Unlimited": "Unlimited",
   "Using": "In Use",
-  "ReloginHint": "Do you need to log in to airaTrack again?"
+  "ReloginHint": "Do you need to log in to airaTrack again?",
+  "Sync": "Sync"
 }
