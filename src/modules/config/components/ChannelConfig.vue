@@ -3,6 +3,9 @@
     <div class="absolute -top-11 right-0 text-white text-xl">{{ $t('License') }}: <span class="text-primary">{{ current }}</span> / {{ licenseCount }}</div>
     <div class="flex items-center justify-between my-2 w-full">
       <div class="flex items-center gap-2 w-1/3">
+        <AppButton type="primary" :isEnable="isValid" class="w-1/4 px-6" @click="onSync">
+          {{ $t('Sync') }}
+        </AppButton>
         <AppInput v-model:modelInput="searchText" class="w-full" :rule="''" :dark="true" />
         <AppSvgIcon name="icon-search" class="text-white w-6 h-6 mr-2" />
       </div>
@@ -11,7 +14,7 @@
         <AppInput :dark="true" type="select" class="w-full !w-1/2" :options="sortList" v-model:modelInput="searchSort" />
       </div>
     </div>
-    <AppDataTable :rowHeight="rowHeight" :columns="column" :dataList="filterData" :margin="marginHeight" style="height: calc(100% - 3rem);" v-if="pageData.length !== 0">
+    <AppDataTable :rowHeight="rowHeight" :columns="column" :dataList="filterData" :margin="marginHeight" style="height: calc(100% - 3.5rem);" v-if="pageData.length !== 0">
       <template #open="props">
         <div class="flex justify-center">
           <AppToggle :value="props.data.live" @change="onChangeLive(props.data.cameraId)" :disabled="isFull && !props.data.live"></AppToggle>
@@ -59,7 +62,7 @@ import AppDataTable from '@/components/AppDataTable.vue';
 import useDevices from '@/stores/devices';
 
 const store = useStore();
-const { getLiveDevices, getDevices, postLiveDevice, deleteLiveDevice, getLicense } = store;
+const { getLiveDevices, getDevices, postLiveDevice, deleteLiveDevice, getLicense, syncDevices } = store;
 
 const devicesStore = useDevices();
 const { setDevices, setLiveDevices } = devicesStore;
@@ -68,7 +71,7 @@ const i18n = useI18n();
 
 const column = ref([
   {
-    width: '5%',
+    width: '8%',
     key: 'open',
     align: 'center',
     text: i18n.t('Switch')
@@ -311,6 +314,16 @@ async function updateList(data) {
 async function updateStore() {
   const { data } = await getLiveDevices();
   setLiveDevices(data);
+}
+
+async function onSync() {
+  const { message } = await syncDevices();
+  if (message === 'ok') {
+    const { data } = await getDevices();
+    pageData.value = data.map((item) => parseData(item));
+    const result = await getLiveDevices();
+    updateList(result.data);
+  }
 }
 
 onBeforeMount(() => {

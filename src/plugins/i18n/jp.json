@@ -188,5 +188,6 @@
   "CaptureThreshold": "キャプチャ閾値",
   "Unlimited": "無制限",
   "Using": "使用中",
-  "ReloginHint": "再度 airaTrack にログインしますか？"
+  "ReloginHint": "再度 airaTrack にログインしますか？",
+  "Sync": "同期"
 }

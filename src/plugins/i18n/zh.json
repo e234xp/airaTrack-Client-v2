@@ -188,5 +188,6 @@
   "CaptureThreshold": "抓拍閾值",
   "Unlimited": "不限",
   "Using": "使用中",
-  "ReloginHint": "您是否要重新登入 airaTrack？"
+  "ReloginHint": "您是否要重新登入 airaTrack？",
+  "Sync": "同步"
 }
