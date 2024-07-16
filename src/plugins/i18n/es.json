@@ -188,5 +188,6 @@
   "CaptureThreshold": "Umbral de Captura",
   "Unlimited": "Ilimitado",
   "Using": "En uso",
-  "ReloginHint": "¿Necesita iniciar sesión en airaTrack nuevamente?"
+  "ReloginHint": "¿Necesita iniciar sesión en airaTrack nuevamente?",
+  "Sync": "Sincronizar"
 }
