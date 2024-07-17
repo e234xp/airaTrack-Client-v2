@@ -62,7 +62,7 @@ import AppDataTable from '@/components/AppDataTable.vue';
 import useDevices from '@/stores/devices';
 
 const store = useStore();
-const { getLiveDevices, getDevices, postLiveDevice, deleteLiveDevice, getLicense, syncDevices } = store;
+const { getLiveDevices, getDevices, postLiveDevice, deleteLiveDevice, getLicense, syncDevices, getNxConfig } = store;
 
 const devicesStore = useDevices();
 const { setDevices, setLiveDevices } = devicesStore;
@@ -312,15 +312,19 @@ async function updateList(data) {
 }
 
 async function updateStore() {
-  const { data } = await getLiveDevices();
-  setLiveDevices(data);
+  const { data: live } = await getLiveDevices();
+  setLiveDevices(live);
 }
 
 async function onSync() {
   const { message } = await syncDevices();
   if (message === 'ok') {
+    // update devices
     const { data } = await getDevices();
     pageData.value = data.map((item) => parseData(item));
+    const { host, password, username, authorization } = await getNxConfig();
+    setDevices(data, { host, password, username, authorization });
+    // update live
     const result = await getLiveDevices();
     updateList(result.data);
   }

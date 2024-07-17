@@ -26,10 +26,14 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import useStore from '@/modules/config/stores/index';
+import useDevices from '@/stores/devices';
 import successStore from '@/components/AppSuccess/success';
 
+const devicesStore = useDevices();
+const { setDevices, setLiveDevices } = devicesStore;
+
 const store = useStore();
-const { getNxConfig, postNxConfig, postNxServerInfo } = store;
+const { getNxConfig, postNxConfig, postNxServerInfo, getLiveDevices, getDevices } = store;
 
 const i18n = useI18n();
 
@@ -71,7 +75,14 @@ async function onClick() {
       server_id: id,
       authorization: selectedVms.value
     });
-    if (result) successStore.show();
+    if (result) {
+      const { data: device } = await getDevices()
+      const { data: live } = await getLiveDevices()
+      
+      setDevices(device, { host: connect.ip, password: login.password, username: login.username, authorization: selectedVms.value });
+      setLiveDevices(live);
+      successStore.show();
+    }
   }
 }
 
