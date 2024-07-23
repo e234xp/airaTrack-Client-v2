@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 
 const prop = defineProps({
   columns: {
@@ -57,10 +57,13 @@ const pagination = reactive({
     return prop.dataList.length;
   }),
   pages: computed(() => {
-    const temp = Math.ceil(pagination.total / pagination.perItems);
-    if (temp < pagination.current) pagination.current = temp;
-    return temp;
+    return Math.ceil(pagination.total / pagination.perItems);
   })
+})
+
+watch(() => pagination.pages, (val) => {
+  if (pagination.pages > 0 && pagination.current === 0) pagination.current = 1;
+  if (pagination.pages < pagination.current) pagination.current = pagination.pages;
 })
 
 function onTurnPage(val) {
