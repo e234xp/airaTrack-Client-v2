@@ -189,5 +189,7 @@
   "Unlimited": "不限",
   "Using": "使用中",
   "ReloginHint": "您是否要重新登入 airaTrack？",
-  "Sync": "同步"
+  "Sync": "同步",
+  "BlockHint": "您已輸入錯誤的帳號或密碼過多次，請在 $N 分鐘後再試。",
+  "ErrHint": "如果輸入錯誤次數過多，您將無法登入。"
 }

@@ -189,5 +189,7 @@
   "Unlimited": "Tidak terbatas",
   "Using": "Sedang digunakan",
   "ReloginHint": "Apakah Anda perlu masuk lagi ke airaTrack?",
-  "Sync": "Sinkronisasi"
+  "Sync": "Sinkronisasi",
+  "BlockHint": "Anda telah memasukkan akun atau kata sandi yang salah terlalu banyak kali. Silakan coba lagi dalam $N menit.",
+  "ErrHint": "Jika Anda salah memasukkan informasi terlalu banyak kali, Anda tidak akan bisa masuk."
 }
