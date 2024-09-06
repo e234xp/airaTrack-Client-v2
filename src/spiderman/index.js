@@ -14,7 +14,7 @@ import faceApi from './face-api';
 // http://192.168.10.70:8081 => 大巨蛋
 
 const system = {
-  version: '2.00.01.240905',
+  version: '2.00.01.240906',
   apiBaseUrl: import.meta.env.MODE === 'development'
     ? 'http://192.168.10.62:8081'
     : '',

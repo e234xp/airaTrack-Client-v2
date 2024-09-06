@@ -5,7 +5,7 @@
         <NavigationBar></NavigationBar>
       </template>
       <template #grow>
-        <div class="max-w-7xl w-full h-full mx-auto pt-4">
+        <div class="max-w-[85rem] w-full h-full mx-auto pt-4">
           <div class="text-2xl text-white pl-6">{{ title }}</div>
           <component :is="{
             video: VideoSourceConfig,
