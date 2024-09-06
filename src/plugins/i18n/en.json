@@ -189,5 +189,7 @@
   "Unlimited": "Unlimited",
   "Using": "In Use",
   "ReloginHint": "Do you need to log in to airaTrack again?",
-  "Sync": "Sync"
+  "Sync": "Sync",
+  "BlockHint": "You have entered the wrong account or password too many times. Please try again in $N minutes.",
+  "ErrHint": "If you enter the wrong information too many times, you will not be able to log in."
 }

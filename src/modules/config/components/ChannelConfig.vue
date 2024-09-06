@@ -20,6 +20,19 @@
           <AppToggle :value="props.data.live" @change="onChangeLive(props.data.cameraId)" :disabled="isFull && !props.data.live"></AppToggle>
         </div>
       </template>
+      <template #vendor="props">
+        <AppSvgIcon
+          name="icon-webcam"
+          class="w-6 h-6 mx-auto"
+          v-if="props.data.vendor.indexOf('usb') >= 0"
+        />
+        <AppSvgIcon
+          name="icon-video-camera"
+          class="w-6 h-6 mx-auto"
+          v-else
+        />
+        <!-- <div class="text-base truncate">{{ props.data.vendor }}</div> -->
+      </template>
       <template #camera="props">
         <div class="text-base">{{ props.data.name }}</div>
         <div class="text-gray-400">{{ props.data.cameraId }}</div>
@@ -77,6 +90,11 @@ const column = ref([
     text: i18n.t('Switch')
   },
   {
+    width: '5%',
+    key: 'vendor',
+    text: ''
+  },
+  {
     width: '25%',
     key: 'camera',
     text: i18n.t('Camera')
@@ -87,22 +105,22 @@ const column = ref([
     text: i18n.t('Decode')
   },
   {
-    width: '12%',
+    width: '10%',
     key: 'interval',
     text: i18n.t('IntervalMs')
   },
   {
-    width: '12%',
+    width: '10%',
     key: 'sensitivity',
     text: i18n.t('Sensitivity')
   },
   {
-    width: '12%',
+    width: '10%',
     key: 'threshold',
     text: i18n.t('CaptureThreshold')
   },
   {
-    width: '12%',
+    width: '10%',
     key: 'minFaceSize',
     text: i18n.t('MinFaceSize')
   }
@@ -214,7 +232,8 @@ function parseData(item, live = false) {
     decodeKeyOnly: item.decode_key_only || false,
     sensitivity: item.capture_sensitivity || -1,
     threshold: item.capture_threshold || -1,
-    minFaceSize: item.min_face_size === undefined ? 50 : item.min_face_size
+    minFaceSize: item.min_face_size === undefined ? 50 : item.min_face_size,
+    vendor: item.vendor || '',
   }
 }
 
@@ -290,7 +309,8 @@ async function updateLiveCamera(camera, isNew = false) {
     capture_sensitivity: isNew ? 0.25 : camera.sensitivity,
     capture_threshold: isNew ? 0.5 : camera.threshold,
     decode_key_only: isNew ? false : camera.decodeKeyOnly,
-    min_face_size: isNew ? 50 : camera.minFaceSize
+    min_face_size: isNew ? 50 : camera.minFaceSize,
+    vendor: camera.vendor
   });
   if (message === 'ok') updateList(data);
 }

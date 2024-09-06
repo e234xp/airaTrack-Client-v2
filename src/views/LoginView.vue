@@ -12,7 +12,7 @@
         <span v-if="path === '/m'">Mobile</span><span v-else>{{ $t('Version') }}</span>: {{ spiderman.system.version }}
       </div>
     </div>
-    <div class="sm:w-full md:w-112 bg-panel shadow-cus rounded mb-4 py-8 px-6">
+    <div class="relative sm:w-full md:w-112 bg-panel shadow-cus rounded mb-4 py-8 px-6">
       <div class="text-center mb-4 text-white font-bold text-3xl">
         {{ $t("LoginTitle") }}
       </div>
@@ -78,10 +78,15 @@
         />
       </div> -->
 
+      <div class="text-center text-orange-400" v-if="restTime > 0">
+        {{ $t('BlockHint').replace('$N', restTime) }}
+      </div>
+
       <AppButton
         class="mx-10 mb-4 py-2 px-20"
         :is-Enable="form.username !== '' && form.password !== '' && !isLoading"
         @click="handleLogin"
+        v-else
       >
         <AppSvgIcon
           name="icon-loading"
@@ -108,6 +113,9 @@
           {{ $t("ForgotPassword") }}
         </AppButton>
       </div>
+      <div class="absolute bottom-2 w-[calc(100%-3rem)] text-center text-orange-400" v-if="errCount > 7">
+        {{ $t('ErrHint') }}
+      </div>
     </div>
 
     <div class="mb-2 flex justify-center items-center text-xl text-white">
@@ -127,7 +135,7 @@
 <script setup>
 import spiderman from '@/spiderman';
 
-import { ref } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 
@@ -173,6 +181,9 @@ const form = ref({
 
 const openReset = ref(false);
 const isLoading = ref(false);
+const restTime = ref(0);
+
+const errCount = ref(0);
 
 const handleLogin = generateSubmit(async () => {
   isLoading.value = true;
@@ -200,9 +211,34 @@ const handleLogin = generateSubmit(async () => {
     }
   } catch (error) {
     isLoading.value = false;
-    console.error(error);
+    errCount.value += 1;
+    if (errCount.value >= 10) {
+      errCount.value = 0;
+      localStorage.setItem('failTime', getFailTime());
+      restTime.value = 10;
+    }
+    // console.error(error);
   }
 });
+
+function getFailTime() {
+  const test = Date.now().toString();
+  const temp = test.split('');
+  let result = '';
+  temp.forEach((item) => {
+    result += `${item}${Math.floor(Math.random(0, 1) * 10)}`;
+  });
+  return result;
+}
+
+function parseFailTime(val) {
+  const temp = val.split('');
+  const result = [];
+  for (let i = 0; i < temp.length; i += 2) {
+    result.push(temp[i]);
+  }
+  return +(result.join(''));
+}
 
 async function setupResources() {
   setAlbums(await getAlbums(sessionId.value));
@@ -210,4 +246,17 @@ async function setupResources() {
     await getAlbumData(item.albumId);
   }));
 }
+
+onBeforeMount(() => {
+  const failTime = localStorage.getItem('failTime');
+  if (failTime) {
+    if (failTime.length === 20) {
+      restTime.value = 10 * 60 * 60 - ((Date.now() - parseFailTime(failTime)) / 1000);
+      if (restTime.value <= 0) {
+        localStorage.removeItem('failTime');
+        restTime.value = 0;
+      }
+    } else restTime.value = 10;
+  }
+});
 </script>
