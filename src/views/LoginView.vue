@@ -226,7 +226,7 @@ function getFailTime() {
   const temp = test.split('');
   let result = '';
   temp.forEach((item) => {
-    result += `${item}${Math.floor(Math.random(0, 1) * 10)}`;
+    result += `${item}${Math.floor(Math.random(0, 1) * 9)}`;
   });
   return result;
 }
@@ -250,8 +250,8 @@ async function setupResources() {
 onBeforeMount(() => {
   const failTime = localStorage.getItem('failTime');
   if (failTime) {
-    if (failTime.length === 20) {
-      restTime.value = 10 * 60 * 60 - ((Date.now() - parseFailTime(failTime)) / 1000);
+    if (failTime.length === 26) {
+      restTime.value = Math.round(10 - ((Date.now() - parseFailTime(failTime)) / 1000 / 60));
       if (restTime.value <= 0) {
         localStorage.removeItem('failTime');
         restTime.value = 0;
