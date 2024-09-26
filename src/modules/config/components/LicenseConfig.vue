@@ -42,6 +42,7 @@ import { useI18n } from 'vue-i18n';
 import spiderman from '@/spiderman';
 import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
+import errorStore from '@/components/AppError/error';
 import AppDataTable from '@/components/AppDataTable.vue';
 import ModalRestart from './ModalRestart.vue';
 
@@ -115,6 +116,8 @@ async function onActivate() {
     license.value = '';
     successStore.show('ActiveHint');
     await updateLicense();
+  } else {
+    errorStore.show(message);
   }
 }
 
