@@ -294,7 +294,7 @@ const breifContent = computed(() => {
   const remark = `<Title>Remarks</Title><div class="px-4">${props.form.remark}</div>`;
   const summary = props.results.map((item, index) => `
   <div class="w-full flex mb-2 items-center px-8">
-    <div class="w-5 h-5 border rounded-full mr-4 ${index % 2 === 0 ? 'bg-primary-hover' : ''} ${index % 2 !== 0 ? 'border border-primary-hover' : ''}"></div>
+    <div class="w-4 h-4 border rounded-full mr-4 border-2 ${item.resultFrom === 'LIVE' ? 'border-live-channel' : 'border-archive-channel'}"></div>
     <div class="w-60 flex items-center">
       ${spiderman.formatDate.parseYMD(item.highest.timestamp)} ${spiderman.dayjs(item.highest.timestamp).format('HH:mm:ss')}
     </div>
