@@ -125,7 +125,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
 
           let tlist = `
               <div class="tlist">
-                  <div class="circle"></div>
+                  <div class="circle ${faceData.resultFrom.toLowerCase()}"></div>
                   <span>${formatDataTime(faceData.highest.timestamp)} &nbsp ${getCameraName(faceData.highest.cid)}</span>
               </div>`;
 
@@ -148,7 +148,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
               #app .title .title-right {display: inline-block;position: absolute;left: 510px;top: 12px;}
               #app .title .title-right .name {margin: 0;margin-bottom: 1px;height: 14px;font-family: Helvetica;font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;text-align: right;color: #999999;}
               #app .title .title-right .date {margin: 0;height: 14px;font-family: Helvetica;font-size: 12px;font-weight: normal;font-stretch: normal;font-style: normal;line-height: normal;letter-spacing: normal;text-align: right;color: #999999;}
-              #app .circle {display: inline-block;width: 10px;height: 10px;background-color: #2475a0;border-radius: 100%;margin-right: 10px;vertical-align: center;z-index: 13333333;}
+              #app .circle {display: inline-block;width: 10px;height: 10px;border-radius: 100%;margin-right: 10px;vertical-align: center;z-index: 13333333;}
               #app .summary {display: block;position: relative;min-height: 298px;}
               #app .summary .face {position: absolute;height: 88px;width: 88px;top: 16px;left: 24px;background-size: cover;}
               #app .summary .right {display: inline-block;margin-top: 16px;margin-left: 124px;width: 471px;box-sizing: border-box;}
@@ -160,7 +160,6 @@ export default async function downloadReport(form, taskName, faceDataList, times
               #app .summary .right .live-cam span {font-family: Helvetica-Light;font-size: 14px;vertical-align: top;}
               #app .summary .right .live-cam .list {margin: 0;padding-left: 21px;left: 0;list-style-type: "- ";list-style-position: inside;}
               #app .summary .right .live-cam .list li {font-family: Helvetica;font-size: 12px;margin-top: 4px;}
-              #app .live-cam:nth-child(2n-1) .circle {width: 8px;height: 8px;background-color: #ffffff;border: 1px solid #2475a0;}
               #app .ribbon {display: inline-block;position: relative;width: 264px;height: 34px;background-color: #2475a0;}
               #app .ribbon span {position: absolute;margin-left: 24px;margin-top: 7px;font-family: Helvetica;font-weight: Bold;font-size: 16px;color: #ffffff;}
               #app .ribbon .slash1 {display: inline-block;position: absolute;transform: skew(-15deg);height: 34px;width: 7px;background-color: #fff;box-sizing: border-box;left: 242px;}
@@ -171,15 +170,18 @@ export default async function downloadReport(form, taskName, faceDataList, times
               #app .timeline {display: block;margin-top: 10px;box-sizing: border-box;}
               #app .timeline .line {position: absolute;top: 40px;left: 26px;width: 2px;height: 10px;background-color: #d8d8d8;z-index: 0;}
               #app .arrow {display: inline-block;width: 0;height: 0;border-left: 5px solid transparent;border-right: 5px solid transparent;border-top: 10px solid #d8d8d8;margin-left: 22px;vertical-align: top;}
-              #app .tlist:nth-child(2n) .circle {width: 8px;height: 8px;background-color: #ffffff;border: 1px solid #2475a0;}
               #app .tlist:last-child {padding-bottom: 0px;}
               #app .tlist {position: relative;display: block;margin-left: 26px;border-left: 2px solid #d8d8d8;padding-bottom: 8px;}
-              #app .tlist .circle {margin-left: -6px;}
+              #app .tlist .circle {margin-left: -8px; border: 2px solid #2475a0; background-color: #ffffff!important;}
               #app .tlist span {font-size: 12px;line-height: 18px;letter-spacing: 0;font-family: Helvetica;}
               #app .footer {position: absolute;bottom: 10px;right: 10px;}
               #app .footer .pagetiangle {position: absolute;border-color: transparent #f1f1f1 #f1f1f1 transparent;border-style: solid solid solid solid;border-width: 32px 32px;height: 0px;width: 0px;bottom: -10px;right: -10px;z-index: 1;}
               #app .footer .nowpage {position: relative;font-size: 36px;letter-spacing: 0px;font-family: Helvetica;color: #b8b8b8;z-index: 2;}
               #app .footer .totalpage { position: relative; font-size: 14px; letter-spacing: 0px; font-family: Helvetica; color: #b8b8b8; z-index: 2; }
+              #app .circle.live {background-color: #8fb5ec;}
+              #app .circle.archive {background-color: #77a17a;}
+              #app .tlist .circle.live {border-color: #8fb5ec!important;}
+              #app .tlist .circle.playback {border-color: #77a17a!important;}
 
               #app2 {position: relative;min-height: 842px;max-width: 595px;width: 595px;margin-top: 40px;margin-left: auto;margin-right: auto;background-color: #ffffff;box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.4);page-break-after: always;}
               #app2 .navbar {position: relative;height: 34px;margin: 0;padding: 0;background-color: #2475a0;display: flex; align-items: center; padding-left: 24px; gap: 8px; color: #fff}
@@ -232,7 +234,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
   if (liveCameras != '') {
       camList = `
       <div class="live-cam">
-          <div class="circle"></div>
+          <div class="circle live"></div>
           <span>Live Camera</span>
           <ul class="list">${liveCameras}</ul>
       </div>`;
@@ -241,7 +243,7 @@ export default async function downloadReport(form, taskName, faceDataList, times
   if (archCameras != '') {
       camList += `
       <div class="live-cam">
-          <div class="circle"></div>
+          <div class="circle archive"></div>
           <span>VMS Video Archive</span>
           <ul class="list">${archCameras}</ul>
       </div>`;
