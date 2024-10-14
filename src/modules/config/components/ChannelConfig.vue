@@ -49,7 +49,7 @@
       </template>
       <template #sensitivity="props">
         <AppInput :dark="true" type="select" class="w-full" :options="sensitivityList"
-          :modelInput="parseSensitivity(props.data.sensitivity)"
+          :modelInput="props.data.sensitivity"
           @update:modelInput="onUpdateSensitivity($event, props.data.cameraId)" v-show="props.data.live" />
       </template>
       <template #threshold="props">
@@ -142,8 +142,9 @@ const intervalList = ref({
 })
 
 const sensitivityList = ref({
-  [`${i18n.t('Normal')}`]: 'normal',
-  [`${i18n.t('High')}`]: 'high'
+  [`${i18n.t('Low')}`]: 0.25,
+  [`${i18n.t('Normal')}`]: 0.5,
+  [`${i18n.t('High')}`]: 0.8
 })
 
 const thresholdList = ref({
@@ -276,7 +277,7 @@ async function onUpdateInterval(val, id) {
 async function onUpdateSensitivity(val, id) {
   const cameraIdx = pageData.value.findIndex((item) => item.cameraId === id);
   if (cameraIdx >= 0) {
-    pageData.value[cameraIdx].sensitivity = convertSensitivity(val);
+    pageData.value[cameraIdx].sensitivity = val;
     await updateLiveCamera(pageData.value[cameraIdx]);
   }
 }

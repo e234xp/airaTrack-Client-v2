@@ -191,5 +191,6 @@
   "ReloginHint": "Bạn có cần đăng nhập lại vào airaTrack không?",
   "Sync": "Đồng bộ",
   "BlockHint": "Bạn đã nhập sai tài khoản hoặc mật khẩu quá nhiều lần. Vui lòng thử lại sau $N phút.",
-  "ErrHint": "Nếu bạn nhập sai thông tin quá nhiều lần, bạn sẽ không thể đăng nhập."
+  "ErrHint": "Nếu bạn nhập sai thông tin quá nhiều lần, bạn sẽ không thể đăng nhập.",
+  "Low": "Thấp"
 }

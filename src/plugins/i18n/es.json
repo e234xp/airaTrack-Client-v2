@@ -191,5 +191,6 @@
   "ReloginHint": "¿Necesita iniciar sesión en airaTrack nuevamente?",
   "Sync": "Sincronizar",
   "BlockHint": "Has ingresado una cuenta o contraseña incorrecta demasiadas veces. Por favor, inténtalo de nuevo en $N minutos.",
-  "ErrHint": "Si ingresas información incorrecta demasiadas veces, no podrás iniciar sesión."
+  "ErrHint": "Si ingresas información incorrecta demasiadas veces, no podrás iniciar sesión.",
+  "Low": "Bajo"
 }
