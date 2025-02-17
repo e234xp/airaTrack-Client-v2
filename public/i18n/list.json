@@ -1,0 +1,12 @@
+[
+    { "code": "en", "disp": "English" },
+    { "code": "es", "disp": "Spanish" },
+    { "code": "fr", "disp": "Français" },
+    { "code": "id", "disp": "Bahasa Indonesia" },
+    { "code": "ja", "disp": "日本語" },
+    { "code": "ko", "disp": "한국어" },
+    { "code": "th", "disp": "แบบไทย" },
+    { "code": "vi", "disp": "Tiếng Việt" },
+    { "code": "zh", "disp": "繁體中文" },
+    { "code": "aa", "disp": "aaaaa" },
+]

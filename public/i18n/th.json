@@ -1,4 +1,5 @@
 {
+  "LanguageDisplay":"แบบไทย",
   "Actions": "การดำเนินการ",
   "Activate": "เปิดใช้งาน",
   "Activated": "เปิดใช้งานแล้ว",
@@ -111,7 +112,7 @@
   "Normal": "ปกติ",
   "Now": "ตอนนี้",
   "NumOfLive": "#ของสด",
-  "Nx4Before": "เครือข่าย Optix 4 หรือเก่ากว่า",
+  "Nx4Before": "เครือข่าย Optix 4.0 หรือเก่ากว่า",
   "Nx5Later": "เครือข่าย Optix 5.0 หรือใหม่กว่า",
   "NxVideoArchive": "คลังวิดีโอ Nx",
   "Operator": "ผู้ดำเนินการ",

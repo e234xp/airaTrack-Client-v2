@@ -1,4 +1,5 @@
 {
+  "LanguageDisplay":"Tiếng Việt",
   "Actions": "hành động",
   "Activate": "KÍCH HOẠT",
   "Activated": "kích hoạt",
@@ -111,7 +112,7 @@
   "Normal": "Bình thường",
   "Now": "Hiện nay",
   "NumOfLive": "# TRỰC TIẾP",
-  "Nx4Before": "Mạng Optix 4 trở về trước",
+  "Nx4Before": "Mạng Optix 4.0 trở về trước",
   "Nx5Later": "Mạng Optix 5.0 trở lên",
   "NxVideoArchive": "Lưu trữ video Nx",
   "Operator": "Nhà điều hành",

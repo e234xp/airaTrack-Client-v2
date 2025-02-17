@@ -5,11 +5,7 @@
     grid grid-flow-col justify-between"
     >
       <div class="ml-2 grid content-center">
-        <img
-          src="@/assets/images/logo-track.png"
-          alt=""
-          class="h-6"
-        >
+        <img src="/cis/logo-track.png" alt="" class="h-6">
       </div>
       <div class="grid grid-flow-col content-center text-gray-300 text-3xl font-bold" />
       <div

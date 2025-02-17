@@ -1,4 +1,5 @@
 {
+  "LanguageDisplay":"English asdfasdf",
   "Actions": "Actions",
   "Activate": "ACTIVATE",
   "Activated": "activated",
@@ -111,7 +112,7 @@
   "Normal": "Normal",
   "Now": "Now",
   "NumOfLive": "# of LIVE",
-  "Nx4Before": "Network Optix 4 or earlier",
+  "Nx4Before": "Network Optix 4.0 or earlier",
   "Nx5Later": "Network Optix 5.0 or later",
   "NxVideoArchive": "Nx Video Archive",
   "Operator": "Operator",

@@ -93,12 +93,6 @@
 
   import ModalResetPassword from './ModalResetPassword.vue';
 
-  import info from '/public/cis/info.json';
-
-  console.log("======================================") ;
-  console.log("info", info) ;
-  document.title = info.titleBar;
-
   const router = useRouter();
   const route = useRoute();
 
@@ -207,6 +201,10 @@
   }
 
   onMounted(async () => {
+    const response = await fetch("/cis/info.json");
+    const info = await response.json();
+    document.title = info.titleBar;
+
     languageList((list) => {
       let ls = {};
       for (let i = 0; i < list.length; i++) {

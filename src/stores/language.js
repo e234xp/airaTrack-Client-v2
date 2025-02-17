@@ -24,27 +24,11 @@ export default defineStore('language', () => {
   // console.log("1");
 
   async function languageList(cb) {
-    // console.log("11");
-    const files = import.meta.glob('/public/i18n/*.json');
-
-    let langList = [];
-
-    for (const f in files) {
-      await new Promise((resolve) => {
-        files[f]().then((l) => {
-          // console.log("13", l['LanguageDisplay']);
-
-          let fn = f.replaceAll('/public/i18n/', '');
-          fn = fn.replaceAll('.json', '');
-          // list[`${l['LanguageDisplay']}`] = fn ;
-          langList.push({ code: fn, disp: l['LanguageDisplay'] });
-
-          // console.log("14", l['LanguageDisplay']);
-          resolve();
-        });
-      });
-    }
-    // console.log("12", langList);
+    console.log("11");
+    // const files = import.meta.glob('/public/i18n/*.json');
+    const response = await fetch("/i18n/list.json");
+    const langList = await response.json();
+    console.log("22", langList);
 
     if (cb) cb(langList);
     return ;

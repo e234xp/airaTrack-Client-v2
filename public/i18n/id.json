@@ -1,4 +1,5 @@
 {
+  "LanguageDisplay":"Bahasa Indonesia",
   "Actions": "Aksi",
   "Activate": "AKTIFKAN",
   "Activated": "diaktifkan",
@@ -111,7 +112,7 @@
   "Normal": "Normal",
   "Now": "Sekarang",
   "NumOfLive": "# dari LANGSUNG",
-  "Nx4Before": "Network Optix versi 4 atau lebih lama",
+  "Nx4Before": "Network Optix versi 4.0 atau lebih lama",
   "Nx5Later": "Network Optix versi 5.0 atau lebih baru",
   "NxVideoArchive": "Arsip Video Nx",
   "Operator": "Operator",
