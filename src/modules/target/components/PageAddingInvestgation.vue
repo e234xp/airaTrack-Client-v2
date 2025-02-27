@@ -1,46 +1,26 @@
 <template>
   <ProgressBarLayout>
     <FullLayout>
-      <!-- <template #header>
-        <NavigationBar />
-      </template> -->
-
-      <template #grow>
+      <template #grow1>
         <div class="mt-16 flex justify-center" style="height: calc(100% - 4rem)">
           <div class="w-full 2xl:w-352 h-full">
             <div class="flex justify-center gap-4 h-full">
-              <img
-                class="w-1/5 object-contain object-top"
-                :src="spiderman.base64Image.getSrc(confirmedFace?.data.face_image)"
-                alt=""
-              >
+              <img class="w-1/5 object-contain object-top"
+                :src="spiderman.base64Image.getSrc(confirmedFace?.data.face_image)" alt="">
 
               <div class="px-4 h-full w-2/3">
                 <div class="flex mb-4 mr-4">
                   <AppLabel :label="$t('TaskName')" class="w-1/2">
-                    <AppInput
-                      dark
-                      v-model:modelInput="form.task_name"
-                      :placeholder="$t('TaskName')"
-                      :dark="true"
-                    />
+                    <AppInput dark v-model:modelInput="form.task_name" :placeholder="$t('TaskName')" :dark="true" />
                   </AppLabel>
                 </div>
                 <div class="flex gap-4 mb-4">
                   <AppLabel :label="$t('StartTime')" class="w-1/2">
-                    <AppDatePicker
-                      v-model:modelSelected="form.search_start_time"
-                      :dark="true"
-                      mode="date-time"
-                    />
+                    <AppDatePicker v-model:modelSelected="form.search_start_time" :dark="true" mode="date-time" />
                   </AppLabel>
                   <AppLabel :label="$t('EndTime')" class="w-1/2">
-                    <AppDatePicker
-                      v-model:modelSelected="form.search_end_time"
-                      :dark="true"
-                      :limit="form.search_start_time"
-                      mode="date-time"
-                    />
+                    <AppDatePicker v-model:modelSelected="form.search_end_time" :dark="true"
+                      :limit="form.search_start_time" mode="date-time" />
                   </AppLabel>
                 </div>
                 <div class="flex gap-2 mb-8" style="height: calc(100% - 20rem)">
@@ -50,33 +30,22 @@
                       ({{ form.livechannels.length }}/{{ liveChannelAmount }})
                     </div>
 
-                    <div
-                      class="border-t-4 border-live-channel rounded bg-third py-2 px-4 overflow-y-auto"
-                      style="height: calc(100% - 2rem)"
-                    >
-                      <AppCheckBox
-                        class="pb-2 mb-2 text-xl text-white border-b-2 border-dashed border-panel"
-                        :placeholder="$t('All')"
-                        :checked="form.livechannels.length===livedevices.length"
-                        @on-change="()=>{
-                          if(form.livechannels.length===livedevices.length){
+                    <div class="border-t-4 border-live-channel rounded bg-third py-2 px-4 overflow-y-auto"
+                      style="height: calc(100% - 3rem)">
+                      <AppCheckBox class="pb-2 mb-2 text-xl text-white border-b-2 border-dashed border-panel"
+                        :placeholder="$t('All')" :checked="form.livechannels.length === livedevices.length" @on-change="() => {
+                          if (form.livechannels.length === livedevices.length) {
                             form.livechannels = [];
                           } else {
                             form.livechannels = spiderman.lodash.cloneDeep(livedevices);
                           }
-                        }"
-                      >{{ $t('All') }}</AppCheckBox>
-                      <AppCheckBox
-                        v-for="livedevice in livedevices"
-                        :key="livedevice.camera_id"
-                        class="mb-2 text-xl text-white"
-                        :placeholder="livedevice.name"
-                        v-model:modelInput="form.livechannels"
-                        :value="livedevice"
-                        :disabled="(form.livechannels.length>=liveChannelAmount)
-                          &&!form.livechannels
-                            .map(({camera_id})=>camera_id).includes(livedevice.camera_id)"
-                      >{{ livedevice.name }}</AppCheckBox>
+                        }">{{ $t('All') }}</AppCheckBox>
+                      <AppCheckBox v-for="livedevice in livedevices" :key="livedevice.camera_id"
+                        class="mb-2 text-xl text-white" :placeholder="livedevice.name"
+                        v-model:modelInput="form.livechannels" :value="livedevice" :disabled="(form.livechannels.length >= liveChannelAmount)
+                          && !form.livechannels
+                            .map(({ camera_id }) => camera_id).includes(livedevice.camera_id)">{{ livedevice.name }}
+                      </AppCheckBox>
                     </div>
                   </div>
 
@@ -85,52 +54,31 @@
                       {{ $t('NxVideoArchive') }}
                       <!-- ({{ form.archchannels.length }}/{{ archiveAmount }}) -->
                     </div>
-                    <div
-                      class="border-t-4 border-archive-channel rounded bg-third py-2 px-4 overflow-y-auto"
-                      style="height: calc(100% - 2rem)"
-                    >
-                      <AppCheckBox
-                        class="pb-2 mb-2 text-xl text-white border-b-2 border-dashed border-panel"
-                        :placeholder="$t('All')"
-                        :checked="form.archchannels.length===devices.length"
-                        :disabled="archiveAmount === 0"
-                        @on-change="()=>{
-                          if(form.archchannels.length===devices.length){
+                    <div class="border-t-4 border-archive-channel rounded bg-third py-2 px-4 overflow-y-auto"
+                      style="height: calc(100% - 2rem)">
+                      <AppCheckBox class="pb-2 mb-2 text-xl text-white border-b-2 border-dashed border-panel"
+                        :placeholder="$t('All')" :checked="form.archchannels.length === devices.length"
+                        :disabled="archiveAmount === 0" @on-change="() => {
+                          if (form.archchannels.length === devices.length) {
                             form.archchannels = [];
                           } else {
                             form.archchannels = spiderman.lodash.cloneDeep(devices);
                           }
-                        }"
-                      >{{ $t('All') }}</AppCheckBox>
-                      <AppCheckBox
-                        v-for="device in devices"
-                        :key="device.camera_id"
-                        class="mb-2 text-xl text-white"
-                        :placeholder="device.name"
-                        v-model:modelInput="form.archchannels"
-                        :value="device"
-                        :disabled="(form.archchannels.length>=archiveAmount)
-                          &&!form.archchannels
-                            .map(({camera_id})=>camera_id).includes(device.camera_id)"
-                      >{{ device.name }}</AppCheckBox>
+                        }">{{ $t('All') }}</AppCheckBox>
+                      <AppCheckBox v-for="device in devices" :key="device.camera_id" class="mb-2 text-xl text-white"
+                        :placeholder="device.name" v-model:modelInput="form.archchannels" :value="device" :disabled="(form.archchannels.length >= archiveAmount)
+                          && !form.archchannels
+                            .map(({ camera_id }) => camera_id).includes(device.camera_id)">{{ device.name }}
+                      </AppCheckBox>
                     </div>
                   </div>
                 </div>
                 <div class="flex justify-end gap-4">
-                  <AppButton
-                    type="secondary"
-                    class="px-6"
-                    @click="setPage('list')"
-                  >
+                  <AppButton type="secondary" class="px-6" @click="setPage('list')">
                     {{ $t('Return') }}
                   </AppButton>
-                  <AppButton
-                    type="primary"
-                    class="px-6"
-                    @click="handleAddTask(form)"
-                    :is-enable="form.archchannels.length > 0
-                      || form.livechannels.length > 0"
-                  >
+                  <AppButton type="primary" class="px-6" @click="handleAddTask(form)" :is-enable="form.archchannels.length > 0
+                    || form.livechannels.length > 0">
                     {{ $t('AddInvestigation') }}
                   </AppButton>
                 </div>
@@ -139,6 +87,102 @@
           </div>
         </div>
       </template>
+
+      <template #grow>
+        <section id="🌀TargetPage">
+          <div id="🔥TargetPerson">
+            <img :src="spiderman.base64Image.getSrc(confirmedFace?.data.face_image)" id="🔥TargetPerson__Img">
+            <div id="🔥TargetPerson__TaskName">
+              <AppLabel :label="$t('TaskName')">
+                <AppInput dark v-model:modelInput="form.task_name" :placeholder="$t('TaskName')" :dark="true" />
+              </AppLabel>
+            </div>
+            <div id="🔥TargetPerson__X">
+              <div id="🔥TargetPerson__X__StartTime">
+                <AppLabel :label="$t('StartTime')">
+                  <AppDatePicker v-model:modelSelected="form.search_start_time" :dark="true" mode="date-time" />
+                </AppLabel>
+              </div>
+              <div id="🔥TargetPerson__X__EndTime">
+                <AppLabel :label="$t('EndTime')">
+                  <AppDatePicker v-model:modelSelected="form.search_end_time" :dark="true"
+                    :limit="form.search_start_time" mode="date-time" />
+                </AppLabel>
+              </div>
+            </div>
+            <div id="🔥TargetPerson__Search">
+              <AppLabel :label="$t('Search')">
+                <input type="search" placeholder="Please enter the camera name"
+                  class="h-[37px] w-full rounded-sm bg-[#3b3b3b] border border-gray-500 text-white focus:outline-none p-4">
+              </AppLabel>
+            </div>
+          </div>
+          <img id="🔥XLine" src="@/assets/images/XLine.png">
+          <div id="🔥CameraList">
+            <div id="🔥CameraList__X">
+              <div class="w-1/2">
+                <div class="text-white text-xl">
+                  {{ $t('LiveChannel') }}
+                  ({{ form.livechannels.length }}/{{ liveChannelAmount }})
+                </div>
+
+                <div class="border-t-4 border-live-channel rounded bg-third py-2 px-4 overflow-y-auto" style="height: calc(100% - 4rem)">
+                  <AppCheckBox class="pb-2 mb-2 text-base text-white border-b-2 border-dashed border-panel"
+                    :placeholder="$t('All')" :checked="form.livechannels.length === livedevices.length" @on-change="() => {
+                      if (form.livechannels.length === livedevices.length) {
+                        form.livechannels = [];
+                      } else {
+                        form.livechannels = spiderman.lodash.cloneDeep(livedevices);
+                      }
+                    }">{{ $t('All') }}</AppCheckBox>
+                  <AppCheckBox v-for="livedevice in livedevices" :key="livedevice.camera_id"
+                    class="mb-2 text-base text-white" :placeholder="livedevice.name"
+                    v-model:modelInput="form.livechannels" :value="livedevice" :disabled="(form.livechannels.length >= liveChannelAmount)
+                      && !form.livechannels
+                        .map(({ camera_id }) => camera_id).includes(livedevice.camera_id)">{{ livedevice.name }}
+                  </AppCheckBox>
+                </div>
+              </div>
+
+              <div class="w-1/2">
+                <div class="text-white text-xl">
+                  {{ $t('NxVideoArchive') }}
+                  <!-- ({{ form.archchannels.length }}/{{ archiveAmount }}) -->
+                </div>
+                <div class="border-t-4 border-archive-channel rounded bg-third py-2 px-4 overflow-y-auto" style="height: calc(100% - 4rem)">
+                  <AppCheckBox class="pb-2 mb-2 text-base text-white border-b-2 border-dashed border-panel"
+                    :placeholder="$t('All')" :checked="form.archchannels.length === devices.length"
+                    :disabled="archiveAmount === 0" @on-change="() => {
+                      if (form.archchannels.length === devices.length) {
+                        form.archchannels = [];
+                      } else {
+                        form.archchannels = spiderman.lodash.cloneDeep(devices);
+                      }
+                    }">{{ $t('All') }}</AppCheckBox>
+                  <AppCheckBox v-for="device in devices" :key="device.camera_id" class="mb-2 text-base text-white"
+                    :placeholder="device.name" v-model:modelInput="form.archchannels" :value="device" :disabled="(form.archchannels.length >= archiveAmount)
+                      && !form.archchannels
+                        .map(({ camera_id }) => camera_id).includes(device.camera_id)">{{ device.name }}
+                  </AppCheckBox>
+                </div>
+              </div>
+            </div>
+            <div id="🔥CameraList__X2">
+              <AppButton type="secondary" class="py-2 px-8 mr-8" @click="setPage('list')">
+                {{ $t('Return') }}
+              </AppButton>
+              <AppButton type="primary" class="py-2 px-8" @click="handleAddTask(form)" :is-enable="form.archchannels.length > 0
+                || form.livechannels.length > 0">
+                {{ $t('AddInvestigation') }}
+              </AppButton>
+            </div>
+          </div>
+
+          <img id="🔥YLine" src="@/assets/images/YLine.png" >
+          <img id="🔥CameraMap" src="https://fakeimg.pl/1280x720/" >
+        </section>
+      </template>
+
     </FullLayout>
   </ProgressBarLayout>
 </template>
@@ -177,7 +221,7 @@ onMounted(async () => {
   liveChannelAmount.value = validLicenses
     .reduce((accumulator, current) => accumulator + current.channel_amount, 0);
 
-  archiveAmount.value = validLicenses.some(({frs}) => frs) ? 999 : 0;
+  archiveAmount.value = validLicenses.some(({ frs }) => frs) ? 999 : 0;
 });
 
 const form = reactive({
@@ -232,3 +276,98 @@ async function handleAddTask(theForm) {
   router.push({ path: '/investigation' });
 }
 </script>
+
+<style>
+#🔥TargetPerson__Img {
+  grid-area: 🔥TargetPerson__Img;
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}
+
+#🔥TargetPerson__TaskName {
+  grid-area: 🔥TargetPerson__TaskName;
+  margin-left: 40px;
+}
+
+#🔥TargetPerson__X {
+  grid-area: 🔥TargetPerson__X;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 5px;
+}
+
+#🔥TargetPerson__X__StartTime {
+  width: 100%;
+  margin-left: 40px;
+}
+
+#🔥TargetPerson__X__EndTime {
+  width: 100%;
+}
+
+#🔥TargetPerson__Search {
+  grid-area: 🔥TargetPerson__Search;
+  margin-left: 40px;
+  margin-top: 5px;
+}
+
+#🔥CameraList__X {
+  display: flex;
+  gap: 1rem;
+  height: 94.5%;
+}
+
+#🔥CameraList__X2 {
+  display: flex;
+  justify-content: right;
+}
+
+#🌀TargetPage {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  grid-template-rows: repeat(20, 1fr);
+  width: 100%;
+  height: 100%;
+  padding: 1.5rem;
+}
+
+#🔥TargetPerson {
+  display: grid;
+  grid-template-areas:
+    "🔥TargetPerson__Img 🔥TargetPerson__TaskName"
+    "🔥TargetPerson__Img 🔥TargetPerson__X"
+    "🔥TargetPerson__Img 🔥TargetPerson__Search";
+  grid-template-columns: 15% 85%;
+  grid-column: 4 / 18;
+}
+
+#🔥XLine {
+  width: 100%;
+  grid-column: 1 / -1;
+  grid-row: 2 / 3;
+  position: relative;
+  top: 50%;
+}
+
+#🔥CameraList {
+  grid-column: 1 / 7;
+  grid-row: 3 / -1;
+}
+
+#🔥YLine {
+  height: 100%;
+  grid-column: 7 / span 1;
+  grid-row: 3 / -1;
+  position: relative;
+  left: 50%;
+}
+
+#🔥CameraMap {
+  grid-column: 8 / -1;
+  grid-row: 3 / -1;
+  height: 100%;
+  margin-inline: auto;
+  object-fit: contain;
+}
+</style>

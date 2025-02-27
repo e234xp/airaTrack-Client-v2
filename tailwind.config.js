@@ -22,7 +22,7 @@ module.exports = {
       modal: 'rgba(40, 40, 40, 1)',
       'video-bar': '#131617',
       'live-channel': '#8fb5ec',
-      'archive-channel': '#77a17a',
+      'archive-channel': '#F1C984',
       transparent: colors.transparent,
       general: 'rgba(100, 100, 100, 1)',
       label: 'rgba(180, 180, 180, 1)',
