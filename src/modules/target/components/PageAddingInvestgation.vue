@@ -92,7 +92,11 @@
           </div>
 
           <img id="🔥YLine" src="@/assets/images/YLine.png" >
-          <img id="🔥CameraMap" src="https://fakeimg.pl/1280x720/" >
+          <div id="🔥CameraMapSelect">
+            <AppInput dark placeholder="請選擇樓層" class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select" :options="{'1F': 1, '2F': 2}" />
+          </div>
+
+          <img id="🔥CameraMap" src="https://fakeimg.pl/1280x720/">
         </section>
       </template>
 
@@ -297,9 +301,15 @@ async function handleAddTask(theForm) {
   left: 50%;
 }
 
+#🔥CameraMapSelect {
+  position: relative;
+  grid-column: 8 / -1;
+  grid-row: 3 / 4;
+}
+
 #🔥CameraMap {
   grid-column: 8 / -1;
-  grid-row: 3 / -1;
+  grid-row: 4 / -1;
   height: 100%;
   margin-inline: auto;
   object-fit: contain;
