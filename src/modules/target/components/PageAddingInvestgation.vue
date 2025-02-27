@@ -25,7 +25,7 @@
             </div>
             <div id="🔥TargetPerson__Search">
               <AppLabel :label="$t('Search')">
-                <input type="search" placeholder="Please enter the camera name"
+                <input type="search" placeholder="Please enter the camera name" v-model="searchQuery"
                   class="h-[37px] w-full rounded-sm bg-[#3b3b3b] border border-gray-500 text-white focus:outline-none p-4">
               </AppLabel>
             </div>
@@ -48,7 +48,7 @@
                         form.livechannels = spiderman.lodash.cloneDeep(livedevices);
                       }
                     }">{{ $t('All') }}</AppCheckBox>
-                  <AppCheckBox v-for="livedevice in livedevices" :key="livedevice.camera_id"
+                  <AppCheckBox v-for="livedevice in filterLiveDevices" :key="livedevice.camera_id"
                     class="mb-2 text-base text-white" :placeholder="livedevice.name"
                     v-model:modelInput="form.livechannels" :value="livedevice" :disabled="(form.livechannels.length >= liveChannelAmount)
                       && !form.livechannels
@@ -72,7 +72,7 @@
                         form.archchannels = spiderman.lodash.cloneDeep(devices);
                       }
                     }">{{ $t('All') }}</AppCheckBox>
-                  <AppCheckBox v-for="device in devices" :key="device.camera_id" class="mb-2 text-base text-white"
+                  <AppCheckBox v-for="device in filterDevices" :key="device.camera_id" class="mb-2 text-base text-white"
                     :placeholder="device.name" v-model:modelInput="form.archchannels" :value="device" :disabled="(form.archchannels.length >= archiveAmount)
                       && !form.archchannels
                         .map(({ camera_id }) => camera_id).includes(device.camera_id)">{{ device.name }}
@@ -101,7 +101,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, reactive } from 'vue';
+import { ref, onMounted, watch, reactive, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router';
 
@@ -121,6 +121,27 @@ const { devices, livedevices } = storeToRefs(devicesStore);
 
 const liveChannelAmount = ref(0);
 const archiveAmount = ref(0);
+
+const searchQuery = ref('')
+
+const filterDevices = computed(() => {
+  if (!searchQuery.value) {
+    return devices.value; // 如果搜尋框為空，顯示所有項目
+  }
+  return devices.value.filter(device =>
+    device.name.toLowerCase().includes(searchQuery.value.toLowerCase()) // 小寫比對
+  )
+})
+
+const filterLiveDevices = computed(() => {
+  if (!searchQuery.value) {
+    return livedevices.value; // 如果搜尋框為空，顯示所有項目
+  }
+  return livedevices.value.filter(liveDevice =>
+    liveDevice.name.toLowerCase().includes(searchQuery.value.toLowerCase()) // 小寫比對
+  )
+})
+
 onMounted(async () => {
   const { license } = await getLicense();
 
