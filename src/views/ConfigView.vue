@@ -12,7 +12,9 @@
             channel: ChannelConfig,
             user: UserConfig,
             license: LicenseConfig,
-            system: SystemConfig
+            system: SystemConfig,
+            map: MapConfig,
+            
           }[page]" />
         </div>
       </template>
@@ -31,6 +33,8 @@ import UserConfig from '@/modules/config/components/UserConfig.vue';
 import LicenseConfig from '@/modules/config/components/LicenseConfig.vue';
 import SystemConfig from '@/modules/config/components/SystemConfig.vue';
 import NavigationBar from '@/modules/config/components/NavigationBar.vue';
+import MapConfig from '@/modules/config/components/MapConfig.vue';
+
 
 import useStore from '@/modules/config/stores/index';
 
@@ -54,6 +58,9 @@ const title = computed({
         return i18n.t('License');
       case 'system':
         return i18n.t('System');
+      case 'map': 
+        return i18n.t('MapTitle');
+      
       default:
         return '';
     }

@@ -162,6 +162,8 @@ const { setPage, getLicense, addTask } = store;
 const devicesStore = useDevices();
 const { devices, livedevices } = storeToRefs(devicesStore);
 
+console.log("device",devices.value)
+
 const liveChannelAmount = ref(0);
 const archiveAmount = ref(0);
 onMounted(async () => {
