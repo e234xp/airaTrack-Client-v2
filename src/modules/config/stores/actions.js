@@ -22,6 +22,20 @@ export async function deleteUsers(payload) {
 // =============================================
 // POST
 // =============================================
+export async function postMaps(payload) {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/maps`,
+    method: 'post',
+    headers: { sessionId: userStore.sessionId },
+    data: {
+      ...payload
+    }
+  })
+}
+
+
+
 export async function postNxServerInfo(payload) {
   const userStore = useUserStore();
   return await spiderman.apiService({
@@ -155,6 +169,26 @@ export async function putUserGroup(payload) {
 // =============================================
 // GET
 // =============================================
+
+export async function getAllMaps() {
+  const userStore = useUserStore();
+  const result = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/maps`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  })
+  return result;
+}
+
+export async function getMapImage(uuid) {
+  const userStore = useUserStore();
+  const result = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/maps/image?uuid=${uuid}`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  })
+  return result;
+}
 export async function getNxConfig() {
   const userStore = useUserStore();
   const result = await spiderman.apiService({

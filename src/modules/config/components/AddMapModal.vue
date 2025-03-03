@@ -184,7 +184,15 @@
   import useDevices from '@/stores/devices';
   import redCameraIcon from '@/assets/svg/red-camera.svg';
   import greenCameraIcon from '@/assets/svg/green-camera.svg';
+  import useStore from '@/modules/config/stores/index';
+  import successStore from '@/components/AppSuccess/success';
+
   
+
+const store = useStore();
+console.log("store",store)
+const { postMaps } = store;
+console.log("🔍 postMaps:", store.postMaps);
 
   const devicesStore = useDevices();
   const { devices, livedevices } = storeToRefs(devicesStore);
@@ -209,7 +217,7 @@
   const imgWidth = ref(0);
   const imgHeight = ref(0);
 
-
+  const emit = defineEmits(["fetch-maps"]);
   function onImageLoad() {
   if (imgRef.value) {
     imgWidth.value = imgRef.value.clientWidth;
@@ -417,51 +425,69 @@ function removeCamera(camera, type) {
 
 
 
-function onSaveMap() {
-
-    const imageWidth = imgWidth.value
-    const imageHeight = imgHeight.value
+async function onSaveMap() {
+    const imageWidth = imgWidth.value;
+    const imageHeight = imgHeight.value;
 
     // 轉換 Live 攝影機座標為相對比例
     const relativeLiveCameras = selectedLiveCameras.value.map(camera => ({
+        type: "live",
+        module: camera.module ?? "boxcam", // 預設為 boxcam，若有其他模組請自行修改
         camera_id: camera.camera_id,
         name: camera.name,
-        relativeX: camera.x / imageWidth, // 轉換為 0 ~ 1 之間的比例
-        relativeY: camera.y / imageHeight
+        position: {
+            x: parseFloat((camera.x / imageWidth).toFixed(3)), // 保留 3 位小數
+            y: parseFloat((camera.y / imageHeight).toFixed(3))
+        }
     }));
 
     // 轉換 Archive 攝影機座標為相對比例
     const relativeArchiveCameras = selectedArchiveCameras.value.map(camera => ({
+        type: "archive",
+        module: camera.module ?? "bulletcam", // 預設為 bulletcam，若有其他模組請自行修改
         camera_id: camera.camera_id,
         name: camera.name,
-        relativeX: camera.x / imageWidth,
-        relativeY: camera.y / imageHeight
+        position: {
+            x: parseFloat((camera.x / imageWidth).toFixed(3)),
+            y: parseFloat((camera.y / imageHeight).toFixed(3))
+        }
     }));
 
     // 最終儲存的資料
     const saveData = {
-        mapName: mapName.value,
-        mapImage: mapImage.value, // Base64 圖片
-        cameras: {
-            live: relativeLiveCameras,
-            archive: relativeArchiveCameras
-        }
+        name: mapName.value,
+        background: mapImage.value, // Base64 圖片
+        cameras: [...relativeLiveCameras, ...relativeArchiveCameras] // 合併 Live & Archive
     };
 
-    console.log("🚀 Sending data to backend:", saveData);
+    console.log(" Sending data to backend:", saveData);
 
-    // 這裡你可以將 `saveData` 傳給 API
-    // axios.post('/api/save-map', saveData).then(...).catch(...);
+    try {
+        const result = await store.postMaps(saveData);
+        console.log("API Response:", result);
 
-    resetForm(); // 儲存後清空表單
-    setModal('');
+        if (result) {
+            // ✅ 通知父組件重新抓取地圖列表
+            emit("fetch-maps");
+
+            // ✅ 關閉 modal
+            setModal('');
+
+            // ✅ 顯示成功通知
+            successStore.show();
+        }
+    } catch (error) {
+        console.error("儲存地圖失敗:", error);
+    }
+
+    resetForm();
 }
 
-    // 🔥 這一行很重要！讓父組件可以呼叫 setModal()
-    defineExpose({ setModal });
-  </script>
-  
-  
+// 🔥 這一行很重要！讓父組件可以呼叫 setModal()
+defineExpose({ setModal });
+</script>
+
+
 <style>
 
 .delete-btn {

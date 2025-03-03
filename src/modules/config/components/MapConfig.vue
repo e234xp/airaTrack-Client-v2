@@ -4,15 +4,18 @@
         {{ $t('AddMap') }}
       </AppButton>
       <AppDataTable :columns="column" :dataList="pageData" v-if="pageData.length !== 0">
+        <template #id="props">
+            <span class="text-white">{{ props.data.uuid }}</span>
+        </template>
         <template #mapName="props">
-            <span class="text-white">{{ props.data.mapName }}</span>
+            <span class="text-white">{{ props.data.name }}</span>
         </template>
         <template #action="props">
             <div class="flex gap-2">
-            <AppButton :type="'secondary'" class="p-2" @click="onEdit(props.data.id)">
+            <AppButton :type="'secondary'" class="p-2" @click="onEdit(props.data)">
                 <AppSvgIcon name="icon-edit" class="w-4 h-4"></AppSvgIcon>
             </AppButton>
-            <AppButton :type="'secondary'" class="p-2" @click="onDelete(props.data.id)">
+            <AppButton :type="'secondary'" class="p-2" @click="onDelete(props.data.uuid)">
                 <AppSvgIcon name="icon-trash" class="w-4 h-4"></AppSvgIcon>
             </AppButton>
             </div>
@@ -20,7 +23,7 @@
         </AppDataTable>
     </div>
   
-    <ModalLayout :is-open="modal === 'edit'" @close="setModal('')">
+    <!-- <ModalLayout :is-open="modal === 'edit'" @close="setModal('')">
       <template #header>
         {{ $t('EditUser') }}
       </template>
@@ -29,21 +32,6 @@
         {{ $t('EditUserDialog') }}
       </template>
   
-      <!-- <template #default>
-        <AppLabel :label="$t('LoginUsername')">
-          <div class="mb-4" v-if="adminList.length === 1 && pageData[selectedIdx].role === adminGroup.id">{{ selected.username }}</div>
-          <AppInput v-model:modelInput="selected.username" class="mb-4" dark v-else/>
-        </AppLabel>
-  
-        <AppLabel :label="$t('EmailAddress')">
-          <AppInput v-model:modelInput="selected.email" :rule="'email'" class="mb-4" dark />
-        </AppLabel>
-  
-        <AppLabel :label="$t('Role')">
-          <div class="mb-4" v-if="adminList.length === 1 && pageData[selectedIdx].role === adminGroup.id">{{ adminGroup.name }}</div>
-          <AppInput type="select" class="mb-8" :options="groupOption" v-model:modelInput="selected.role" dark v-else/>
-        </AppLabel>
-      </template> -->
   
       <template #footer>
         <div class="flex justify-end gap-4">
@@ -56,7 +44,7 @@
           </AppButton>
         </div>
       </template>
-    </ModalLayout>
+    </ModalLayout> -->
   
     <ModalLayout :is-open="modal === 'delete'" @close="setModal('')">
       <template #header>
@@ -92,7 +80,14 @@
    
     
 
-    <AddMapModal ref="addMapModal" />
+    <AddMapModal ref="addMapModal" @fetch-maps="fetchMaps"/>
+    <!-- 編輯地圖 Modal -->
+  <EditMapModal 
+    :isOpen="editModalOpen" 
+    :selectedMap="selectedMap" 
+    @update:isOpen="editModalOpen = $event"
+    @save-edit="handleSaveEdit"
+  />
   </template>
   
   <script setup>
@@ -102,6 +97,7 @@
   import useStore from '@/modules/config/stores/index';
   import successStore from '@/components/AppSuccess/success';
   import AddMapModal from '@/modules/config/components/AddMapModal.vue'
+  import EditMapModal from '@/modules/config/components/EditMapModal.vue'
   import AppDataTable from '@/components/AppDataTable.vue';
   
   const store = useStore();
@@ -129,73 +125,63 @@ const column = ref([
   }
 ]);
   
-  const adminKey = ref('Administrator');
-  const optKey = ref('Operator');
+  
   
   const modal = ref('');
-  const selectedIdx = ref(-1);
-  const selected = ref(null);
-  
-  const newUser = reactive({
-    username: '',
-    email: '',
-    password: '',
-    role: ''
-  })
-  
-  const resetUser = reactive({
-    password: ''
-  })
-  
   const pageData = ref([]);
-  const groupData = ref([]);
-  
-  const newUserValid = reactive({
-    username: false,
-    email: false,
-    password: false,
-    check: computed(() => {
-      return newUserValid.username && newUserValid.email && newUserValid.password;
-    })
-  })
-  
-  const adminList = computed(() => {
-    const adminId = groupData.value.find((item) => item.name === adminKey.value)?.id || '';
-    return adminId === '' ? [] : pageData.value.filter((item) => item.groups[0] === adminId);
-  })
-  
-  const groupOption = computed(() => {
-    if (!adminGroup.value || !optGroup.value) return {};
-    return {
-      [adminGroup.value.name]: adminGroup.value.id,
-      [optGroup.value.name]: optGroup.value.id,
-    }
-  })
-  
-  const adminGroup = computed(() => {
-    return groupData.value.find((item) => item.code === '001');
-  })
-  
-  const optGroup = computed(() => {
-    return groupData.value.find((item) => item.code === '002');
-  })
-  
   const addMapModal = ref(null);
+  const editModalOpen = ref(false);
+  const selectedMap = ref(null);
 
 function openAddMapModal() {
   addMapModal.value.setModal('add-map');
 }
   
-  function onEdit(id) {
-    console.log(id)
-    const idx = pageData.value.findIndex((item) => item.id === id);
-    console.log(idx)
-    if (idx >= 0) {
-      selectedIdx.value = idx;
-      selected.value = JSON.parse(JSON.stringify(pageData.value[idx]));
-      setModal('edit');
-    }
+function onEdit(map) {
+  selectedMap.value = map; // 設定選中的地圖
+  editModalOpen.value = true; // 打開 Modal
+}
+
+async function fetchMaps() {
+  console.log(" 重新獲取地圖資料...");
+  try {
+    // **第一步：取得所有地圖（不含圖片）**
+    const maps = await store.getAllMaps();
+    console.log("地圖列表取得成功:", maps);
+    const mapsArray = maps.data
+    // **第二步：遍歷所有地圖，根據 `uuid` 取得圖片**
+    const mapsWithImages = await Promise.all(
+      mapsArray.map(async (map) => {
+        try {
+          const image = await store.getMapImage(map.uuid);
+          const img = image.background
+          console.log(image)
+          console.log(img)
+          return { ...map, img }; // 合併圖片
+        } catch (error) {
+          console.error(`取得地圖圖片失敗 (UUID: ${map.uuid})`, error);
+          return { ...map, img: null }; // 取得圖片失敗時，設為 `null`
+        }
+      })
+    );
+
+    // **第三步：更新表格數據**
+    pageData.value = mapsWithImages;
+    console.log("地圖資料更新完成:", pageData.value);
+  } catch (error) {
+    console.error("取得地圖資料失敗:", error);
   }
+}
+  // function onEdit(id) {
+  //   console.log(id)
+  //   const idx = pageData.value.findIndex((item) => item.uuid === id);
+  //   console.log(idx)
+  //   if (idx >= 0) {
+  //     selectedIdx.value = idx;
+  //     selected.value = JSON.parse(JSON.stringify(pageData.value[idx]));
+  //     setModal('edit');
+  //   }
+  // }
   
   function onDelete(id) {
     const temp = pageData.value.find((item) => item.id === id);
@@ -271,31 +257,6 @@ function openAddMapModal() {
     modal.value = val;
   }
   
-  onMounted(async () => {
-    groupData.value = await getUserGroup();
-    // pageData.value = await getUsers();
-    // pageData.value = pageData.value.map((item) => {
-    //   return {
-    //     ...item,
-    //     role: item.groups[0]
-    //   }
-    // })
-    pageData.value = [
-    { id: '001', mapName: '台北市地圖' },
-    { id: '002', mapName: '新北市地圖' },
-    { id: '003', mapName: '桃園市地圖' },
-    { id: '004', mapName: '台中市地圖' },
-    { id: '005', mapName: '高雄市地圖' },
-  ];
-    console.log("pagedata",pageData.value)
-    if (groupData.value.findIndex((item) => item.code === '002') === -1) {
-      const opet = {
-        code: '002',
-        name: 'Operator'
-      };
-      const result = await postUserGroup(opet);
-      groupData.value.push(result);
-    }
-  })
+  onMounted(fetchMaps);
   
   </script>
