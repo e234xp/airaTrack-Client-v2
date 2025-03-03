@@ -1,7 +1,11 @@
 <template>
   <div class="flex justify-between w-full">
     <label class="flex items-center select-none truncate">
-      <input
+      <label id="🔗CheckBox">
+        <input id="🔗CheckBox__Input" type="checkbox" v-model="input" :value="value" @change="$emit('onChange')" :disabled="disabled"
+          :checked="checked">
+      </label>
+      <!-- <input
         type="checkbox"
         class="w-4 h-4 accent-primary hover:accent-primary-hover"
         v-model="input"
@@ -9,16 +13,13 @@
         @change="$emit('onChange')"
         :disabled="disabled"
         :checked="checked"
-      >
+      > -->
       <div class="pl-2" style="width: calc(100% - 1rem)">
         <slot />
       </div>
     </label>
 
-    <div
-      v-if="isShowError"
-      class="mt-1 text-red-500 text-s"
-    >
+    <div v-if="isShowError" class="mt-1 text-red-500 text-s">
       {{ errorMessage }}
     </div>
   </div>
@@ -93,3 +94,37 @@ const isShowError = computed(() => {
 const errorMessage = computed(() => generateMessage());
 
 </script>
+
+<style>
+#🔗CheckBox {
+  position: relative;
+  top: -2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  box-shadow: 0 0 0 1px #959595, 0 0 0 2px #5f5f5f;
+  background-color: #1f1f1f;
+}
+
+#🔗CheckBox__Input {
+  position: absolute;
+  visibility: hidden;
+}
+
+#🔗CheckBox:has(#🔗CheckBox__Input:checked) {
+  & {
+    box-shadow: 0 0 0 1px #e3e3e3, 0 0 0 2px #7f7f7f;
+  }
+
+  /* 打勾圖案 */
+  &::after {
+    content: '';
+    display: block;
+    background-image: url('../assets/images/btn-check.png');
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+    transform: translate(20%, 25%);
+  }
+}
+</style>
