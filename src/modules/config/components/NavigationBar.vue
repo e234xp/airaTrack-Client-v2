@@ -49,7 +49,12 @@ const optList = ref([
   {
     value: 'system',
     text: i18n.t('System')
-  }
+  },
+  {
+    value: 'map',
+    text: i18n.t('Map')
+  },
+  
 ])
 
 const version = ref('1.00.02.0728');

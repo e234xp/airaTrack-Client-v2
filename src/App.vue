@@ -1,8 +1,9 @@
 <template>
-  <div
-    :style="{ backgroundImage: spiderman.base64Image.getStyle(background), height: `${height}px` }"
-    class="bg-cover font-custom"
-  >
+  <v-app>
+    <div
+      :style="{ backgroundImage: spiderman.base64Image.getStyle(background), height: `${height}px` }"
+      class="bg-cover font-custom"
+    >
     <AppError
       :is-show="errorStore.isShow"
       :title="errorStore.header"
@@ -28,6 +29,7 @@
       @close="modalStore.close"
     />
   </div>
+</v-app>
 </template>
 
 <script setup>
