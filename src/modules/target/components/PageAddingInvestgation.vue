@@ -30,7 +30,7 @@
               </AppLabel>
             </div>
           </div>
-          <img id="🔥XLine" src="@/assets/images/XLine.png">
+          <img id="🔥LineX" src="@/assets/images/line-x.png">
           <div id="🔥CameraList">
             <div id="🔥CameraList__X">
               <div class="w-1/2">
@@ -38,7 +38,6 @@
                   {{ $t('LiveChannel') }}
                   ({{ form.livechannels.length }}/{{ liveChannelAmount }})
                 </div>
-
                 <div class="border-t-4 border-live-channel rounded bg-third py-2 px-4 overflow-y-auto" style="height: calc(100% - 4rem)">
                   <AppCheckBox class="pb-2 mb-2 text-base text-white border-b-2 border-dashed border-panel"
                     :placeholder="$t('All')" :checked="form.livechannels.length === livedevices.length" @on-change="() => {
@@ -91,13 +90,19 @@
             </div>
           </div>
 
-          <img id="🔥YLine" src="@/assets/images/YLine.png" >
+          <img id="🔥LineY" src="@/assets/images/line-y.png" >
           <div id="🔥CameraMapSelect">
             <AppInput dark placeholder="請選擇樓層" class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select" :options="{'1F': 1, '2F': 2}" />
           </div>
 
           <div id="🔥CameraMap">
-            <div id="🔥CameraMap__Img"></div>
+            <img id="🔥CameraMap__Img" :src="mapData.mapImage">
+            <template v-for="live in mapData.cameras.live" :key="live.camera_id">
+              <img id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live.png" :style="`left: ${live.relativeX * 100}%; top: ${live.relativeY * 100}%`">
+            </template>
+            <template v-for="archive in mapData.cameras.archive" :key="archive.camera_id">
+              <img id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png" :style="`left: ${archive.relativeX * 100}%; top: ${archive.relativeY * 100}%`">
+            </template>
           </div>
         </section>
       </template>
@@ -119,6 +124,7 @@ import useDevices from '@/stores/devices';
 const router = useRouter();
 
 const store = useStore();
+
 const { confirmedFace } = storeToRefs(store);
 const { setPage, getLicense, addTask } = store;
 
@@ -131,6 +137,7 @@ const liveChannelAmount = ref(0);
 const archiveAmount = ref(0);
 
 const searchQuery = ref('')
+const mapData = ref({})
 
 const filterDevices = computed(() => {
   if (!searchQuery.value) {
@@ -217,6 +224,7 @@ async function handleAddTask(theForm) {
 
   router.push({ path: '/investigation' });
 }
+mapData.value = JSON.parse(localStorage.getItem('map'))
 </script>
 
 <style>
@@ -284,7 +292,7 @@ async function handleAddTask(theForm) {
   grid-column: 4 / 18;
 }
 
-#🔥XLine {
+#🔥LineX {
   width: 100%;
   grid-column: 1 / -1;
   grid-row: 2 / 3;
@@ -297,7 +305,7 @@ async function handleAddTask(theForm) {
   grid-row: 3 / -1;
 }
 
-#🔥YLine {
+#🔥LineY {
   height: 100%;
   grid-column: 7 / span 1;
   grid-row: 3 / -1;
@@ -309,22 +317,29 @@ async function handleAddTask(theForm) {
   position: relative;
   grid-column: 8 / -1;
   grid-row: 3 / 4;
-  /* 避免地圖覆蓋樓層選項 */
-  z-index: 1;
 }
 
 #🔥CameraMap {
+  position: relative;
   grid-column: 8 / -1;
   grid-row: 4 / -1;
   background: pink;
 }
 
 #🔥CameraMap__Img {
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
   width: 100%;
-  aspect-ratio: 16 / 9;
-  background: green;
+  height: 100%;
+}
+
+#🔥CameraMap__LiveDot {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+}
+
+#🔥CameraMap__ArchiveDot {
+  position: absolute;
+  width: 24px;
+  height: 24px;
 }
 </style>
