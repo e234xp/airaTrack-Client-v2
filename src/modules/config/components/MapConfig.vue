@@ -23,44 +23,23 @@
         </AppDataTable>
     </div>
   
-    <!-- <ModalLayout :is-open="modal === 'edit'" @close="setModal('')">
-      <template #header>
-        {{ $t('EditUser') }}
-      </template>
-  
-      <template #description>
-        {{ $t('EditUserDialog') }}
-      </template>
-  
-  
-      <template #footer>
-        <div class="flex justify-end gap-4">
-          <AppButton type="secondary" class="px-6" @click="setModal('')">
-            {{ $t('Cancel') }}
-          </AppButton>
-  
-          <AppButton type="primary" :isEnable="name !== ''" class="px-8" @click="onSaveEdit">
-            {{ $t('Save') }}
-          </AppButton>
-        </div>
-      </template>
-    </ModalLayout> -->
+    
   
     <ModalLayout :is-open="modal === 'delete'" @close="setModal('')">
       <template #header>
-        {{ $t('DeleteUser') }}
+        {{ $t('DeleteMap') }}
       </template>
   
       <template #description>
-        {{ $t('DeleteUserDialog') }}
+        {{ $t('DeleteMapDialog') }}
       </template>
   
       <template #default>
         <div class="mb-2 text-xl">
-          {{ $t('LoginUsername') }} : {{ selected.username }}
+          {{ $t('mapName') }} : {{ selectedMap.name }}
         </div>
         <div class="mb-2 text-xl">
-          {{ $t('EmailAddress') }} : {{ selected.email }}
+          {{ $t('mapUuid') }} : {{ selectedMap.uuid }}
         </div>
       </template>
   
@@ -85,8 +64,9 @@
   <EditMapModal 
     :isOpen="editModalOpen" 
     :selectedMap="selectedMap" 
+    @fetch-maps="fetchMaps"
     @update:isOpen="editModalOpen = $event"
-    @save-edit="handleSaveEdit"
+  
   />
   </template>
   
@@ -101,7 +81,6 @@
   import AppDataTable from '@/components/AppDataTable.vue';
   
   const store = useStore();
-  const { getUsers, getUserGroup, deleteUsers, postUsers, putUsers, postUserGroup } = store;
   
   const i18n = useI18n();
   
@@ -155,8 +134,6 @@ async function fetchMaps() {
         try {
           const image = await store.getMapImage(map.uuid);
           const img = image.background
-          console.log(image)
-          console.log(img)
           return { ...map, img }; // 合併圖片
         } catch (error) {
           console.error(`取得地圖圖片失敗 (UUID: ${map.uuid})`, error);
@@ -172,84 +149,30 @@ async function fetchMaps() {
     console.error("取得地圖資料失敗:", error);
   }
 }
-  // function onEdit(id) {
-  //   console.log(id)
-  //   const idx = pageData.value.findIndex((item) => item.uuid === id);
-  //   console.log(idx)
-  //   if (idx >= 0) {
-  //     selectedIdx.value = idx;
-  //     selected.value = JSON.parse(JSON.stringify(pageData.value[idx]));
-  //     setModal('edit');
-  //   }
-  // }
   
   function onDelete(id) {
-    const temp = pageData.value.find((item) => item.id === id);
+    const temp = pageData.value.find((item) => item.uuid === id);
     if (temp) {
-      selected.value = temp;
+      selectedMap.value = temp;
       setModal('delete');
     }
   }
   
-  function onReset(id) {
-    const idx = pageData.value.findIndex((item) => item.id === id);
-    if (idx >= 0) {
-      selected.value = JSON.parse(JSON.stringify(pageData.value[idx]));
-      setModal('reset-pwd');
-    }
-  }
-  
-  async function onSaveEdit() {
-    const result = await putUsers({
-      id: selected.value.id,
-      username: selected.value.username,
-      password: selected.value.password,
-      email: selected.value.email,
-      groups: [selected.value.role]
-    })
-    if (result) {
-      setModal('');
-      successStore.show();
-      const idx = pageData.value.findIndex((item) => item.id === selected.value.id);
-      pageData.value[idx] = {
-        ...selected.value,
-        role: selected.value.groups[0]
-      }
-    }
-  }
+ 
   
   async function onSaveDelete() { 
-    const result = await deleteUsers({
-      id: selected.value.id
+    const result = await store.deleteMaps({
+      uuid: selectedMap.value.uuid
     });
     if (result) {
       setModal('');
       successStore.show();
-      const idx = pageData.value.findIndex((item) => item.id === selected.value.id);
+      const idx = pageData.value.findIndex((item) => item.uuid === selectedMap.value.uuid);
       pageData.value.splice(idx, 1);
     }
   }
   
-  async function onSaveAdd() {
-    const result = await postUsers({
-      username: newUser.username,
-      password: newUser.password,
-      email: newUser.email,
-      groups: [newUser.role]
-    });
-    if (result) {
-      setModal('');
-      successStore.show();
-      pageData.value.push({
-        ...result,
-        role: result.groups[0]
-      });
-      newUser.username = '';
-      newUser.password = '';
-      newUser.email = '';
-      newUser.role = '';
-    }
-  }
+  
   
   
   

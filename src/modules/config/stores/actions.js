@@ -19,6 +19,19 @@ export async function deleteUsers(payload) {
   })
 }
 
+
+export async function deleteMaps(payload) {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/Maps`,
+    method: 'delete',
+    headers: { sessionId: userStore.sessionId },
+    data: {
+      ...payload
+    }
+  })
+}
+
 // =============================================
 // POST
 // =============================================
@@ -158,6 +171,19 @@ export async function putUserGroup(payload) {
   const userStore = useUserStore();
   return await spiderman.apiService({
     url: `${spiderman.system.apiBaseUrl}/airaTracker/UserGroups`,
+    method: 'put',
+    headers: { sessionId: userStore.sessionId },
+    data: {
+      ...payload
+    }
+  })
+}
+
+
+export async function editMaps(payload) {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/maps`,
     method: 'put',
     headers: { sessionId: userStore.sessionId },
     data: {
