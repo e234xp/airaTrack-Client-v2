@@ -91,7 +91,7 @@
                         
                         <v-tooltip location="top">
                                 <template v-slot:activator="{ props }">
-                                    <img v-bind="props" :src="redCameraIcon" class="w-6 h-6" draggable="false" />
+                                    <img v-bind="props" src="@/assets/images/camera-live.png" class="w-6 h-6" draggable="false" />
                                 </template>
                                 {{ camera.name }}
                             </v-tooltip>
@@ -110,7 +110,7 @@
 
                         <v-tooltip location="top">
                                 <template v-slot:activator="{ props }">
-                                    <img v-bind="props" :src="greenCameraIcon" class="w-6 h-6" draggable="false" />
+                                    <img v-bind="props" src="@/assets/images/camera-archive.png" class="w-6 h-6" draggable="false" />
                                 </template>
                                 {{ camera.name }}
                             </v-tooltip>
@@ -132,13 +132,13 @@
             <div v-for="(camera, index) in selectedLiveCameras" :key="camera.camera_id"
               class="absolute"
               :style="{ left: camera.x + 'px', top: camera.y + 'px' }">
-              <img :src="redCameraIcon" class="w-6 h-6" />
+              <img src="@/assets/images/camera-live.png" class="w-6 h-6" />
               
             </div>
             <div v-for="(camera, index) in selectedArchiveCameras" :key="camera.camera_id"
               class="absolute"
               :style="{ left: camera.x + 'px', top: camera.y + 'px' }">
-              <img :src="greenCameraIcon" class="w-6 h-6" />
+              <img src="@/assets/images/camera-archive.png" class="w-6 h-6" />
               
             </div>
           </div>
@@ -168,8 +168,6 @@ import { ref, computed, defineProps, defineEmits, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import useStore from '@/modules/config/stores/index';
 import useDevices from '@/stores/devices';
-import redCameraIcon from '@/assets/svg/red-camera.svg';
-import greenCameraIcon from '@/assets/svg/green-camera.svg';
 import successStore from '@/components/AppSuccess/success';
 
 
