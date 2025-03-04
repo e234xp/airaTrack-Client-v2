@@ -120,7 +120,7 @@ const errorMessage = computed(() => generateMessage());
   &::after {
     content: '';
     display: block;
-    background-image: url('../assets/images/btn-check.png');
+    background-image: url('@/assets/images/btn-check.png');
     background-repeat: no-repeat;
     width: 100%;
     height: 100%;
