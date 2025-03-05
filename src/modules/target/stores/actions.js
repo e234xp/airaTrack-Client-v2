@@ -96,3 +96,13 @@ export async function getMapImage(uuid) {
   })
   return result;
 }
+
+export async function getAllArchDevices() {
+  const userStore = useUserStore();
+  const result = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/archdevices`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  })
+  return result;
+}

@@ -73,7 +73,7 @@
                         form.archchannels = spiderman.lodash.cloneDeep(devices);
                       }
                     }">{{ $t('All') }}</AppCheckBox>
-                  <AppCheckBox v-for="device in filterDevices" :key="device.camera_id" class="mb-2 text-base text-white"
+                  <AppCheckBox v-for="device in filterArchiveDevices" :key="device.camera_id" class="mb-2 text-base text-white"
                     :placeholder="device.name" v-model:modelInput="form.archchannels" :value="device" :disabled="(form.archchannels.length >= archiveAmount)
                       && !form.archchannels
                         .map(({ camera_id }) => camera_id).includes(device.camera_id)">{{ device.name }}
@@ -99,7 +99,7 @@
                 :options="{ '1F': 1, '2F': 2 }" />
             </div>
 
-            <div id="🔥CameraMap" v-show="map.name === '1F'">
+            <div id="🔥CameraMap" v-show="map.name === '2F'">
               <img id="🔥CameraMap__Img" :src="map.img">
               <template v-for="camera in map.cameras" :key="camera.camera__uuid">
                 <template v-if="camera.type === 'live'">
@@ -147,12 +147,13 @@ const archiveAmount = ref(0);
 
 const searchQuery = ref('')
 const mapData = ref({})
+const archiveDevices = ref({})
 
-const filterDevices = computed(() => {
+const filterArchiveDevices = computed(() => {
   if (!searchQuery.value) {
-    return devices.value; // 如果搜尋框為空，顯示所有項目
+    return archiveDevices.value.data; // 如果搜尋框為空，顯示所有項目
   }
-  return devices.value.filter(device =>
+  return archiveDevices.value.data.filter(device =>
     device.name.toLowerCase().includes(searchQuery.value.toLowerCase()) // 小寫比對
   )
 })
@@ -182,6 +183,8 @@ onMounted(async () => {
   archiveAmount.value = validLicenses.some(({ frs }) => frs) ? 999 : 0;
 
   fetchMaps()
+  archiveDevices.value = await store.getAllArchDevices()
+
 });
 
 async function fetchMaps() {
