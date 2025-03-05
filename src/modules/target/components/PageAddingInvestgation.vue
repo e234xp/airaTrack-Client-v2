@@ -36,7 +36,7 @@
               <div class="w-1/2">
                 <div class="text-white text-xl">
                   {{ $t('LiveChannel') }}
-                  ({{ form.livechannels.length }}/{{ liveChannelAmount }})
+                  ({{ form.livechannels.length }}/{{ livedevices.length }})
                 </div>
                 <div class="border-t-4 border-live-channel rounded bg-third py-2 px-4 overflow-y-auto"
                   style="height: calc(100% - 4rem)">
@@ -60,7 +60,7 @@
               <div class="w-1/2">
                 <div class="text-white text-xl">
                   {{ $t('NxVideoArchive') }}
-                  <!-- ({{ form.archchannels.length }}/{{ archiveAmount }}) -->
+                  ({{ form.archchannels.length }}/{{ devices.length }})
                 </div>
                 <div class="border-t-4 border-archive-channel rounded bg-third py-2 px-4 overflow-y-auto"
                   style="height: calc(100% - 4rem)">
@@ -99,7 +99,7 @@
                 :options="{ '1F': 1, '2F': 2 }" />
             </div>
 
-            <div id="🔥CameraMap" v-show="map.name === '2F'">
+            <div id="🔥CameraMap" v-show="map.name === '1F'">
               <img id="🔥CameraMap__Img" :src="map.img">
               <template v-for="camera in map.cameras" :key="camera.camera__uuid">
                 <template v-if="camera.type === 'live'">
@@ -147,13 +147,12 @@ const archiveAmount = ref(0);
 
 const searchQuery = ref('')
 const mapData = ref({})
-const archiveDevices = ref({})
 
 const filterArchiveDevices = computed(() => {
   if (!searchQuery.value) {
-    return archiveDevices.value.data; // 如果搜尋框為空，顯示所有項目
+    return devices.value; // 如果搜尋框為空，顯示所有項目
   }
-  return archiveDevices.value.data.filter(device =>
+  return devices.value.filter(device =>
     device.name.toLowerCase().includes(searchQuery.value.toLowerCase()) // 小寫比對
   )
 })
@@ -176,6 +175,7 @@ onMounted(async () => {
     return trialEndTime ? now > trialEndTime : true;
   });
 
+  
   // 找出兩個 channel 的 limit
   liveChannelAmount.value = validLicenses
     .reduce((accumulator, current) => accumulator + current.channel_amount, 0);
@@ -183,8 +183,9 @@ onMounted(async () => {
   archiveAmount.value = validLicenses.some(({ frs }) => frs) ? 999 : 0;
 
   fetchMaps()
-  archiveDevices.value = await store.getAllArchDevices()
 
+  const archiveDevices = await store.getAllArchDevices()
+  devices.value = archiveDevices.data
 });
 
 async function fetchMaps() {
