@@ -96,7 +96,7 @@
           
           <div id="🔥CameraMapSelect">
             <AppInput dark  class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select"
-              :options="{ '1F': '1F', '2F': '2F' }" v-model:modelInput="mapFloor" />
+              :options="mapFloorList" v-model:modelInput="mapFloor" />
           </div>
 
           <template v-for="map in mapData" :key="map.uuid">
@@ -148,7 +148,7 @@ const archiveAmount = ref(0);
 
 const searchQuery = ref('')
 const mapData = ref({})
-
+const mapFloorList = ref({})
 const filterArchiveDevices = computed(() => {
   if (!searchQuery.value) {
     return devices.value; // 如果搜尋框為空，顯示所有項目
@@ -187,7 +187,25 @@ onMounted(async () => {
 
   const archiveDevices = await store.getAllArchDevices()
   devices.value = archiveDevices.data
+
+
+  getMapFloorList()
 });
+
+function getMapFloorList() {
+  mapFloorList.value = mapData.value.reduce((accumulator, currentItem) => {
+    // 每次迭代，currentItem 都是數組中的一個元素
+    // accumulator 是累積的結果，初始值是 {}
+    console.log('Current accumulator:', accumulator);
+    console.log('Current item:', currentItem);
+    
+    // 將當前 item 的 name 作為 key 和 value
+    accumulator[currentItem.name] = currentItem.name;
+    
+    // 返回更新後的 accumulator
+    return accumulator;
+  }, {})
+}
 
 async function fetchMaps() {
   console.log(" 重新獲取地圖資料...");
