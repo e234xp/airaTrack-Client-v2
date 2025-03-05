@@ -38,7 +38,8 @@
                   {{ $t('LiveChannel') }}
                   ({{ form.livechannels.length }}/{{ liveChannelAmount }})
                 </div>
-                <div class="border-t-4 border-live-channel rounded bg-third py-2 px-4 overflow-y-auto" style="height: calc(100% - 4rem)">
+                <div class="border-t-4 border-live-channel rounded bg-third py-2 px-4 overflow-y-auto"
+                  style="height: calc(100% - 4rem)">
                   <AppCheckBox class="pb-2 mb-2 text-base text-white border-b-2 border-dashed border-panel"
                     :placeholder="$t('All')" :checked="form.livechannels.length === livedevices.length" @on-change="() => {
                       if (form.livechannels.length === livedevices.length) {
@@ -61,7 +62,8 @@
                   {{ $t('NxVideoArchive') }}
                   <!-- ({{ form.archchannels.length }}/{{ archiveAmount }}) -->
                 </div>
-                <div class="border-t-4 border-archive-channel rounded bg-third py-2 px-4 overflow-y-auto" style="height: calc(100% - 4rem)">
+                <div class="border-t-4 border-archive-channel rounded bg-third py-2 px-4 overflow-y-auto"
+                  style="height: calc(100% - 4rem)">
                   <AppCheckBox class="pb-2 mb-2 text-base text-white border-b-2 border-dashed border-panel"
                     :placeholder="$t('All')" :checked="form.archchannels.length === devices.length"
                     :disabled="archiveAmount === 0" @on-change="() => {
@@ -90,20 +92,27 @@
             </div>
           </div>
 
-          <img id="🔥LineY" src="@/assets/images/line-y.png" >
-          <div id="🔥CameraMapSelect">
-            <AppInput dark placeholder="請選擇樓層" class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select" :options="{'1F': 1, '2F': 2}" />
-          </div>
+          <img id="🔥LineY" src="@/assets/images/line-y.png">
+          <template v-for="map in mapData" :key="map.uuid">
+            <div id="🔥CameraMapSelect">
+              <AppInput dark placeholder="請選擇樓層" class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select"
+                :options="{ '1F': 1, '2F': 2 }" />
+            </div>
 
-          <div id="🔥CameraMap">
-            <img id="🔥CameraMap__Img" :src="mapData.mapImage">
-            <template v-for="live in mapData.cameras.live" :key="live.camera_id">
-              <img id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live.png" :style="`left: ${live.relativeX * 100}%; top: ${live.relativeY * 100}%`">
-            </template>
-            <template v-for="archive in mapData.cameras.archive" :key="archive.camera_id">
-              <img id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png" :style="`left: ${archive.relativeX * 100}%; top: ${archive.relativeY * 100}%`">
-            </template>
-          </div>
+            <div id="🔥CameraMap" v-show="map.name === '1F'">
+              <img id="🔥CameraMap__Img" :src="map.img">
+              <template v-for="camera in map.cameras" :key="camera.camera__uuid">
+                <template v-if="camera.type === 'live'">
+                  <img id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live.png"
+                    :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
+                </template>
+                <template v-else-if="camera.type === 'archive'">
+                  <img id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png"
+                    :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
+                </template>
+              </template>
+            </div>
+          </template>
         </section>
       </template>
 
@@ -131,7 +140,7 @@ const { setPage, getLicense, addTask } = store;
 const devicesStore = useDevices();
 const { devices, livedevices } = storeToRefs(devicesStore);
 
-console.log("device",devices.value)
+console.log("device", devices.value)
 
 const liveChannelAmount = ref(0);
 const archiveAmount = ref(0);
@@ -171,7 +180,38 @@ onMounted(async () => {
     .reduce((accumulator, current) => accumulator + current.channel_amount, 0);
 
   archiveAmount.value = validLicenses.some(({ frs }) => frs) ? 999 : 0;
+
+  fetchMaps()
 });
+
+async function fetchMaps() {
+  console.log(" 重新獲取地圖資料...");
+  try {
+    // **第一步：取得所有地圖（不含圖片）**
+    const maps = await store.getAllMaps();
+    console.log("地圖列表取得成功:", maps);
+    const mapsArray = maps.data
+    // **第二步：遍歷所有地圖，根據 `uuid` 取得圖片**
+    const mapsWithImages = await Promise.all(
+      mapsArray.map(async (map) => {
+        try {
+          const image = await store.getMapImage(map.uuid);
+          const img = `data:image/png;base64, ${image.background}`
+          return { ...map, img }; // 合併圖片
+        } catch (error) {
+          console.error(`取得地圖圖片失敗 (UUID: ${map.uuid})`, error);
+          return { ...map, img: null }; // 取得圖片失敗時，設為 `null`
+        }
+      })
+    );
+
+    // **第三步：更新表格數據**
+    mapData.value = mapsWithImages;
+    console.log("地圖資料更新完成:", mapData.value);
+  } catch (error) {
+    console.error("取得地圖資料失敗:", error);
+  }
+}
 
 const form = reactive({
   target: {
@@ -323,7 +363,6 @@ mapData.value = JSON.parse(localStorage.getItem('map'))
   position: relative;
   grid-column: 8 / -1;
   grid-row: 4 / -1;
-  background: pink;
 }
 
 #🔥CameraMap__Img {

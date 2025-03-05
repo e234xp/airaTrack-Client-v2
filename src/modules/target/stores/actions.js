@@ -76,3 +76,23 @@ export async function getLicense() {
     headers: { sessionId: userStore.sessionId },
   });
 }
+
+export async function getAllMaps() {
+  const userStore = useUserStore();
+  const result = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/maps`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  })
+  return result;
+}
+
+export async function getMapImage(uuid) {
+  const userStore = useUserStore();
+  const result = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/maps/image?uuid=${uuid}`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  })
+  return result;
+}
