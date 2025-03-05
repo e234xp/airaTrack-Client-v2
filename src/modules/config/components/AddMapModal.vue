@@ -58,7 +58,7 @@
           <!-- 錄影攝影機 -->
           <div class="w-1/2 border rounded bg-black p-4 overflow-auto">
           <h3 class="text-xl text-white border-b-2 border-green-500 pb-2">
-              {{ $t('NxVideoArchive') }} ({{ selectedArchiveCameras.length }}/{{ devices.length }})
+              {{ $t('NxVideoArchive') }} ({{ selectedArchiveCameras.length }}/{{ archdevices.length }})
           </h3>
           <input
           v-model="searchArchive"
@@ -179,25 +179,15 @@
 </template>
 
 <script setup>
-import { ref, computed ,watch} from 'vue';
-import { storeToRefs } from 'pinia';
-import useDevices from '@/stores/devices';
-import redCameraIcon from '@/assets/svg/red-camera.svg';
-import greenCameraIcon from '@/assets/svg/green-camera.svg';
+import { ref, computed ,watch, onMounted} from 'vue';
 import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
 
 
 
 const store = useStore();
-console.log("store",store)
-const { postMaps } = store;
-console.log("🔍 postMaps:", store.postMaps);
-
-const devicesStore = useDevices();
-const { devices, livedevices } = storeToRefs(devicesStore);
-
- // 存儲使用者選擇的攝影機
+const livedevices = ref([])
+const archdevices = ref([])
 const selectedLiveCameras = ref([]);
 const selectedArchiveCameras = ref([]);
 
@@ -218,6 +208,34 @@ const imgWidth = ref(0);
 const imgHeight = ref(0);
 
 const emit = defineEmits(["fetch-maps"]);
+
+
+
+// **當進入步驟 2 時，調用 API**
+watch(currentStep, async (newStep) => {
+  if (newStep === 2) {
+    console.log("🔍 進入步驟 2，開始取得攝影機列表...");
+
+    try {
+      // 呼叫 API 獲取資料
+      const result1 = await store.getAllLiveDevices();
+      const result2 = await store.getAllArchDevices();
+
+      // 🔹 過濾出 `applyToMap` 為空陣列的攝影機
+      livedevices.value = result1.data.filter(device => 
+        Array.isArray(device.applyToMap) && device.applyToMap.length === 0
+      );
+
+      archdevices.value = result2.data.filter(device => 
+        Array.isArray(device.applyToMap) && device.applyToMap.length === 0
+      );
+      console.log("result", result1.data, result2.data);
+      console.log("✅ 過濾後的攝影機數據:", livedevices.value, archdevices.value);
+    } catch (error) {
+      console.error("❌ 獲取攝影機列表失敗:", error);
+    }
+  }
+});
 function onImageLoad() {
 if (imgRef.value) {
   imgWidth.value = imgRef.value.clientWidth;
@@ -235,7 +253,7 @@ const filteredLiveCameras = computed(() => {
 
 // ✅ 根據 `searchArchive` 來篩選錄影攝影機
 const filteredArchiveCameras = computed(() => {
-  return devices.value.filter(camera =>
+  return archdevices.value.filter(camera =>
       camera.name.toLowerCase().includes(searchArchive.value.toLowerCase())
   );
 });
@@ -279,10 +297,10 @@ if (selectedLiveCameras.value.length === livedevices.value.length) {
 
 // 全選 / 取消全選 錄影攝影機
 function toggleSelectArchive() {
-if (selectedArchiveCameras.value.length === devices.value.length) {
+if (selectedArchiveCameras.value.length === archdevices.value.length) {
   selectedArchiveCameras.value = [];
 } else {
-  selectedArchiveCameras.value = [...devices.value];
+  selectedArchiveCameras.value = [...archdevices.value];
 }
 }
 

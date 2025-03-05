@@ -58,6 +58,30 @@ export default defineStore('device', () => {
     livedevices.value = data;
   }
 
+  const archdevices = ref([]);
+
+  async function getArchDevices(sessionId) {
+    const apiPromise = new Promise(async (resolve, reject) => {
+      const { data } = await spiderman.apiService({
+        url: `${spiderman.system.apiBaseUrl}/airaTracker/archdevices`,
+        method: 'get',
+        headers: { sessionId },
+      });
+      if (data) resolve(data);
+      else reject([]);
+    });
+
+    const timeoutPromise = new Promise((resolve) => {
+      setTimeout(() => resolve([]), TIME_OUT);
+    });
+
+    return Promise.race([apiPromise, timeoutPromise]);
+  }
+
+  function setArchDevices(data) {
+    archdevices.value = data;
+  }
+
   function findDevice(cameraId) {
     if (!cameraId) return { name: '--' };
     return [ ...devices.value, ...livedevices.value ].find((device) => device.camera_id === cameraId) || { name: '--' };
@@ -70,6 +94,9 @@ export default defineStore('device', () => {
     livedevices,
     getLiveDevices,
     setLiveDevices,
+    archdevices,
+    getArchDevices,
+    setArchDevices,
 
     findDevice,
   };

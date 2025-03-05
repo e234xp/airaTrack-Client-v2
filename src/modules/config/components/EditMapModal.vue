@@ -53,7 +53,7 @@
 
             <div class="w-1/2 border rounded bg-black p-4 overflow-auto">
                 <h3 class="text-xl text-white border-b-2 border-green-500 pb-2">
-                    {{ $t('NxVideoArchive') }} ({{ selectedArchiveCameras.length }}/{{ devices.length }})
+                    {{ $t('NxVideoArchive') }} ({{ selectedArchiveCameras.length }}/{{ archdevices.length }})
                 </h3>
                 <input v-model="searchArchive" type="text" class="w-full p-2 mb-2 border rounded text-white" :placeholder="$t('Search')" />
 
@@ -171,8 +171,10 @@ import useDevices from '@/stores/devices';
 import successStore from '@/components/AppSuccess/success';
 
 
-const devicesStore = useDevices();
-const { devices, livedevices } = storeToRefs(devicesStore);
+// const devicesStore = useDevices();
+// const { devices, livedevices } = storeToRefs(devicesStore);
+const livedevices = ref([])
+const archdevices = ref([])
  // 存儲使用者選擇的攝影機
 const selectedLiveCameras = ref([]);
 const selectedArchiveCameras = ref([]);
@@ -194,6 +196,82 @@ let offsetX = 0;
 let offsetY = 0;
 const imgWidth = ref(0);
 const imgHeight = ref(0);
+
+
+// **當進入步驟 2 時，調用 API**
+watch(currentStep, async (newStep) => {
+  if (newStep === 2) {
+    console.log("🔍 進入步驟 2，開始取得攝影機列表...");
+
+    try {
+      // 呼叫 API 獲取資料
+      const result1 = await store.getAllLiveDevices();
+      const result2 = await store.getAllArchDevices();
+        console.log('result1',result1)
+      // 取得當前編輯的地圖 UUID
+      const currentMapUUID = editedMap.value.uuid;
+      console.log("🆔 當前地圖 UUID:", currentMapUUID);
+
+      // 🔹 過濾 `applyToMap` 為空陣列或包含當前 UUID 的攝影機
+      livedevices.value = result1.data.filter(device => 
+        Array.isArray(device.applyToMap) && 
+        (device.applyToMap.length === 0 || device.applyToMap.includes(currentMapUUID))
+      );
+
+      archdevices.value = result2.data.filter(device => 
+        Array.isArray(device.applyToMap) && 
+        (device.applyToMap.length === 0 || device.applyToMap.includes(currentMapUUID))
+      );
+
+      console.log("result", result1.data, result2.data);
+      console.log("✅ 過濾後的攝影機數據:", livedevices.value, archdevices.value);
+
+      matchExistingCameras();
+    } catch (error) {
+      console.error("❌ 獲取攝影機列表失敗:", error);
+    }
+  }
+});
+
+function matchExistingCameras() {
+  if (!props.selectedMap || !Array.isArray(props.selectedMap.cameras)) return;
+
+  console.log("🔄 開始匹配已存在的攝影機...");
+  
+  // ✅ 依據 selectedMap 來篩選已存在的攝影機
+  selectedLiveCameras.value = livedevices.value.filter(device => 
+    props.selectedMap.cameras.some(c => c.camera_id === device.camera_id && c.type.trim() === "live")
+  );
+
+  selectedArchiveCameras.value = archdevices.value.filter(device => 
+    props.selectedMap.cameras.some(c => c.camera_id === device.camera_id && c.type.trim() === "archive")
+  );
+
+  // ✅ 更新已選攝影機的 x, y 座標
+  selectedLiveCameras.value.forEach(device => {
+    const cameraData = props.selectedMap.cameras.find(c => c.camera_id === device.camera_id);
+    
+    if (cameraData) {
+      Object.assign(device, { 
+        x: cameraData.position?.x ?? 0, 
+        y: cameraData.position?.y ?? 0 
+      });
+    }
+  });
+
+  selectedArchiveCameras.value.forEach(device => {
+    const cameraData = props.selectedMap.cameras.find(c => c.camera_id === device.camera_id);
+    
+    if (cameraData) {
+      Object.assign(device, { 
+        x: cameraData.position?.x ?? 0, 
+        y: cameraData.position?.y ?? 0 
+      });
+    }
+  });
+
+  console.log("✅ 已匹配的攝影機New:", selectedLiveCameras.value, selectedArchiveCameras.value);
+}
 function onImageLoad() {
   if (imgRef.value) {
     imgWidth.value = imgRef.value.clientWidth;
@@ -233,42 +311,42 @@ const stepDescription = computed(() => {
     }
 
     // ✅ 清空攝影機列表，確保不會累積舊數據
-    selectedLiveCameras.value = [];
-    selectedArchiveCameras.value = [];
+//     selectedLiveCameras.value = [];
+//     selectedArchiveCameras.value = [];
+//     console.log('攝影機資料',livedevices.value,archdevices.value)
+//     // ✅ 避免 `cameras` 為空
+//     // ✅ 清空攝影機列表，確保不會累積舊數據
+// selectedLiveCameras.value = livedevices.value.filter(device => 
+//   newVal.cameras.some(c => c.camera_id === device.camera_id && c.type.trim() === "live")
+// );
 
-    // ✅ 避免 `cameras` 為空
-    // ✅ 清空攝影機列表，確保不會累積舊數據
-selectedLiveCameras.value = livedevices.value.filter(device => 
-  newVal.cameras.some(c => c.camera_id === device.camera_id && c.type.trim() === "live")
-);
+// selectedArchiveCameras.value = archdevices.value.filter(device => 
+//   newVal.cameras.some(c => c.camera_id === device.camera_id && c.type.trim() === "archive")
+// );
 
-selectedArchiveCameras.value = devices.value.filter(device => 
-  newVal.cameras.some(c => c.camera_id === device.camera_id && c.type.trim() === "archive")
-);
-
-// ✅ 直接修改已選攝影機的 x, y 座標，不改變 Vue 追蹤的物件引用
-selectedLiveCameras.value.forEach(device => {
-  const cameraData = newVal.cameras.find(c => c.camera_id === device.camera_id);
+// // ✅ 直接修改已選攝影機的 x, y 座標，不改變 Vue 追蹤的物件引用
+// selectedLiveCameras.value.forEach(device => {
+//   const cameraData = newVal.cameras.find(c => c.camera_id === device.camera_id);
   
-  if (cameraData) {
-    Object.assign(device, { 
-      x: cameraData.position.x ?? undefined, 
-      y: cameraData.position.y ?? undefined 
-    });
-  }
-});
+//   if (cameraData) {
+//     Object.assign(device, { 
+//       x: cameraData.position.x ?? undefined, 
+//       y: cameraData.position.y ?? undefined 
+//     });
+//   }
+// });
 
-selectedArchiveCameras.value.forEach(device => {
-  const cameraData = newVal.cameras.find(c => c.camera_id === device.camera_id);
-  if (cameraData) {
-    Object.assign(device, { 
-      x: cameraData.position.x ?? undefined, 
-      y: cameraData.position.y ?? undefined 
-    });
-  }
-});
+// selectedArchiveCameras.value.forEach(device => {
+//   const cameraData = newVal.cameras.find(c => c.camera_id === device.camera_id);
+//   if (cameraData) {
+//     Object.assign(device, { 
+//       x: cameraData.position.x ?? undefined, 
+//       y: cameraData.position.y ?? undefined 
+//     });
+//   }
+// });
 
-    console.log("✅ 重新匹配攝影機：", selectedLiveCameras.value, selectedArchiveCameras.value);
+//     console.log("✅ 重新匹配攝影機：", selectedLiveCameras.value, selectedArchiveCameras.value);
 
 }, { immediate: true });
 
@@ -332,7 +410,7 @@ const filteredLiveCameras = computed(() => {
 
 
 const filteredArchiveCameras = computed(() => {
-    return devices.value.filter(camera =>
+    return archdevices.value.filter(camera =>
         camera.name.toLowerCase().includes(searchArchive.value.toLowerCase())
     );
 });
@@ -349,10 +427,10 @@ const filteredArchiveCameras = computed(() => {
 
 // 全選 / 取消全選 錄影攝影機
 function toggleSelectArchive() {
-  if (selectedArchiveCameras.value.length === devices.value.length) {
+  if (selectedArchiveCameras.value.length === archdevices.value.length) {
     selectedArchiveCameras.value = [];
   } else {
-    selectedArchiveCameras.value = [...devices.value];
+    selectedArchiveCameras.value = [...archdevices.value];
   }
 }
 
