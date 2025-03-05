@@ -49,6 +49,10 @@ const optList = ref([
   {
     value: 'system',
     text: i18n.t('System')
+  },
+  {
+    value: 'notify',
+    text: i18n.t('Notify')
   }
 ])
 

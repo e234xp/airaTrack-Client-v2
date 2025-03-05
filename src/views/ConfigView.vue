@@ -12,7 +12,8 @@
             channel: ChannelConfig,
             user: UserConfig,
             license: LicenseConfig,
-            system: SystemConfig
+            system: SystemConfig,
+            notify: NotifyConfig,
           }[page]" />
         </div>
       </template>
@@ -31,6 +32,7 @@ import UserConfig from '@/modules/config/components/UserConfig.vue';
 import LicenseConfig from '@/modules/config/components/LicenseConfig.vue';
 import SystemConfig from '@/modules/config/components/SystemConfig.vue';
 import NavigationBar from '@/modules/config/components/NavigationBar.vue';
+import NotifyConfig from '@/modules/config/components/NotifyConfig.vue';
 
 import useStore from '@/modules/config/stores/index';
 
@@ -54,6 +56,8 @@ const title = computed({
         return i18n.t('License');
       case 'system':
         return i18n.t('System');
+      case 'notify': 
+        return i18n.t('NotifyTitle');
       default:
         return '';
     }
