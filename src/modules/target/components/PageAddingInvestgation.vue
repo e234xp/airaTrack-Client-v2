@@ -93,15 +93,16 @@
           </div>
 
           <img id="🔥LineY" src="@/assets/images/line-y.png">
-          <template v-for="map in mapData" :key="map.uuid">
-            <div id="🔥CameraMapSelect">
-              <AppInput dark placeholder="請選擇樓層" class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select"
-                :options="{ '1F': 1, '2F': 2 }" />
-            </div>
+          
+          <div id="🔥CameraMapSelect">
+            <AppInput dark  class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select"
+              :options="{ '1F': '1F', '2F': '2F' }" v-model:modelInput="mapFloor" />
+          </div>
 
-            <div id="🔥CameraMap" v-show="map.name === '1F'">
+          <template v-for="map in mapData" :key="map.uuid">
+            <div id="🔥CameraMap" v-show="map.name === mapFloor">
               <img id="🔥CameraMap__Img" :src="map.img">
-              <template v-for="camera in map.cameras" :key="camera.camera__uuid">
+              <template v-for="camera in map.cameras" :key="map.uuid">
                 <template v-if="camera.type === 'live'">
                   <img id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live.png"
                     :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
@@ -133,7 +134,7 @@ import useDevices from '@/stores/devices';
 const router = useRouter();
 
 const store = useStore();
-
+const mapFloor = ref('1F')
 const { confirmedFace } = storeToRefs(store);
 const { setPage, getLicense, addTask } = store;
 
