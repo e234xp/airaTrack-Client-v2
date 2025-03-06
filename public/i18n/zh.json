@@ -224,6 +224,23 @@
   "Method":"方法",
   "FieldName":"欄位名稱",
   "FieldData":"欄位值",
-  "Body":"正文"
+  "Body":"正文",
+  "Host":"主機位置",
+  "EnableSMTPS":"啟用SMTPS",
+  "Account":"帳號",
+  "Sender":"寄件者",
+  "Recipient":"收件者",
+  "CC":"副本",
+  "BCC":"密件副本",
+  "Language":"語言",
+  "Title2":"主旨",
+  "WeeklyScheduler":"固定週間排程",
+  "ClearAll":"重置選擇",
+  "AssignTimeScheduler":"指定日期範圍",
+  "Finish":"完成",
+  "DeleteNotify":"刪除通知",
+  "DeleteNotifyDialog":"使用者可透過此功能刪除通知。請確認您的操作，刪除後通知將無法復原。",
+  "NotifyId":"通知ID"
+
 
 }

@@ -10,36 +10,65 @@
   
       <template #default>
         <div v-if="currentStep === 1">
-            <!-- 事件名稱 -->
-            <AppLabel :label="$t('EventName')">
-                <input v-model="eventName" type="text" placeholder="請輸入事件名稱" class="mt-2 w-full p-2 border rounded" />
-            </AppLabel>
-
-            <!-- 事件類別 -->
-            <AppLabel :label="$t('EventType')" class="mt-2">
-                <select v-model="eventType" class="mt-2 w-full p-2 border rounded">
-                    <option value="http">HTTP</option>
-                    <option value="mail">Mail</option>
-                    <option value="line">Line</option>
-                    <option value="telegram">Telegram</option>
-                </select>
-            </AppLabel>
-
-            <!-- 相簿 -->
+          <v-container>
+            <v-row>
+              <v-col cols="6">
+                <!-- 事件名稱 -->
+                <AppLabel :label="$t('EventName')">
+                    <input v-model="eventName" type="text" placeholder="請輸入事件名稱" class="mt-2 w-full p-2 border rounded" />
+                </AppLabel>
+              </v-col>
+              <v-col cols="6">
+                  <!-- 事件類別 -->
+                  <AppLabel :label="$t('EventType')" class="mt-2">
+                      <select v-model="eventType" class="mt-2 w-full p-2 border rounded">
+                          <option value="http">HTTP</option>
+                          <option value="mail">Mail</option>
+                          <option value="line">Line</option>
+                          <option value="telegram">Telegram</option>
+                      </select>
+                  </AppLabel>
+            </v-col>
+            <v-col cols="6">
+            <!-- 相簿多選 -->
             <AppLabel :label="$t('Album')" class="mt-2">
-                <select v-model="albumType" class="mt-2 w-full p-2 border rounded">
-                    <option value="staff">Staff</option>
-                    <option value="watchlist">Watchlist</option>
-                    <option value="vip">VIP</option>
-                    <option value="suspect">Suspect</option>
-                    <option value="album">Album</option>
-                </select>
+                <div class="mt-2 w-full p-2 border rounded">
+                    <div v-for="album in albums" :key="album.albumId" class="flex items-center space-x-2">
+                        <input 
+                            type="checkbox" 
+                            :value="album.albumId" 
+                            v-model="selectedAlbums" 
+                            class="w-4 h-4"
+                        />
+                        <label>{{ album.albumName}}</label>
+                    </div>
+                </div>
             </AppLabel>
-
+          </v-col>
+          <v-col cols="6">
+            <!-- 相簿多選 -->
+            <AppLabel :label="$t('LiveDevices')" class="mt-2">
+                <div class="mt-2 w-full p-2 border rounded">
+                    <div v-for="device in devices" :key="device.camera_id" class="flex items-center space-x-2">
+                        <input 
+                            type="checkbox" 
+                            :value="device.camera_id" 
+                            v-model="selectedDeviceds" 
+                            class="w-4 h-4"
+                        />
+                        <label>{{ device.name}}</label>
+                    </div>
+                </div>
+            </AppLabel>
+          </v-col>
+          <v-col cols="12">
             <!-- 備註 -->
             <AppLabel :label="$t('EventNote')" class="mt-2">
                 <textarea v-model="eventNote" placeholder="請輸入備註" class="mt-2 w-full p-2 border rounded"></textarea>
             </AppLabel>
+          </v-col>
+          </v-row>
+          </v-container>
         </div>
         
         <div v-if="currentStep === 2" class="flex flex-col gap-4">
@@ -165,15 +194,229 @@
                     </v-row>
                 </v-container>
             </template>
+            <template v-else-if="eventType === 'mail'">
+            <v-container>
+              <v-row>
+                <!-- SMTP 方法 -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('SMTPmethod')">
+                    <v-select
+                      v-model="mailConfig.SMTPmethod"
+                      :items="['SMTP', 'Other']"
+                      class="w-full "
+                      outlined
+                    />
+                  </AppLabel>
+                </v-col>
+
+                <!-- 主機位址 -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('Host')">
+                    <input v-model="mailConfig.host" type="text" class="w-full p-2 border-lg border-background rounded" />
+                  </AppLabel>
+                </v-col>
+
+                <!-- 埠號 -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('Port')">
+                    <input v-model="mailConfig.port" type="text" class="w-full p-2 border-lg border-background rounded" />
+                  </AppLabel>
+                </v-col>
+
+                <!-- 啟用 SMTPS -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('EnableSMTPS')">
+                    <v-switch v-model="mailConfig.enableSMTPS" inset color="info"/>
+                  </AppLabel>
+                </v-col>
+
+                <!-- 帳號 -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('Account')">
+                    <input v-model="mailConfig.account" type="email" class="w-full p-2 border-lg border-background rounded" />
+                  </AppLabel>
+                </v-col>
+
+                <!-- 密碼 -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('Password')">
+                    <input v-model="mailConfig.password" type="password" class="w-full p-2 border-lg border-background rounded" />
+                  </AppLabel>
+                </v-col>
+
+                <!-- 寄件者 -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('Sender')">
+                    <input v-model="mailConfig.sender" type="text" class="w-full p-2 border-lg border-background rounded" />
+                  </AppLabel>
+                </v-col>
+
+                <!-- 主旨 -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('Title2')">
+                    <input v-model="mailConfig.subject" type="text" class="w-full p-2 border-lg border-background rounded" />
+                  </AppLabel>
+                </v-col>
+
+                <!-- 收件者 -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('Recipient')">
+                    <input v-model="mailConfig.recipient" type="email" class="w-full p-2 border-lg border-background rounded" />
+                  </AppLabel>
+                </v-col>
+
+                <!-- 副本 -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('CC')">
+                    <input v-model="mailConfig.cc" type="email" class="w-full p-2 border-lg border-background rounded" />
+                  </AppLabel>
+                </v-col>
+
+                <!-- 密件副本 -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('BCC')">
+                    <input v-model="mailConfig.bcc" type="email" class="w-full p-2 border-lg border-background rounded" />
+                  </AppLabel>
+                </v-col>
+
+                <!-- 語言 -->
+                <v-col cols="4">
+                  <AppLabel :label="$t('Language')">
+                  <v-select
+                    v-model="mailConfig.language"
+                    :items="languageOptions"
+                    item-title="label"
+                    item-value="value"
+                    class="w-full"
+                    outlined
+                  />
+                </AppLabel>
+                </v-col>
+              </v-row>
+
+              <v-divider class="my-4"></v-divider>
+              <v-row>
+    
+                <!-- 欄位選擇 -->
+                <v-col cols="6">
+                  <AppLabel :label="$t('IncludeFields')">
+                    <div class="p-2 border-lg border-background rounded">
+                      <div v-for="(value, key) in mailConfig.fields" :key="key" class="flex items-center space-x-2">
+                        <input type="checkbox" v-model="mailConfig.fields[key]" class="w-4 h-4" />
+                        <label>{{ key }}</label>
+                      </div>
+                    </div>
+                  </AppLabel>
+                </v-col>
+                <!-- 擴充欄位 -->
+                <v-col cols="6">
+                  <AppLabel :label="$t('AdditionalFields')">
+                    <textarea v-model="mailConfig.additionalFields" class="w-full p-2 border-lg border-background rounded" rows="5"></textarea>
+                  </AppLabel>
+                </v-col>
+
+              </v-row>
+
+            </v-container>
+          </template>
+
+          <template v-else-if="eventType === 'line' || eventType === 'telegram'">
+            <v-container>
+              <v-row>
+                <v-col cols="4">
+                  <AppLabel :label="$t('Token')">
+                    <input v-model="lineConfig.token" type="text" class="w-full p-2 border-lg border-background rounded" />
+                  </AppLabel>
+                </v-col>
+                <v-col cols="4">
+                  <AppLabel :label="$t('GroupId')">
+                    <input v-model="lineConfig.groupid" type="text" class="w-full p-2 border-lg border-background rounded" />
+                  </AppLabel>
+                </v-col>
+                <v-col cols="4">
+                  <AppLabel :label="$t('Language')">
+                  <v-select
+                    v-model="lineConfig.language"
+                    :items="languageOptions"
+                    item-title="label"
+                    item-value="value"
+                    class="w-full"
+                    outlined
+                  />
+                </AppLabel>
+                </v-col>
+                <v-divider class="my-4"></v-divider>
+              <v-row>
+    
+                <!-- 欄位選擇 -->
+                <v-col cols="6">
+                  <AppLabel :label="$t('IncludeFields')">
+                    <div class="p-2 border-lg border-background rounded">
+                      <div v-for="(value, key) in lineConfig.fields" :key="key" class="flex items-center space-x-2">
+                        <input type="checkbox" v-model="lineConfig.fields[key]" class="w-4 h-4" />
+                        <label>{{ key }}</label>
+                      </div>
+                    </div>
+                  </AppLabel>
+                </v-col>
+                <!-- 擴充欄位 -->
+                <v-col cols="6">
+                  <AppLabel :label="$t('AdditionalFields')">
+                    <textarea v-model="lineConfig.additionalFields" class="w-full p-2 border-lg border-background rounded" rows="5"></textarea>
+                  </AppLabel>
+                </v-col>
+
+              </v-row>
+
+            
+              </v-row>
+            </v-container>
+
+          </template>
         </div>
 
   
         <div v-if="currentStep === 3">
-                
-            </div>
+          <v-container>
+
+              <h2 class="my-4">{{ $t('WeeklyScheduler') }}</h2>
+              <FullCalendar ref="calendarRef" :options="calendarOptions" />
+              <v-btn color="error" class="mt-4" @click="clearSelectedTimes">
+                {{ $t('ClearAll') }}
+              </v-btn>
+
+              <v-divider class="my-4"></v-divider>
+
+              <h2 class="my-4">{{ $t('AssignTimeScheduler') }}</h2>
+              <div class="flex items-center gap-2">
+                <AppDatePicker
+                  v-model:modelSelected="selectedTimesRange"
+                  :dark="true"
+                  :range="true"
+                  mode="date-time"
+                  :min-date="new Date()" 
+                  :max-date="new Date(2025, 11, 31)"
+                />
+                <!-- 加入選擇時間範圍的按鈕 -->
+                <v-btn color="primary" @click="addSelectedRange">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </div>
+
+              <!-- 顯示已選擇的時間範圍 -->
+              <div v-if="selectedRanges.length > 0" class="mt-4 border rounded p-2">
+                <div v-for="(range, index) in selectedRanges" :key="index" class="flex justify-between items-center p-2 border-b">
+                  <span>{{ range.start }} ~ {{ range.end }}</span>
+                  <v-btn color="error" @click="removeRange(index)">
+                    <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                </div>
+              </div>
+            </v-container>
+        </div>
 
         <div v-if="currentStep === 4">
-          
+          <h1 class="text-3xl flex items-center justify-center">{{ $t('Finish') }}</h1>
         </div>
       </template>
   
@@ -187,7 +430,7 @@
             {{ $t('Next') }}
           </AppButton>
   
-          <AppButton v-if="currentStep === 4" type="primary" class="px-6" @click="onSaveMap">
+          <AppButton v-if="currentStep === 4" type="primary" class="px-6" @click="onSaveNotify">
             {{ $t('Save') }}
           </AppButton>
         </div>
@@ -196,19 +439,145 @@
   </template>
   
   <script setup>
-  import { ref, computed ,watch} from 'vue';
-  
+  import { ref, computed ,watch, onMounted} from 'vue';
+  import useStore from '@/modules/config/stores/index';
+  import FullCalendar from '@fullcalendar/vue3';
+  import timeGridPlugin from '@fullcalendar/timegrid';
+  import interactionPlugin from '@fullcalendar/interaction';
 
-  
+  const selectedTimes = ref([]); // 存儲選擇的時間
+  const calendarRef = ref(null); // 取得 FullCalendar 實例
+  const selectedTimesRange = ref('')
+  const selectedRanges = ref([]); 
 
+
+
+  const calendarOptions = ref({
+  plugins: [timeGridPlugin, interactionPlugin],
+  initialView: 'timeGridWeek', // 單週時間視圖
+  selectable: true, // 允許選擇
+  selectMirror: true, // 拖曳時顯示效果
+  allDaySlot: false, // 移除 "全天"
+  slotDuration: '01:00:00', // 每格 30 分鐘
+  slotMinTime: '00:00:00', // 最早時間 6:00 AM
+  slotMaxTime: '24:00:00', // 最晚時間 10:00 PM
+  hiddenDays: [], // 顯示整週
+  headerToolbar: false, // 移除上方標題
+  dayHeaderFormat: { weekday: 'short' }, // 只顯示 "Mon, Tue..."
+  eventOverlap: false, // 不允許時間重疊
+  // ✅ 限制使用者只能在單日內選擇
+  selectAllow: (selectInfo) => {
+    return selectInfo.start.getDate() === selectInfo.end.getDate();
+  },
+  select: (info) => {
+    // 使用者拖曳選擇時段時
+    selectedTimes.value.push({
+      start: info.startStr,
+      end: info.endStr,
+      dow: info.start.getDay(), // 取得星期幾
+    });
+    console.log('選擇時段:', selectedTimes.value);
+    console.log('格式化選擇時段',convertToBackendFormat(selectedTimes.value));
+    refreshEvents();
+  },
+  events: selectedTimes.value, // 顯示選擇的時段
+});
+
+// **清除所有選擇的時間**
+const clearSelectedTimes = () => {
+  selectedTimes.value = []; // 清空選擇的時段
+  refreshEvents();
+};
+
+// **重新整理 FullCalendar 的事件**
+const refreshEvents = () => {
+  console.log("clear")
+  if (calendarRef.value) {
+    const calendarApi = calendarRef.value.getApi();
+    calendarApi.removeAllEvents(); // 刪除所有事件
+    selectedTimes.value.forEach(event => calendarApi.addEvent(event)); // 重新加入事件
+  }
+};
+const convertToBackendFormat = (selectedTimes) => {
+  const groupedByDay = {};
+
+  selectedTimes.forEach((time) => {
+    const dayOfWeek = time.dow; // 取得星期幾
+    const startHour = new Date(time.start).getHours();
+    const endHour = new Date(time.end).getHours();
+
+    // 確保該星期有對應的陣列
+    if (!groupedByDay[dayOfWeek]) {
+      groupedByDay[dayOfWeek] = new Set();
+    }
+
+    // 把時間範圍內的每個小時加入 Set（確保不重複）
+    for (let hour = startHour; hour < endHour; hour++) {
+      groupedByDay[dayOfWeek].add(hour);
+    }
+  });
+
+  // 轉換為後端格式
+  const weeklySchedule = {
+      list: Object.entries(groupedByDay).map(([day_of_week, hoursSet]) => ({
+        day_of_week: parseInt(day_of_week), // 轉換回數字
+        hours_list: [...hoursSet].sort((a, b) => a - b), // 轉換為陣列並排序
+      })),
+    
+  };
+
+  return weeklySchedule;
+};
+
+// 🔹 加入選擇的時間範圍
+const addSelectedRange = () => {
+  if (!selectedTimesRange.value || !selectedTimesRange.value.length === 2) {
+    console.warn("請選擇一個有效的時間範圍");
+    return;
+  }
+
+  // 確保選擇範圍內有開始和結束時間
+  const [start, end] = selectedTimesRange.value;
+  if (!start || !end) return;
+
+  // 避免重複加入相同的時間範圍
+  if (!selectedRanges.value.some(range => range.start === start && range.end === end)) {
+    selectedRanges.value.push({ start, end });
+  }
+  console.log("選擇時間",selectedRanges.value)
+  console.log("選擇時間格式化",convertToBackendFormat2(selectedRanges.value))
+  // 清空選擇框，讓使用者可以選擇下一個區間
+  selectedTimesRange.value = '';
+};
+function convertToBackendFormat2(selectedRanges) {
+    return {
+        list: selectedRanges.map(item => ({
+            start_time: new Date(item.start).getTime(),
+            end_time: new Date(item.end).getTime()
+        }))
+    };
+}
+// 🔹 移除選擇的時間範圍
+const removeRange = (index) => {
+  selectedRanges.value.splice(index, 1);
+};
+  
+  const store = useStore();
   const modal = ref('');
   const currentStep = ref(1);
 
 const eventName = ref('');
 const eventType = ref('http'); // 預設值
-const albumType = ref('staff'); // 預設值
+
 const eventNote = ref('');
- 
+const languageOptions = ref([
+  { value: 'en', label: 'English' },
+  { value: 'zh', label: '繁體中文' },
+  { value: 'ja', label: '日本語' },
+  { value: 'es', label: 'Español' },
+  { value: 'fr', label: 'Français' },
+  { value: 'th', label: 'แบบไทย' },
+]);
 // HTTP 設定
 const httpConfig = ref({
     host: '',
@@ -225,35 +594,78 @@ const httpConfig = ref({
 
 // Mail 設定
 const mailConfig = ref({
-    recipient: '',
-    subject: '',
-    body: ''
+  SMTPmethod: "SMTP",
+  host: "",
+  port: "",
+  enableSMTPS: false,
+  account: "",
+  password: "",
+  sender: "",
+  subject: "",
+  recipient: "",
+  cc: "",
+  bcc: "",
+  language: "en",
+  additionalFields: "", // 擴充欄位
+  fields: {
+    device_uuid: true,
+    device_name: true,
+    timestamp: true,
+    datetime: true,
+    album_id: true,
+    album_name: true,
+  },
 });
+
 
 // LINE 設定
 const lineConfig = ref({
     token: '',
-    message: ''
+    groupid: '',
+    language: "en",
+    additionalFields: "",
+    fields: {
+    device_uuid: true,
+    device_name: true,
+    timestamp: true,
+    datetime: true,
+    album_id: true,
+    album_name: true,
+  }
 });
 
-// Telegram 設定
-const telegramConfig = ref({
-    chatId: '',
-    message: ''
-});
 
-// 監聽 eventType，當切換時清空對應的欄位
-watch(eventType, (newType) => {
-    if (newType === 'http') {
-        httpConfig.value = { host: '', ssl: false, username: '', password: '', port: 7002, path: '/api/createEvent', urlParams: '', extraFields: '' };
-    } else if (newType === 'mail') {
-        mailConfig.value = { recipient: '', subject: '', body: '' };
-    } else if (newType === 'line') {
-        lineConfig.value = { token: '', message: '' };
-    } else if (newType === 'telegram') {
-        telegramConfig.value = { chatId: '', message: '' };
+
+const albums = ref([]); // 存放從後端取得的相簿
+const selectedAlbums = ref([]); // 存放使用者選中的相簿
+
+const devices = ref([])
+const selectedDeviceds= ref([])
+onMounted(async () => {
+    try {
+        const response1 = await store.getAllAlbums(); // 假設這是呼叫 API 取得相簿的函式
+        console.log("albums",response1)
+        albums.value = response1.data; // 假設後端返回的結構為 { data: [...] }
+
+        const response2 = await store.getAllLiveDevices(); // 假設這是呼叫 API 取得相簿的函式
+        console.log("livedevices",response2)
+        devices.value = response2.data; // 假設後端返回的結構為 { data: [...] }
+    } catch (error) {
+        console.error("❌ 無法取得相簿列表:", error);
     }
 });
+// 監聽 eventType，當切換時清空對應的欄位
+// watch(eventType, (newType) => {
+//     if (newType === 'http') {
+//         httpConfig.value = { host: '', ssl: false, username: '', password: '', port: 7002, path: '/api/createEvent', urlParams: '', extraFields: '' };
+//     } else if (newType === 'mail') {
+//         mailConfig.value = { recipient: '', subject: '', body: '' };
+//     } else if (newType === 'line') {
+//         lineConfig.value = { token: '', message: '' };
+//     } else if (newType === 'telegram') {
+//         telegramConfig.value = { chatId: '', message: '' };
+//     }
+// });
 
  
 
@@ -287,10 +699,7 @@ watch(() => httpConfig.value.dataFormat, () => {
 
 // **重設所有表單數據**
 function resetForm() {
-  mapName.value = '';
-  mapImage.value = null;
-  selectedLiveCameras.value = [];
-  selectedArchiveCameras.value = [];
+  
   currentStep.value = 1;
 }
 
@@ -306,10 +715,16 @@ function setModal(val) {
 
   function nextStep() {
     if (currentStep.value < 4) currentStep.value++;
+    if (currentStep.value === 3) {
+      clearSelectedTimes(); // **確保切換回來時不會還原刪除的排程**
+    }
   }
   
   function prevStep() {
     if (currentStep.value > 1) currentStep.value--;
+    if (currentStep.value === 3) {
+      clearSelectedTimes(); // **確保切換回來時不會還原刪除的排程**
+    }
   }
 
   function addToUrlParams() {
@@ -365,17 +780,101 @@ watch(() => httpConfig.value.path, updateCompleteUrl);
 
 
 
-function onSaveMap() {
+async function onSaveNotify() {
+  
+  // **轉換時間排程格式**
+  const specifyTimeData = convertToBackendFormat2(selectedRanges.value);
+  const weeklyScheduleData = convertToBackendFormat(selectedTimes.value);
 
- 
+  // **組合 API 需要的格式**
+  const payloadhttp= {
+    name: eventName.value,
+    action_type: eventType.value,
+    enable: true, // 預設啟用
+    device_list: selectedDeviceds.value, // 選擇的裝置
+    group_list: selectedAlbums.value, // 選擇的群組
+    remarks: eventNote.value || "", // 備註
+    specify_time: specifyTimeData, // 指定日期排程
+    weekly_schedule: weeklyScheduleData, // 每週時間排程
+    language: "en", // 預設語言
+    data_list: httpConfig.value.urlParams,
+    note: httpConfig.value.extraFields,
+    https: httpConfig.value.ssl,
+    method: httpConfig.value.method,
+    user: httpConfig.value.username,
+    pass: httpConfig.value.password,
+    host: httpConfig.value.host,
+    port: httpConfig.value.port, 
+    url: httpConfig.value.path
+  };
+  const payloadmail={
+    name: eventName.value,
+    action_type: eventType.value,
+    enable: true, // 預設啟用
+    device_list: selectedDeviceds.value, 
+    group_list: selectedAlbums.value, 
+    remarks: eventNote.value,
+    specify_time: specifyTimeData, // 指定日期排程
+    weekly_schedule: weeklyScheduleData, // 每週時間排程
+    language: mailConfig.value.language, // 預設語言
+    method: mailConfig.value.SMTPmethod,
+    secure: mailConfig.value.enableSMTPS, // 啟用安全 SMTP
+    user: mailConfig.value.account, // SMTP 帳號
+    pass: mailConfig.value.password, // SMTP 密碼
+    host: mailConfig.value.host, // SMTP 主機位址
+    port: mailConfig.value.port, // SMTP 連接埠
+    from: mailConfig.value.sender, // 發件人名稱
+    subject: mailConfig.value.subject, // 郵件標題
+    to: [mailConfig.value.recipient], // 收件者
+    cc: [mailConfig.value.cc],
+    bcc: [mailConfig.value.bcc],
+    data_list: mailConfig.value.fields, // 選擇的欄位
+  }
 
-    console.log("🚀 Sending data to backend:", saveData);
+  const payloadline = {
+    name: eventName.value, // 事件名稱
+    action_type: eventType.value, // 事件類型 (http, mail, line, telegram)
+    enable: true, // 預設啟用
+    device_list: selectedDeviceds.value, // 選擇的設備 ID 陣列
+    group_list: selectedAlbums.value, // 選擇的群組 (相簿) ID 陣列
+    remarks: eventNote.value || "", // 事件備註
+    specify_time: specifyTimeData, // 指定時間範圍
+    weekly_schedule: weeklyScheduleData, // 每週排程
+    language: lineConfig.value.language || "en", // 預設語言
+    note: lineConfig.value.additionalFields, // LINE 通知的備註
+    token: lineConfig.value.token, // LINE API Token
+    group_id: lineConfig.value.groupid, // 群組 ID
+    data_list: lineConfig.value.fields, // 選擇的欄位
+  }
 
-    // 這裡你可以將 `saveData` 傳給 API
-    // axios.post('/api/save-map', saveData).then(...).catch(...);
 
-    resetForm(); // 儲存後清空表單
-    setModal('');
+  console.log("🚀 Sending payload to backend:", payloadhttp,payloadmail,payloadline);
+
+
+  if (eventType.value === "http"){
+    const result = await store.postNotify(payloadhttp);
+    console.log("result",result)
+    if(result){
+    resetForm(); // 清空表單
+    setModal(""); // 關閉 Modal
+  }
+  }else if(eventType.value === "mail"){
+    const result = await store.postNotify(payloadmail);
+    console.log("result",result)
+    if(result){
+    resetForm(); // 清空表單
+    setModal(""); // 關閉 Modal
+    }
+  }else{
+    const result = await store.postNotify(payloadline);
+    console.log("result",result)
+    if(result){
+    resetForm(); // 清空表單
+    setModal(""); // 關閉 Modal
+    }
+
+  }
+  
 }
 
     // 🔥 這一行很重要！讓父組件可以呼叫 setModal()
@@ -383,7 +882,5 @@ function onSaveMap() {
   </script>
   
   
-<style>
 
-</style>
 

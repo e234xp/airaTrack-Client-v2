@@ -7,6 +7,21 @@ let serverConfig = {};
 // =============================================
 // DEL
 // =============================================
+
+
+export async function deleteNotify(payload) {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/eventhandles`,
+    method: 'delete',
+    headers: { sessionId: userStore.sessionId },
+    data: {
+      ...payload
+    }
+  })
+}
+
+
 export async function deleteUsers(payload) {
   const userStore = useUserStore();
   return await spiderman.apiService({
@@ -22,6 +37,22 @@ export async function deleteUsers(payload) {
 // =============================================
 // POST
 // =============================================
+
+
+export async function postNotify(payload) {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/eventhandles`,
+    method: 'post',
+    headers: { sessionId: userStore.sessionId },
+    data: {
+      ...payload
+    }
+  })
+}
+
+
+
 export async function postNxServerInfo(payload) {
   const userStore = useUserStore();
   return await spiderman.apiService({
@@ -128,6 +159,18 @@ export async function postUserGroup(payload) {
 // =============================================
 // PUT
 // =============================================
+
+export async function editNotify(payload) {
+  const userStore = useUserStore();
+  return await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/eventhandles`,
+    method: 'put',
+    headers: { sessionId: userStore.sessionId },
+    data: {
+      ...payload
+    }
+  })
+}
 export async function putUsers(payload) {
   const userStore = useUserStore();
   return await spiderman.apiService({
@@ -155,6 +198,40 @@ export async function putUserGroup(payload) {
 // =============================================
 // GET
 // =============================================
+
+export async function getAllNotify() {
+  const userStore = useUserStore();
+  const result = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/eventhandles`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  })
+  return result;
+}
+
+
+export async function getAllAlbums() {
+  const userStore = useUserStore();
+  const result = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/album`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  })
+  return result;
+}
+
+
+export async function getAllLiveDevices() {
+  const userStore = useUserStore();
+  const result = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/livedevices`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  })
+  return result;
+}
+
+
 export async function getNxConfig() {
   const userStore = useUserStore();
   const result = await spiderman.apiService({
@@ -255,6 +332,8 @@ export async function syncDevices() {
 // =============================================
 // DELETE
 // =============================================
+
+
 export async function deleteLiveDevice(id) {
   const userStore = useUserStore();
   return await spiderman.apiService({

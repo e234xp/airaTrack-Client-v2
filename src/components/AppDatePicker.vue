@@ -10,7 +10,8 @@
     :preview-format="format"
     :locale="language"
     :range="range"
-    :max-date="maxDate"
+    :min-date="computedMinDate"
+    :max-date="computedMaxDate"
     ref="dp"
   >
     <template #action-buttons>
@@ -59,6 +60,14 @@ const props = defineProps({
   limit: {
     type: String,
     default: ''
+  },
+  minDate: {
+    type: [Date, String],
+    default: null, // 允許不設置
+  },
+  maxDate: {
+    type: [Date, String],
+    default: null, // 允許不設置
   }
 });
 const emit = defineEmits(['update:modelSelected']);
@@ -71,9 +80,14 @@ const selected = computed({
   set: (value) => emit('update:modelSelected', value),
 });
 
-const maxDate = computed({
-  get: () => new Date()
-})
+// const maxDate = computed({
+//   get: () => new Date()
+// })
+
+
+// ✅ **確保 `minDate` 和 `maxDate` 是 Date 型別**
+const computedMinDate = computed(() => props.minDate ? new Date(props.minDate) : new Date());
+const computedMaxDate = computed(() => props.maxDate ? new Date(props.maxDate) : null);
 
 const dp = ref();
 

@@ -6,24 +6,24 @@
       <AppDataTable :columns="column" :dataList="pageData" v-if="pageData.length !== 0">
         <template #open="props">
         <div class="flex justify-center">
-          <AppToggle :value="props.data.open" @change="onChangeLive(props.data.id)" ></AppToggle>
+          <AppToggle :value="props.data.enable" @change="onChangeLive(props.data)" ></AppToggle>
         </div>
       </template>
         <template #notifyName="props">
-            <span class="text-white">{{ props.data.notifyName }}</span>
+            <span class="text-white">{{ props.data.name }}</span>
         </template>
         <template #notifyType="props">
-            <span class="text-white">{{ props.data.notifyType }}</span>
+            <span class="text-white">{{ props.data.action_type }}</span>
         </template>
         <template #remark="props">
-            <span class="text-white">{{ props.data.remark }}</span>
+            <span class="text-white">{{ props.data.remarks }}</span>
         </template>
         <template #action="props">
             <div class="flex gap-2">
             <AppButton :type="'secondary'" class="p-2" @click="onEdit(props.data.id)">
                 <AppSvgIcon name="icon-edit" class="w-4 h-4"></AppSvgIcon>
             </AppButton>
-            <AppButton :type="'secondary'" class="p-2" @click="onDelete(props.data.id)">
+            <AppButton :type="'secondary'" class="p-2" @click="onDelete(props.data.uuid)">
                 <AppSvgIcon name="icon-trash" class="w-4 h-4"></AppSvgIcon>
             </AppButton>
             </div>
@@ -40,21 +40,6 @@
         {{ $t('EditUserDialog') }}
       </template>
   
-      <!-- <template #default>
-        <AppLabel :label="$t('LoginUsername')">
-          <div class="mb-4" v-if="adminList.length === 1 && pageData[selectedIdx].role === adminGroup.id">{{ selected.username }}</div>
-          <AppInput v-model:modelInput="selected.username" class="mb-4" dark v-else/>
-        </AppLabel>
-  
-        <AppLabel :label="$t('EmailAddress')">
-          <AppInput v-model:modelInput="selected.email" :rule="'email'" class="mb-4" dark />
-        </AppLabel>
-  
-        <AppLabel :label="$t('Role')">
-          <div class="mb-4" v-if="adminList.length === 1 && pageData[selectedIdx].role === adminGroup.id">{{ adminGroup.name }}</div>
-          <AppInput type="select" class="mb-8" :options="groupOption" v-model:modelInput="selected.role" dark v-else/>
-        </AppLabel>
-      </template> -->
   
       <template #footer>
         <div class="flex justify-end gap-4">
@@ -71,19 +56,19 @@
   
     <ModalLayout :is-open="modal === 'delete'" @close="setModal('')">
       <template #header>
-        {{ $t('DeleteUser') }}
+        {{ $t('DeleteNotify') }}
       </template>
   
       <template #description>
-        {{ $t('DeleteUserDialog') }}
+        {{ $t('DeleteNotifyDialog') }}
       </template>
   
       <template #default>
         <div class="mb-2 text-xl">
-          {{ $t('LoginUsername') }} : {{ selected.username }}
+          {{ $t('NotifyName') }} : {{ selected.name }}
         </div>
         <div class="mb-2 text-xl">
-          {{ $t('EmailAddress') }} : {{ selected.email }}
+          {{ $t('NotifyId') }} : {{ selected.uuid}}
         </div>
       </template>
   
@@ -93,7 +78,7 @@
             {{ $t('Cancel') }}
           </AppButton>
   
-          <AppButton type="danger" :isEnable="name !== ''" class="px-6" @click="onSaveDelete">
+          <AppButton type="danger" class="px-6" @click="onSaveDelete">
             {{ $t('Delete') }}
           </AppButton>
         </div>
@@ -116,12 +101,8 @@
   import AppDataTable from '@/components/AppDataTable.vue';
   
   const store = useStore();
-  const { getUsers, getUserGroup, deleteUsers, postUsers, putUsers, postUserGroup } = store;
-  
   const i18n = useI18n();
   
-
-
 const column = ref([
   {
     width: '10%',
@@ -150,63 +131,16 @@ const column = ref([
   }
 ]);
   const addNotifyModal = ref(null);
-  const adminKey = ref('Administrator');
-  const optKey = ref('Operator');
-  
   const modal = ref('');
   const selectedIdx = ref(-1);
   const selected = ref(null);
-  
-  const newUser = reactive({
-    username: '',
-    email: '',
-    password: '',
-    role: ''
-  })
-  
-  const resetUser = reactive({
-    password: ''
-  })
-  
   const pageData = ref([]);
-  const groupData = ref([]);
+ 
   
-  const newUserValid = reactive({
-    username: false,
-    email: false,
-    password: false,
-    check: computed(() => {
-      return newUserValid.username && newUserValid.email && newUserValid.password;
-    })
-  })
-  
-  const adminList = computed(() => {
-    const adminId = groupData.value.find((item) => item.name === adminKey.value)?.id || '';
-    return adminId === '' ? [] : pageData.value.filter((item) => item.groups[0] === adminId);
-  })
-  
-  const groupOption = computed(() => {
-    if (!adminGroup.value || !optGroup.value) return {};
-    return {
-      [adminGroup.value.name]: adminGroup.value.id,
-      [optGroup.value.name]: optGroup.value.id,
-    }
-  })
-  
-  const adminGroup = computed(() => {
-    return groupData.value.find((item) => item.code === '001');
-  })
-  
-  const optGroup = computed(() => {
-    return groupData.value.find((item) => item.code === '002');
-  })
-  
-  
-
-function openAddNotifyModal() {
+  function openAddNotifyModal() {
   addNotifyModal.value.setModal('add-notify');
 }
-  
+
   function onEdit(id) {
     console.log(id)
     const idx = pageData.value.findIndex((item) => item.id === id);
@@ -219,72 +153,51 @@ function openAddNotifyModal() {
   }
   
   function onDelete(id) {
-    const temp = pageData.value.find((item) => item.id === id);
+    const temp = pageData.value.find((item) => item.uuid === id);
     if (temp) {
       selected.value = temp;
       setModal('delete');
     }
   }
   
-  function onReset(id) {
-    const idx = pageData.value.findIndex((item) => item.id === id);
-    if (idx >= 0) {
-      selected.value = JSON.parse(JSON.stringify(pageData.value[idx]));
-      setModal('reset-pwd');
+  async function onChangeLive(data){
+    console.log("原始資料:", data);
+    const originalEnable = data.enable;
+    const updatedData = { ...data, enable: !data.enable };
+
+    console.log("更新的資料:", updatedData);
+
+    try {
+        const result = await store.editNotify(updatedData);
+        console.log(result)
+        if (result) {
+            successStore.show();
+        } else {
+            throw new Error("API 回應失敗");
+        }
+    } catch (error) {
+        console.error("更新失敗:", error)
+        data.enable = originalEnable;
+        data = { ...data };
     }
-  }
+};
   
-  async function onSaveEdit() {
-    const result = await putUsers({
-      id: selected.value.id,
-      username: selected.value.username,
-      password: selected.value.password,
-      email: selected.value.email,
-      groups: [selected.value.role]
-    })
-    if (result) {
-      setModal('');
-      successStore.show();
-      const idx = pageData.value.findIndex((item) => item.id === selected.value.id);
-      pageData.value[idx] = {
-        ...selected.value,
-        role: selected.value.groups[0]
-      }
-    }
-  }
+
   
   async function onSaveDelete() { 
-    const result = await deleteUsers({
-      id: selected.value.id
+    const result = await store.deleteNotify({
+      uuid: selected.value.uuid
     });
+    console.log("result",result)
     if (result) {
       setModal('');
       successStore.show();
-      const idx = pageData.value.findIndex((item) => item.id === selected.value.id);
+      const idx = pageData.value.findIndex((item) => item.uuid === selected.value.uuid);
       pageData.value.splice(idx, 1);
     }
   }
   
-  async function onSaveAdd() {
-    const result = await postUsers({
-      username: newUser.username,
-      password: newUser.password,
-      email: newUser.email,
-      groups: [newUser.role]
-    });
-    if (result) {
-      setModal('');
-      successStore.show();
-      pageData.value.push({
-        ...result,
-        role: result.groups[0]
-      });
-      newUser.username = '';
-      newUser.password = '';
-      newUser.email = '';
-      newUser.role = '';
-    }
-  }
+ 
   
   
   
@@ -293,30 +206,10 @@ function openAddNotifyModal() {
   }
   
   onMounted(async () => {
-    groupData.value = await getUserGroup();
-    // pageData.value = await getUsers();
-    // pageData.value = pageData.value.map((item) => {
-    //   return {
-    //     ...item,
-    //     role: item.groups[0]
-    //   }
-    // })
-    pageData.value = [
-    { id: '001', open: true, notifyName: 'aaa' ,notifyType:'http' },
-    { id: '002', open: true, notifyName: 'bbb' ,notifyType:'mail' },
-    { id: '003', open: true, notifyName: 'ccc' ,notifyType:'line' },
-    { id: '004', open: true, notifyName: 'ddd' ,notifyType:'telegram'},
+    const result = await store.getAllNotify();
+    pageData.value = result.data
+    console.log(pageData.value)
     
-  ];
-    console.log("pagedata",pageData.value)
-    if (groupData.value.findIndex((item) => item.code === '002') === -1) {
-      const opet = {
-        code: '002',
-        name: 'Operator'
-      };
-      const result = await postUserGroup(opet);
-      groupData.value.push(result);
-    }
   })
   
   </script>
