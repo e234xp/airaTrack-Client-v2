@@ -101,14 +101,14 @@
 
           <template v-for="map in mapData" :key="map.uuid">
             <div id="🔥CameraMap" v-show="map.name === mapFloor">
-              <img id="🔥CameraMap__Img" :src="map.img">
+              <img id="🔥CameraMap__Img" draggable="false" :src="map.img">
               <template v-for="camera in map.cameras" :key="map.uuid">
                 <template v-if="camera.type === 'live'">
-                  <img id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live.png"
+                  <img id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live.png" draggable="false"
                     :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
                 </template>
                 <template v-else-if="camera.type === 'archive'">
-                  <img id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png"
+                  <img id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png" draggable="false"
                     :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
                 </template>
               </template>
