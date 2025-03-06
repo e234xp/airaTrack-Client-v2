@@ -50,9 +50,7 @@
                     }">{{ $t('All') }}</AppCheckBox>
                   <AppCheckBox v-for="livedevice in filterLiveDevices" :key="livedevice.camera_id"
                     class="mb-2 text-base text-white" :placeholder="livedevice.name"
-                    v-model:modelInput="form.livechannels" :value="livedevice" :disabled="(form.livechannels.length >= liveChannelAmount)
-                      && !form.livechannels
-                        .map(({ camera_id }) => camera_id).includes(livedevice.camera_id)">{{ livedevice.name }}
+                    v-model:modelInput="form.livechannels" :value="livedevice">{{ livedevice.name }}
                   </AppCheckBox>
                 </div>
               </div>
@@ -74,9 +72,7 @@
                       }
                     }">{{ $t('All') }}</AppCheckBox>
                   <AppCheckBox v-for="device in filterArchiveDevices" :key="device.camera_id" class="mb-2 text-base text-white"
-                    :placeholder="device.name" v-model:modelInput="form.archchannels" :value="device" :disabled="(form.archchannels.length >= archiveAmount)
-                      && !form.archchannels
-                        .map(({ camera_id }) => camera_id).includes(device.camera_id)">{{ device.name }}
+                    :placeholder="device.name" v-model:modelInput="form.archchannels" :value="device">{{ device.name }}
                   </AppCheckBox>
                 </div>
               </div>
