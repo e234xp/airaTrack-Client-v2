@@ -96,11 +96,11 @@
           
           <div id="🔥CameraMapSelect">
             <AppInput dark  class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select"
-              :options="mapFloorList" v-model:modelInput="mapFloor" />
+              :options="mapFloorList" v-model:modelInput="currentMapFloor" />
           </div>
 
           <template v-for="map in mapData" :key="map.uuid">
-            <div id="🔥CameraMap" v-show="map.name === mapFloor">
+            <div id="🔥CameraMap" v-show="map.name === currentMapFloor">
               <img id="🔥CameraMap__Img" draggable="false" :src="map.img">
               <template v-for="camera in map.cameras" :key="map.uuid">
                 <template v-if="camera.type === 'live'">
@@ -134,7 +134,6 @@ import useDevices from '@/stores/devices';
 const router = useRouter();
 
 const store = useStore();
-const mapFloor = ref('1F')
 const { confirmedFace } = storeToRefs(store);
 const { setPage, getLicense, addTask } = store;
 
@@ -145,6 +144,7 @@ console.log("device", devices.value)
 
 const liveChannelAmount = ref(0);
 const archiveAmount = ref(0);
+const currentMapFloor = ref('1F')
 
 const searchQuery = ref('')
 const mapData = ref({})
@@ -188,8 +188,9 @@ onMounted(async () => {
   const archiveDevices = await store.getAllArchDevices()
   devices.value = archiveDevices.data
 
-
   getMapFloorList()
+  // 預設顯示 地圖樓層資料的第一筆
+  currentMapFloor.value = Object.keys(mapFloorList.value)[0]
 });
 
 function getMapFloorList() {
