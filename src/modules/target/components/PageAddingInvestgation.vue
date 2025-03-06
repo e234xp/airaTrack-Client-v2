@@ -194,11 +194,9 @@ onMounted(async () => {
 });
 
 function getMapFloorList() {
-  mapFloorList.value = mapData.value.reduce((accumulator, currentItem) => {
+  mapFloorList.value = mapData.value?.reduce((accumulator, currentItem) => {
     // 每次迭代，currentItem 都是數組中的一個元素
     // accumulator 是累積的結果，初始值是 {}
-    console.log('Current accumulator:', accumulator);
-    console.log('Current item:', currentItem);
     
     // 將當前 item 的 name 作為 key 和 value
     accumulator[currentItem.name] = currentItem.name;
