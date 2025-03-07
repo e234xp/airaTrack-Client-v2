@@ -1,7 +1,7 @@
 <template>
-    <ModalLayout :is-open="modal === 'add-notify'" @close="setModal('')" >
-      <template #header>
-        {{ $t('AddNotify') }}
+<ModalLayout :is-open="modal === 'edit-notify'" @close="setModal('')">
+    <template #header>
+        {{ $t('EditNotify') }}
       </template>
   
       <template #description>
@@ -21,7 +21,7 @@
               <v-col cols="6">
                   <!-- 事件類別 -->
                   <AppLabel :label="$t('EventType')" class="mt-2">
-                      <select v-model="eventType" class="mt-2 w-full p-2 border rounded">
+                      <select v-model="eventType" class="mt-2 w-full p-2 border rounded" disabled>
                           <option value="http">HTTP</option>
                           <option value="mail">Mail</option>
                           <option value="line">Line</option>
@@ -87,21 +87,21 @@
                         <v-col cols="6">
                             <!-- 啟用 SSL -->
                             <AppLabel :label="$t('EnableSSL')">
-                                <v-switch v-model="httpConfig.ssl" inset color="info"></v-switch>
+                                <v-switch v-model="httpConfig.https" inset color="info"></v-switch>
                             </AppLabel>
                         </v-col>
 
                         <v-col cols="6">
                             <!-- 帳號 -->
                             <AppLabel :label="$t('Username')">
-                                <input v-model="httpConfig.username" type="text" class="w-full p-2 border rounded" />
+                                <input v-model="httpConfig.user" type="text" class="w-full p-2 border rounded" />
                             </AppLabel>
                         </v-col>
 
                         <v-col cols="6">
                             <!-- 密碼 -->
                             <AppLabel :label="$t('Password')">
-                                <input v-model="httpConfig.password" type="password" class="w-full p-2 border rounded" />
+                                <input v-model="httpConfig.pass" type="password" class="w-full p-2 border rounded" />
                             </AppLabel>
                         </v-col>
 
@@ -115,7 +115,7 @@
                         <v-col cols="6">
                             <!-- API Path -->
                             <AppLabel :label="$t('Path')">
-                                <input v-model="httpConfig.path" type="text" class="w-full p-2 border rounded" />
+                                <input v-model="httpConfig.url" type="text" class="w-full p-2 border rounded" />
                             </AppLabel>
                         </v-col>
 
@@ -176,7 +176,7 @@
                         <v-col cols="12">
                             <!-- URL 參數 -->
                             <AppLabel :label="httpConfig.method === 'GET' ? $t('URLParameters') : $t('Body')">
-                                <textarea v-model="httpConfig.urlParams" class="w-full p-2 border rounded" rows="3"></textarea>
+                                <textarea v-model="httpConfig.data_list" class="w-full p-2 border rounded" rows="3"></textarea>
                             </AppLabel>
                         </v-col>
                     </v-row>
@@ -188,7 +188,7 @@
                         <v-col cols="12">
                             <!-- 擴充欄位 -->
                             <AppLabel :label="$t('ExtraFields')">
-                                <textarea v-model="httpConfig.extraFields" class="w-full p-2 border rounded" rows="3"></textarea>
+                                <textarea v-model="httpConfig.note" class="w-full p-2 border rounded" rows="3"></textarea>
                             </AppLabel>
                         </v-col>
                     </v-row>
@@ -435,24 +435,173 @@
           </AppButton>
         </div>
       </template>
-    </ModalLayout>
-  </template>
+  </ModalLayout>
+</template>
+
+<script setup>
+
+import { ref, computed ,watch, onMounted, defineExpose, defineEmits} from 'vue';
+import useStore from '@/modules/config/stores/index';
+import FullCalendar from '@fullcalendar/vue3';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+const modal = ref('');
+const store = useStore();
+const currentStep = ref(1);
+const eventName = ref('');
+const eventType = ref('http'); 
+const eventNote = ref('');
+const selectedTimes = ref([]); 
+const calendarRef = ref(null); 
+const selectedTimesRange = ref('')
+const selectedRanges = ref([]); 
+const notifyEditData = ref(null)
+const albums = ref([]); 
+const selectedAlbums = ref([]); 
+
+const devices = ref([])
+const selectedDeviceds= ref([])
+
+const languageOptions = ref([
+  { value: 'en', label: 'English' },
+  { value: 'zh', label: '繁體中文' },
+  { value: 'ja', label: '日本語' },
+  { value: 'es', label: 'Español' },
+  { value: 'fr', label: 'Français' },
+  { value: 'th', label: 'แบบไทย' },
+]);
+
+const httpConfig = ref("")
+const mailConfig = ref({
+  SMTPmethod: "SMTP",
+  host: "",
+  port: "",
+  enableSMTPS: false,
+  account: "",
+  password: "",
+  sender: "",
+  subject: "",
+  recipient: "",
+  cc: "",
+  bcc: "",
+  language: "en",
+  additionalFields: "", // 擴充欄位
+  fields:"",
+});
+const lineConfig = ref({
+    token: '',
+    groupid: '',
+    language: "en",
+    additionalFields: "",
+    fields:"",
+});
+const emit = defineEmits(['refreshNotifyList']);
+
+onMounted(async () => {
+    try {
+        const response1 = await store.getAllAlbums(); // 假設這是呼叫 API 取得相簿的函式
+        console.log("albums",response1)
+        albums.value = response1.data; // 假設後端返回的結構為 { data: [...] }
+
+        const response2 = await store.getAllLiveDevices(); // 假設這是呼叫 API 取得相簿的函式
+        console.log("livedevices",response2)
+        devices.value = response2.data; // 假設後端返回的結構為 { data: [...] }
+    } catch (error) {
+        console.error("❌ 無法取得相簿列表:", error);
+    }
+});
+
+const stepDescription = computed(() => {
+    switch (currentStep.value) {
+      case 1: return '編輯事件資訊';
+      case 2: return '編輯通知資訊';
+      case 3: return '編輯排程';
+      case 4: return '編輯完成';
+      default: return '';
+    }
+  });
+
+  function nextStep() {
+    if (currentStep.value < 4) currentStep.value++;
+    if (currentStep.value === 3) {
+        refreshEvents()
+    }
+  }
   
-  <script setup>
-  import { ref, computed ,watch, onMounted, defineEmits} from 'vue';
-  import useStore from '@/modules/config/stores/index';
-  import FullCalendar from '@fullcalendar/vue3';
-  import timeGridPlugin from '@fullcalendar/timegrid';
-  import interactionPlugin from '@fullcalendar/interaction';
+  function prevStep() {
+    if (currentStep.value > 1) currentStep.value--;
+    if (currentStep.value === 3) {
+        refreshEvents()
+    }
+  }
 
-  const selectedTimes = ref([]); // 存儲選擇的時間
-  const calendarRef = ref(null); // 取得 FullCalendar 實例
-  const selectedTimesRange = ref('')
-  const selectedRanges = ref([]); 
-  const emit = defineEmits(['refreshNotifyList']);
+  // **根據 JSON/XML 選擇變更 Label**
+  const selectedFormatLabel = computed(() => {
+  return httpConfig.value.dataFormat === "JSON" ? "JSON" : "XML";
+});
+  
+
+// **監聽 `method` 變化，當切換 GET/POST 時清空 urlParams**
+watch(() => httpConfig.value.method, () => {
+  httpConfig.value.data_list = "";
+  httpConfig.value.completeUrl = "";
+});
+
+// **監聽 `dataFormat` 變化，當切換 JSON/XML 時清空 urlParams**
+watch(() => httpConfig.value.dataFormat, () => {
+  httpConfig.value.data_list = "";
+});
+
+  function addToUrlParams() {
+  if (httpConfig.value.method === "GET") {
+    // 確保有欄位名稱和欄位值
+    if (!httpConfig.value.fieldName || !httpConfig.value.fieldData) return;
+
+    // 格式化 GET 參數
+    const newParam = `&${httpConfig.value.fieldName}=##${httpConfig.value.fieldData}##`;
+
+    // 檢查是否已經存在
+    if (!httpConfig.value.data_list.includes(newParam)) {
+      httpConfig.value.data_list += newParam;
+    }
+    // 更新完整 URL
+    updateCompleteUrl();
+    // 清空輸入欄位
+    httpConfig.value.fieldName = "";
+    httpConfig.value.fieldData = "";
+  } else if(httpConfig.value.method === "POST") {
+    let newField = "";
+
+    if (httpConfig.value.dataFormat === "JSON") {
+      // 產生 JSON 格式
+      newField = `"${httpConfig.value.fieldName}": "##${httpConfig.value.fieldData}##",`;
+    } else if (httpConfig.value.dataFormat === "XML") {
+      // 產生 XML 格式
+      newField = `<${httpConfig.value.fieldName}>##${httpConfig.value.fieldData}##</${httpConfig.value.fieldName}>\n`;
+    }
+
+    // 避免重複新增相同參數
+    if (!httpConfig.value.data_list.includes(newField)) {
+      httpConfig.value.data_list += httpConfig.value.data_list ? `\n${newField}` : newField;
+    }
+
+    // 清空輸入欄位
+    httpConfig.value.fieldName = "";
+    httpConfig.value.fieldData = "";
+  }
+}
 
 
-  const calendarOptions = ref({
+// **動態更新完整 URL**
+function updateCompleteUrl() {
+  const basePath = httpConfig.value.url.startsWith("/") ? httpConfig.value.url : `/${httpConfig.value.url}`;
+  httpConfig.value.completeUrl = `${basePath}${httpConfig.value.data_list ? "?" + httpConfig.value.data_list : ""}`;
+}
+
+// **監聽 URL 參數變化，自動更新完整 URL**
+watch(() => httpConfig.value.url, updateCompleteUrl);
+
+const calendarOptions = ref({
   plugins: [timeGridPlugin, interactionPlugin],
   initialView: 'timeGridWeek', // 單週時間視圖
   selectable: true, // 允許選擇
@@ -489,13 +638,24 @@ const clearSelectedTimes = () => {
   refreshEvents();
 };
 
-// **重新整理 FullCalendar 的事件**
+
+
 const refreshEvents = () => {
-  console.log("clear")
+  
   if (calendarRef.value) {
     const calendarApi = calendarRef.value.getApi();
-    calendarApi.removeAllEvents(); // 刪除所有事件
-    selectedTimes.value.forEach(event => calendarApi.addEvent(event)); // 重新加入事件
+    
+    // 移除所有舊的事件
+    calendarApi.removeAllEvents();
+
+    // 重新加入新的事件
+    selectedTimes.value.forEach(event => {
+      calendarApi.addEvent({
+        start: event.start,
+        end: event.end,
+        dow: event.dow 
+      });
+    });
   }
 };
 const convertToBackendFormat = (selectedTimes) => {
@@ -561,158 +721,43 @@ function convertToBackendFormat2(selectedRanges) {
 const removeRange = (index) => {
   selectedRanges.value.splice(index, 1);
 };
-  
-  const store = useStore();
-  const modal = ref('');
-  const currentStep = ref(1);
 
-const eventName = ref('');
-const eventType = ref('http'); // 預設值
-
-const eventNote = ref('');
-const languageOptions = ref([
-  { value: 'en', label: 'English' },
-  { value: 'zh', label: '繁體中文' },
-  { value: 'ja', label: '日本語' },
-  { value: 'es', label: 'Español' },
-  { value: 'fr', label: 'Français' },
-  { value: 'th', label: 'แบบไทย' },
-]);
-// HTTP 設定
-const httpConfig = ref({
-    host: '',
-    ssl: false,
-    username: '',
-    password: '',
-    port: '',
-    path: '',
-    completeUrl:'',
-    urlParams: '',
-    extraFields: '',
-    dataFormat:'JSON',
-});
-
-// Mail 設定
-const mailConfig = ref({
-  SMTPmethod: "SMTP",
-  host: "",
-  port: "",
-  enableSMTPS: false,
-  account: "",
-  password: "",
-  sender: "",
-  subject: "",
-  recipient: "",
-  cc: "",
-  bcc: "",
-  language: "en",
-  additionalFields: "", // 擴充欄位
-  fields: {
-    device_uuid: false,
-    device_name: false,
-    timestamp: false,
-    datetime: false,
-    album_id: false,
-    album_name: false,
-  },
-});
-
-
-// LINE 設定
-const lineConfig = ref({
-    token: '',
-    groupid: '',
-    language: "en",
-    additionalFields: "",
-    fields: {
-    device_uuid: false,
-    device_name: false,
-    timestamp: false,
-    datetime: false,
-    album_id: false,
-    album_name: false,
-  }
-});
-
-
-
-const albums = ref([]); // 存放從後端取得的相簿
-const selectedAlbums = ref([]); // 存放使用者選中的相簿
-
-const devices = ref([])
-const selectedDeviceds= ref([])
-onMounted(async () => {
-    try {
-        const response1 = await store.getAllAlbums(); // 假設這是呼叫 API 取得相簿的函式
-        console.log("albums",response1)
-        albums.value = response1.data; // 假設後端返回的結構為 { data: [...] }
-
-        const response2 = await store.getAllLiveDevices(); // 假設這是呼叫 API 取得相簿的函式
-        console.log("livedevices",response2)
-        devices.value = response2.data; // 假設後端返回的結構為 { data: [...] }
-    } catch (error) {
-        console.error("❌ 無法取得相簿列表:", error);
-    }
-});
-
-
- 
-
-  const stepDescription = computed(() => {
-    switch (currentStep.value) {
-      case 1: return '輸入事件資訊';
-      case 2: return '輸入通知資訊';
-      case 3: return '選擇排程';
-      case 4: return '完成';
-      default: return '';
-    }
-  });
-
-
-  // **根據 JSON/XML 選擇變更 Label**
-const selectedFormatLabel = computed(() => {
-  return httpConfig.value.dataFormat === "JSON" ? "JSON" : "XML";
-});
-  
-
-// **監聽 `method` 變化，當切換 GET/POST 時清空 urlParams**
-watch(() => httpConfig.value.method, () => {
-  httpConfig.value.urlParams = "";
-  httpConfig.value.completeUrl = "";
-});
-
-// **監聽 `dataFormat` 變化，當切換 JSON/XML 時清空 urlParams**
-watch(() => httpConfig.value.dataFormat, () => {
-  httpConfig.value.urlParams = "";
-});
 
 // **重設所有表單數據**
 function resetForm() {
-  eventName.value = "";
-  eventType.value = "http"; // 重置為預設值
-  eventNote.value = "";
 
+  // 清空事件基本資訊
+  eventName.value = '';
+  eventType.value = 'http'; // 預設為 HTTP
+  eventNote.value = '';
+
+  // 清空選擇的相簿與設備
   selectedAlbums.value = [];
   selectedDeviceds.value = [];
 
+  // 清空選擇的時間
   selectedTimes.value = [];
-  selectedTimesRange.value = "";
   selectedRanges.value = [];
+  notifyEditData.value = null;
 
+  // 清空 HTTP 設定
   httpConfig.value = {
-    host: "",
-    ssl: false,
-    username: "",
-    password: "",
-    port: "",
-    path: "",
-    completeUrl: "",
-    urlParams: "",
-    extraFields: "",
-    dataFormat: "JSON",
-    method: "GET",
+    host: '',
+    https: false,
+    user: '',
+    pass: '',
+    port: '',
+    url: '',
+    completeUrl: '',
+    method: 'GET',
+    data_list: '',
+    note: '',
+    dataFormat: 'JSON',
+    fieldName: '',
+    fieldData: ''
   };
 
+  // 清空 Mail 設定
   mailConfig.value = {
     SMTPmethod: "SMTP",
     host: "",
@@ -727,29 +772,16 @@ function resetForm() {
     bcc: "",
     language: "en",
     additionalFields: "",
-    fields: {
-      device_uuid: false,
-      device_name: false,
-      timestamp: false,
-      datetime: false,
-      album_id: false,
-      album_name: false,
-    },
+    fields: "",
   };
 
+  // 清空 LINE 設定
   lineConfig.value = {
-    token: "",
-    groupid: "",
+    token: '',
+    groupid: '',
     language: "en",
     additionalFields: "",
-    fields: {
-      device_uuid: false,
-      device_name: false,
-      timestamp: false,
-      datetime: false,
-      album_id: false,
-      album_name: false,
-    },
+    fields: "",
   };
 
   // 清空 FullCalendar
@@ -758,187 +790,211 @@ function resetForm() {
     calendarApi.removeAllEvents();
   }
 
-  currentStep.value = 1; 
+  // 步驟重置
+  currentStep.value = 1;
 }
 
-function setModal(val) {
-  if (val === '') {
-    resetForm(); 
-    modal.value = val;
-  }
-  modal.value = val;
-}
+function convertToFullCalendar(weeklySchedule) {
+    const events = [];
+    const now = new Date();
+    
+    // 取得當週的星期一 (設定為 1~7)
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1);
+    startOfWeek.setHours(0, 0, 0, 0);
 
+    weeklySchedule.list.forEach(schedule => {
+        const dayOffset = schedule.day_of_week - 1; // 1(星期一) -> 0, 2(星期二) -> 1 ...
+        const date = new Date(startOfWeek);
+        date.setDate(startOfWeek.getDate() + dayOffset); // 找到當週的對應日期
 
+        let startHour = null;
+        let endHour = null;
 
-  function nextStep() {
-    if (currentStep.value < 4) currentStep.value++;
-    if (currentStep.value === 3) {
-      clearSelectedTimes(); // **確保切換回來時不會還原刪除的排程**
-    }
-  }
+        schedule.hours_list.forEach((hour, index) => {
+            if (startHour === null) {
+                startHour = hour;
+            }
+
+            // 若下一個小時不連續，則結束當前時段
+            if (index === schedule.hours_list.length - 1 || schedule.hours_list[index + 1] !== hour + 1) {
+                endHour = hour; // 修正：不加 1
+
+                // 設定日期時間
+                const startDate = new Date(date);
+                startDate.setHours(startHour, 0, 0, 0);
   
-  function prevStep() {
-    if (currentStep.value > 1) currentStep.value--;
-    if (currentStep.value === 3) {
-      clearSelectedTimes(); // **確保切換回來時不會還原刪除的排程**
-    }
+                const endDate = new Date(date);
+                endDate.setHours(endHour + 1, 0, 0, 0); // `endHour + 1` 表示最後的結束時間
+
+                // 轉換為台北時區 (UTC+8)
+                const startISO = new Date(startDate.getTime() + (8 * 60 * 60 * 1000)).toISOString().replace("Z", "+08:00");
+                const endISO = new Date(endDate.getTime() + (8 * 60 * 60 * 1000)).toISOString().replace("Z", "+08:00");
+
+                // 推入 FullCalendar 格式
+                events.push({
+                    start: startISO,
+                    end: endISO,
+                    dow: dayOffset + 1 // FullCalendar 以 1 (星期一) 開始
+                });
+
+                // 重置 startHour，準備處理下一段時段
+                startHour = null;
+                endHour = null;
+            }
+        });
+    });
+
+    return events;
+}
+function setModal(type, notifyData) {
+    if (type === '') {
+    modal.value = type;
+    return
   }
-
-  function addToUrlParams() {
-  if (httpConfig.value.method === "GET") {
-    // 確保有欄位名稱和欄位值
-    if (!httpConfig.value.fieldName || !httpConfig.value.fieldData) return;
-
-    // 格式化 GET 參數
-    const newParam = `&${httpConfig.value.fieldName}=##${httpConfig.value.fieldData}##`;
-
-    // 檢查是否已經存在
-    if (!httpConfig.value.urlParams.includes(newParam)) {
-      httpConfig.value.urlParams += newParam;
+    modal.value = type;
+    console.log(notifyData)
+    eventName.value = notifyData.name;
+    eventType.value = notifyData.action_type;
+    eventNote.value = notifyData.remarks;
+    selectedDeviceds.value = notifyData.device_list
+    selectedAlbums.value = notifyData.group_list
+     // **轉換 specify_time 為前端格式**
+     selectedRanges.value = notifyData.specify_time?.list.map(item => ({
+        start: new Date(item.start_time).toISOString().slice(0, 16).replace("T", " "), 
+        end: new Date(item.end_time).toISOString().slice(0, 16).replace("T", " ")
+    })) || [];
+    console.log("selectedRanges",selectedRanges.value)
+    // **轉換 weekly_schedule 為 FullCalendar 格式**
+    selectedTimes.value = [];
+    selectedTimes.value = convertToFullCalendar(notifyData.weekly_schedule) 
+    console.log("selectedTimes",selectedTimes.value)
+    
+    notifyEditData.value = notifyData
+   
+    if (eventType.value === 'http') {
+        httpConfig.value = { ...notifyData };
+        console.log("http",httpConfig.value)
+    } else if (eventType.value === 'mail') {
+        mailConfig.value.SMTPmethod = notifyData.method;
+        mailConfig.value.host = notifyData.host;
+        mailConfig.value.port = notifyData.port;
+        mailConfig.value.enableSMTPS = notifyData.secure;
+        mailConfig.value.account = notifyData.user;
+        mailConfig.value.password = notifyData.pass;
+        mailConfig.value.sender = notifyData.from;
+        mailConfig.value.subject = notifyData.subject;
+        mailConfig.value.recipient = notifyData.to;
+        mailConfig.value.cc = notifyData.cc;
+        mailConfig.value.bcc = notifyData.bcc;
+        mailConfig.value.language = notifyData.language;
+        mailConfig.value.additionalFields = notifyData.note;
+        mailConfig.value.fields = notifyData.data_list;
+        console.log("mail",mailConfig.value)
+    }else{
+        lineConfig.value.token = notifyData.token;
+        lineConfig.value.groupid = notifyData.group_id;
+        lineConfig.value.language = notifyData.language;
+        lineConfig.value.additionalFields = notifyData.note;
+        lineConfig.value.fields = notifyData.data_list;
+        console.log("line",lineConfig.value)
     }
-    // 更新完整 URL
-    updateCompleteUrl();
-    // 清空輸入欄位
-    httpConfig.value.fieldName = "";
-    httpConfig.value.fieldData = "";
-  } else if(httpConfig.value.method === "POST") {
-    let newField = "";
-
-    if (httpConfig.value.dataFormat === "JSON") {
-      // 產生 JSON 格式
-      newField = `"${httpConfig.value.fieldName}": "##${httpConfig.value.fieldData}##",`;
-    } else if (httpConfig.value.dataFormat === "XML") {
-      // 產生 XML 格式
-      newField = `<${httpConfig.value.fieldName}>##${httpConfig.value.fieldData}##</${httpConfig.value.fieldName}>\n`;
-    }
-
-    // 避免重複新增相同參數
-    if (!httpConfig.value.urlParams.includes(newField)) {
-      httpConfig.value.urlParams += httpConfig.value.urlParams ? `\n${newField}` : newField;
-    }
-
-    // 清空輸入欄位
-    httpConfig.value.fieldName = "";
-    httpConfig.value.fieldData = "";
-  }
+     
 }
 
+watch(calendarRef, (newVal) => {
+    if (newVal) {
+        console.log("calendarRef is now available, refreshing events...");
+        refreshEvents();
+    }
+});
 
-// **動態更新完整 URL**
-function updateCompleteUrl() {
-  const basePath = httpConfig.value.path.startsWith("/") ? httpConfig.value.path : `/${httpConfig.value.path}`;
-  httpConfig.value.completeUrl = `${basePath}${httpConfig.value.urlParams ? "?" + httpConfig.value.urlParams : ""}`;
-}
+async function onSaveNotify(){
 
-// **監聽 URL 參數變化，自動更新完整 URL**
-watch(() => httpConfig.value.path, updateCompleteUrl);
-
-
-
-
-
-async function onSaveNotify() {
-  
-  // **轉換時間排程格式**
+    // **轉換時間排程格式**
   const specifyTimeData = convertToBackendFormat2(selectedRanges.value);
   const weeklyScheduleData = convertToBackendFormat(selectedTimes.value);
 
 
   console.log("specifyTimeData",specifyTimeData)
   console.log("weeklyScheduleData",weeklyScheduleData)
-  
+
   // **組合 API 需要的格式**
-  const payloadhttp= {
+  const payload= {
+    uuid: notifyEditData.value.uuid,
     name: eventName.value,
     action_type: eventType.value,
-    enable: true, // 預設啟用
-    device_list: selectedDeviceds.value, // 選擇的裝置
-    group_list: selectedAlbums.value, // 選擇的群組
-    remarks: eventNote.value || "", // 備註
-    specify_time: specifyTimeData, // 指定日期排程
-    weekly_schedule: weeklyScheduleData, // 每週時間排程
-    language: "en", // 預設語言
-    data_list: httpConfig.value.urlParams,
-    note: httpConfig.value.extraFields,
-    https: httpConfig.value.ssl,
-    method: httpConfig.value.method,
-    user: httpConfig.value.username,
-    pass: httpConfig.value.password,
-    host: httpConfig.value.host,
-    port: httpConfig.value.port, 
-    url: httpConfig.value.path
-  };
-  const payloadmail={
-    name: eventName.value,
-    action_type: eventType.value,
-    enable: true, // 預設啟用
+    enable: notifyEditData.value.enable, 
     device_list: selectedDeviceds.value, 
     group_list: selectedAlbums.value, 
     remarks: eventNote.value,
-    specify_time: specifyTimeData, // 指定日期排程
-    weekly_schedule: weeklyScheduleData, // 每週時間排程
-    language: mailConfig.value.language, // 預設語言
+    specify_time: specifyTimeData, 
+    weekly_schedule: weeklyScheduleData,
+  };
+
+  const payloadhttp = {
+    ...payload,
+    language: "en", // 預設語言
+    data_list: httpConfig.value.data_list,
+    note: httpConfig.value.note,
+    https: httpConfig.value.https,
+    method: httpConfig.value.method,
+    user: httpConfig.value.user,
+    pass: httpConfig.value.pass,
+    host: httpConfig.value.host,
+    port: httpConfig.value.port, 
+    url: httpConfig.value.url,
+  }
+
+  const payloadmail = {
+    ...payload,
+    language: mailConfig.value.language, 
     method: mailConfig.value.SMTPmethod,
-    secure: mailConfig.value.enableSMTPS, // 啟用安全 SMTP
-    user: mailConfig.value.account, // SMTP 帳號
-    pass: mailConfig.value.password, // SMTP 密碼
-    host: mailConfig.value.host, // SMTP 主機位址
-    port: mailConfig.value.port, // SMTP 連接埠
-    from: mailConfig.value.sender, // 發件人名稱
-    subject: mailConfig.value.subject, // 郵件標題
-    to: [mailConfig.value.recipient], // 收件者
+    secure: mailConfig.value.enableSMTPS, 
+    user: mailConfig.value.account, 
+    pass: mailConfig.value.password, 
+    host: mailConfig.value.host, 
+    port: mailConfig.value.port, 
+    from: mailConfig.value.sender, 
+    subject: mailConfig.value.subject, 
+    to: [mailConfig.value.recipient], 
     cc: [mailConfig.value.cc],
     bcc: [mailConfig.value.bcc],
-    data_list: mailConfig.value.fields, // 選擇的欄位
+    data_list: mailConfig.value.fields, 
     note: mailConfig.value.additionalFields
   }
 
   const payloadline = {
-    name: eventName.value, // 事件名稱
-    action_type: eventType.value, // 事件類型 (http, mail, line, telegram)
-    enable: true, // 預設啟用
-    device_list: selectedDeviceds.value, // 選擇的設備 ID 陣列
-    group_list: selectedAlbums.value, // 選擇的群組 (相簿) ID 陣列
-    remarks: eventNote.value || "", // 事件備註
-    specify_time: specifyTimeData, // 指定時間範圍
-    weekly_schedule: weeklyScheduleData, // 每週排程
-    language: lineConfig.value.language || "en", // 預設語言
-    note: lineConfig.value.additionalFields, // LINE 通知的備註
-    token: lineConfig.value.token, // LINE API Token
-    group_id: lineConfig.value.groupid, // 群組 ID
-    data_list: lineConfig.value.fields, // 選擇的欄位
+    ...payload,
+    language: lineConfig.value.language,
+    note: lineConfig.value.additionalFields, 
+    token: lineConfig.value.token, 
+    group_id: lineConfig.value.groupid, 
+    data_list: lineConfig.value.fields,
   }
 
-
-  console.log("🚀 Sending payload to backend:",payloadline);
+  console.log("payloadline",payloadline)
 
   let result = ''
   if (eventType.value === "http"){
-    result = await store.postNotify(payloadhttp);
+    result = await store.editNotify(payloadhttp);
     console.log("result",result)
     
   }else if(eventType.value === "mail"){
-    result = await store.postNotify(payloadmail);
+    result = await store.editNotify(payloadmail);
     console.log("result",result)
   }else{
-    result = await store.postNotify(payloadline);
+    result = await store.editNotify(payloadline);
     console.log("result",result)
   }
   if(result){
-    console.log("close")
+    console.log('close')
     resetForm(); // 清空表單
-    setModal(""); // 關閉 Modal
-    emit('refreshNotifyList'); // 發送事件通知父組件重新抓取通知列表
+    setModal(''); // 關閉 Modal
+    emit('refreshNotifyList');
     }
 
-  
 }
-
-    // 🔥 這一行很重要！讓父組件可以呼叫 setModal()
-    defineExpose({ setModal });
-  </script>
-  
-  
-
-
+// 讓外部可以呼叫 setModal
+defineExpose({ setModal });
+</script>

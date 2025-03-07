@@ -1,6 +1,6 @@
 <template>
     <div class="w-full relative" style="height: calc(100% - 4rem)">
-      <AppButton :type="'primary'" class="absolute px-4 -top-12 right-0" @click="openAddNotifyModal">
+      <AppButton :type="'primary'" class="absolute px-4 -top-12 right-0" @click="openAddNotifyModal" >
         {{ $t('AddNotify') }}
       </AppButton>
       <AppDataTable :columns="column" :dataList="pageData" v-if="pageData.length !== 0">
@@ -20,10 +20,10 @@
         </template>
         <template #action="props">
             <div class="flex gap-2">
-            <AppButton :type="'secondary'" class="p-2" @click="onEdit(props.data.id)">
+            <AppButton :type="'secondary'" class="p-2" @click="onEdit(props.data)">
                 <AppSvgIcon name="icon-edit" class="w-4 h-4"></AppSvgIcon>
             </AppButton>
-            <AppButton :type="'secondary'" class="p-2" @click="onDelete(props.data.uuid)">
+            <AppButton :type="'secondary'" class="p-2" @click="onDelete(props.data.uuid)" >
                 <AppSvgIcon name="icon-trash" class="w-4 h-4"></AppSvgIcon>
             </AppButton>
             </div>
@@ -31,29 +31,7 @@
         </AppDataTable>
     </div>
   
-    <ModalLayout :is-open="modal === 'edit'" @close="setModal('')">
-      <template #header>
-        {{ $t('EditUser') }}
-      </template>
-  
-      <template #description>
-        {{ $t('EditUserDialog') }}
-      </template>
-  
-  
-      <template #footer>
-        <div class="flex justify-end gap-4">
-          <AppButton type="secondary" class="px-6" @click="setModal('')">
-            {{ $t('Cancel') }}
-          </AppButton>
-  
-          <AppButton type="primary" :isEnable="name !== ''" class="px-8" @click="onSaveEdit">
-            {{ $t('Save') }}
-          </AppButton>
-        </div>
-      </template>
-    </ModalLayout>
-  
+   
     <ModalLayout :is-open="modal === 'delete'" @close="setModal('')">
       <template #header>
         {{ $t('DeleteNotify') }}
@@ -87,8 +65,8 @@
   
    
     
-
-    <AddNotifyModal ref="addNotifyModal" />
+    <EditNotifyModal ref="editNotifyModal" @refreshNotifyList="fetchNotifyList"/>
+    <AddNotifyModal ref="addNotifyModal" @refreshNotifyList="fetchNotifyList"/>
   </template>
   
   <script setup>
@@ -98,6 +76,7 @@
   import useStore from '@/modules/config/stores/index';
   import successStore from '@/components/AppSuccess/success';
   import AddNotifyModal from '@/modules/config/components/AddNotifyModal.vue'
+  import EditNotifyModal from '@/modules/config/components/EditNotifyModal.vue'
   import AppDataTable from '@/components/AppDataTable.vue';
   
   const store = useStore();
@@ -131,6 +110,7 @@ const column = ref([
   }
 ]);
   const addNotifyModal = ref(null);
+  const editNotifyModal = ref(null);
   const modal = ref('');
   const selectedIdx = ref(-1);
   const selected = ref(null);
@@ -141,15 +121,8 @@ const column = ref([
   addNotifyModal.value.setModal('add-notify');
 }
 
-  function onEdit(id) {
-    console.log(id)
-    const idx = pageData.value.findIndex((item) => item.id === id);
-    console.log(idx)
-    if (idx >= 0) {
-      selectedIdx.value = idx;
-      selected.value = JSON.parse(JSON.stringify(pageData.value[idx]));
-      setModal('edit');
-    }
+  function onEdit(data){
+    editNotifyModal.value.setModal('edit-notify',data)
   }
   
   function onDelete(id) {
@@ -211,6 +184,13 @@ const column = ref([
     console.log(pageData.value)
     
   })
+
+  async function fetchNotifyList(){
+    console.log("refresh")
+    const result = await store.getAllNotify();
+    pageData.value = result.data
+    console.log(pageData.value)
+  }
   
   </script>
 

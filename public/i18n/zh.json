@@ -240,7 +240,13 @@
   "Finish":"完成",
   "DeleteNotify":"刪除通知",
   "DeleteNotifyDialog":"使用者可透過此功能刪除通知。請確認您的操作，刪除後通知將無法復原。",
-  "NotifyId":"通知ID"
+  "NotifyId":"通知ID",
+  "SMTPmethod":"SMTP方法",
+  "IncludeFields":"欄位",
+  "AdditionalFields":"擴充欄位",
+  "Token":"Token",
+  "GroupId":"群組ID",
+  "EditNotify":"編輯通知"
 
 
 }

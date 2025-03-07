@@ -2,9 +2,9 @@
   <div
     class="flex justify-center items-center cursor-pointer transition text-base py-2"
     :class="[{
-      'bg-ctrl-primary hover:bg-ctrl-primary-hover border border-white rounded leading-4': type === 'primary',
-      'bg-ctrl-secondary hover:bg-ctrl-secondary-hover border border-white rounded leading-4': type === 'secondary',
-      'bg-ctrl-danger hover:bg-ctrl-danger-hover border border-white rounded leading-4': type === 'danger',
+      'bg-ctrl-primary hover:bg-ctrl-primary-hover border-white rounded leading-4': type === 'primary',
+      'bg-ctrl-secondary hover:bg-ctrl-secondary-hover border-white rounded leading-4': type === 'secondary',
+      'bg-ctrl-danger hover:bg-ctrl-danger-hover border-white rounded leading-4': type === 'danger',
       'hover:text-primary-hover': type === 'transparent',
       'opacity-30': type === 'transparent' && !isEnable,
 
@@ -14,6 +14,8 @@
 
       'pointer-events-none bg-opacity-30 border-opacity-30': !isEnable
     }, classParse]"
+
+    :style="borderStyle"
   >
     <slot />
   </div>
@@ -45,6 +47,11 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+});
+const borderStyle = computed(() => {
+  return ['primary', 'secondary', 'danger'].includes(props.type)
+    ? { border: '1px solid white' }
+    : {};
 });
 
 const classParse = computed({
