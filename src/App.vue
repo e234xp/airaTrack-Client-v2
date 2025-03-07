@@ -65,3 +65,13 @@ onBeforeUnmount(() => {
 })
 
 </script>
+<style>
+body .border {
+  border-color: #e5e7eb !important;
+}
+
+body .border-general {
+  border-color: #646464 !important;
+}
+
+</style>

@@ -46,7 +46,7 @@
             </div>
             <div class="pr-4 grid content-center" v-if="admin">
               <AppButton :type="$route.path !== '/config' ? 'secondary' : 'primary'"
-                @click="$router.push({ path: '/config' })" class="!p-0">
+                @click="$router.push({ path: '/config' })" id="p-0">
                 <AppSvgIcon name="icon-gear" class="text-white w-8 h-8" />
               </AppButton>
             </div>
@@ -141,5 +141,9 @@
     height: 0px;
     position: absolute;
     width: 0px;
+  }
+
+  #p-0{
+    padding: 0px !important;
   }
 </style>
