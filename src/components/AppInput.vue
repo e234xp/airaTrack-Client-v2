@@ -16,6 +16,7 @@
       >
         <select
           v-model="input"
+          :disabled="disabled"
           class="shadow appearance-none border-general border
           rounded w-full h-10 px-4 text-gray-700
           focus:border-primary focus:shadow-outline focus:outline-none"
@@ -58,6 +59,7 @@
 
       <input
         v-else
+        :disabled="disabled"
         class="shadow appearance-none rounded
         w-full h-10 px-4 text-gray-700 leading-tight border
         focus:border-primary focus:shadow-outline focus:outline-none"
@@ -128,6 +130,10 @@ const props = defineProps({
   maxLength: {
     type: Number,
     default: -1,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
   }
 });
 

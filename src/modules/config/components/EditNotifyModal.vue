@@ -14,25 +14,29 @@
             <v-row>
               <v-col cols="6">
                 <!-- 事件名稱 -->
-                <AppLabel :label="$t('EventName')">
-                    <input v-model="eventName" type="text" placeholder="請輸入事件名稱" class="mt-2 w-full p-2 border rounded" />
+                <AppLabel :label="$t('EventName')" class="mt-2">
+                    <AppInput v-model:modelInput="eventName" placeholder="請輸入事件名稱" class="mb-4" dark />
+                    <p v-if="errors.eventName" class="text-red-500 text-sm mt-1">{{ errors.eventName }}</p>
                 </AppLabel>
               </v-col>
               <v-col cols="6">
                   <!-- 事件類別 -->
                   <AppLabel :label="$t('EventType')" class="mt-2">
-                      <select v-model="eventType" class="mt-2 w-full p-2 border rounded" disabled>
-                          <option value="http">HTTP</option>
-                          <option value="mail">Mail</option>
-                          <option value="line">Line</option>
-                          <option value="telegram">Telegram</option>
-                      </select>
+                    <AppInput
+                    type="select"
+                    class="mb-4"
+                    :options="eventTypeOptions"
+                    v-model:modelInput="eventType"
+                    dark
+                    :disabled="true"
+                  />
+                  <p v-if="errors.eventType" class="text-red-500 text-sm mt-1">{{ errors.eventType }}</p>
                   </AppLabel>
             </v-col>
             <v-col cols="6">
             <!-- 相簿多選 -->
             <AppLabel :label="$t('Album')" class="mt-2">
-                <div class="mt-2 w-full p-2 border rounded">
+                <div class="mt-2 w-full p-2 border rounded border-general">
                     <div v-for="album in albums" :key="album.albumId" class="flex items-center space-x-2">
                         <input 
                             type="checkbox" 
@@ -43,12 +47,13 @@
                         <label>{{ album.albumName}}</label>
                     </div>
                 </div>
+                <p v-if="errors.selectedAlbums" class="text-red-500 text-sm mt-1">{{ errors.selectedAlbums }}</p>
             </AppLabel>
           </v-col>
           <v-col cols="6">
             <!-- 相簿多選 -->
             <AppLabel :label="$t('LiveChannel')" class="mt-2">
-                <div class="mt-2 w-full p-2 border rounded">
+                <div class="mt-2 w-full p-2 border rounded border-general">
                     <div v-for="device in devices" :key="device.camera_id" class="flex items-center space-x-2">
                         <input 
                             type="checkbox" 
@@ -59,12 +64,13 @@
                         <label>{{ device.name}}</label>
                     </div>
                 </div>
+                <p v-if="errors.selectedDeviceds" class="text-red-500 text-sm mt-1">{{ errors.selectedDeviceds }}</p>
             </AppLabel>
           </v-col>
           <v-col cols="12">
             <!-- 備註 -->
             <AppLabel :label="$t('EventNote')" class="mt-2">
-                <textarea v-model="eventNote" placeholder="請輸入備註" class="mt-2 w-full p-2 border rounded"></textarea>
+                <textarea v-model="eventNote" placeholder="請輸入備註" class="mt-2 w-full p-2 border rounded border-general"></textarea>
             </AppLabel>
           </v-col>
           </v-row>
@@ -80,7 +86,9 @@
                         <v-col cols="6">
                             <!-- 主機位址 -->
                             <AppLabel :label="$t('HostAddress')">
-                                <input v-model="httpConfig.host" type="text" class="w-full p-2 border rounded" />
+                                <AppInput v-model:modelInput="httpConfig.host" 
+                                @valid="val => httpValid.host = val" 
+                                placeholder="請輸入主機位址"  dark :hasSubmitted="hasSubmitted" />
                             </AppLabel>
                         </v-col>
 
@@ -94,35 +102,43 @@
                         <v-col cols="6">
                             <!-- 帳號 -->
                             <AppLabel :label="$t('Username')">
-                                <input v-model="httpConfig.user" type="text" class="w-full p-2 border rounded" />
+                                <AppInput v-model:modelInput="httpConfig.user" 
+                                @valid="val => httpValid.user = val" 
+                                placeholder="請輸入帳號"  dark :hasSubmitted="hasSubmitted" />
                             </AppLabel>
                         </v-col>
 
                         <v-col cols="6">
                             <!-- 密碼 -->
                             <AppLabel :label="$t('Password')">
-                                <input v-model="httpConfig.pass" type="password" class="w-full p-2 border rounded" />
+                                <AppInput v-model:modelInput="httpConfig.pass" 
+                                @valid="val => httpValid.pass = val" 
+                                placeholder="請輸入密碼"  dark :hasSubmitted="hasSubmitted" />
                             </AppLabel>
                         </v-col>
 
                         <v-col cols="6">
                             <!-- 埠號 -->
                             <AppLabel :label="$t('Port')">
-                                <input v-model="httpConfig.port" type="text"  class="w-full p-2 border rounded" />
+                                <AppInput v-model:modelInput="httpConfig.port" 
+                                @valid="val => httpValid.port = val" 
+                                 dark :hasSubmitted="hasSubmitted" />
                             </AppLabel>
                         </v-col>
 
                         <v-col cols="6">
                             <!-- API Path -->
                             <AppLabel :label="$t('Path')">
-                                <input v-model="httpConfig.url" type="text" class="w-full p-2 border rounded" />
+                                <AppInput v-model:modelInput="httpConfig.url" 
+                                @valid="val => httpValid.url = val" 
+                                 dark :hasSubmitted="hasSubmitted" />
                             </AppLabel>
                         </v-col>
 
                         <v-col cols="12">
                             <!-- 顯示url -->
                             <AppLabel :label="$t('ShowCompleteUrl')">
-                                <input v-model="httpConfig.completeUrl" type="text" class="w-full p-2 border rounded" readonly />
+                                <input v-model="httpConfig.completeUrl" type="text" class="w-full p-2 border rounded border-general" readonly />
                             </AppLabel>
                         </v-col>
                     </v-row>
@@ -134,26 +150,29 @@
                         <v-col cols="12">
                             <!-- 方法 -->
                             <AppLabel :label="$t('Method')">
-                                <select v-model="httpConfig.method" class="mt-2 w-full p-2 border rounded">
-                                    <option value="GET">GET</option>
-                                    <option value="POST">POST</option>
-                                </select>
+                                <AppInput
+                                type="select"
+                                :options="methodOptions"
+                                v-model:modelInput="httpConfig.method"
+                                dark
+                              />
                             </AppLabel>
                         </v-col>
                         <v-col cols="3">
                             <!-- 欄位名稱 -->
                             <AppLabel :label="$t('FieldName')">
-                                <input v-model="httpConfig.fieldName" type="text" class="w-full p-2 border rounded" />
+                                <AppInput v-model:modelInput="httpConfig.fieldName"  dark />
                             </AppLabel>
                         </v-col>
                         <v-col cols="3">
                             <!-- 欄位值 -->
                             <AppLabel :label="$t('FieldData')">
-                                <select v-model="httpConfig.fieldData" class="w-full p-2 border rounded">
-                                    <option value="channel">channel</option>
-                                    <option value="time">time</option>
-                                    <option value="albumn">albumn</option>
-                                </select>
+                                <AppInput
+                                type="select"
+                                :options="fieldDataOptions"
+                                v-model:modelInput="httpConfig.fieldData"
+                                dark
+                              />
                             </AppLabel>
                         </v-col>
                         <v-col cols="3" class="d-flex align-center justify-center">
@@ -176,7 +195,7 @@
                         <v-col cols="12">
                             <!-- URL 參數 -->
                             <AppLabel :label="httpConfig.method === 'GET' ? $t('URLParameters') : $t('Body')">
-                                <textarea v-model="httpConfig.data_list" class="w-full p-2 border rounded" rows="3"></textarea>
+                                <textarea v-model="httpConfig.data_list" class="w-full p-2 border rounded border-general" rows="3"></textarea>
                             </AppLabel>
                         </v-col>
                     </v-row>
@@ -188,7 +207,7 @@
                         <v-col cols="12">
                             <!-- 擴充欄位 -->
                             <AppLabel :label="$t('ExtraFields')">
-                                <textarea v-model="httpConfig.note" class="w-full p-2 border rounded" rows="3"></textarea>
+                                <textarea v-model="httpConfig.note" class="w-full p-2 border rounded border-general" rows="3"></textarea>
                             </AppLabel>
                         </v-col>
                     </v-row>
@@ -200,26 +219,30 @@
                 <!-- SMTP 方法 -->
                 <v-col cols="4">
                   <AppLabel :label="$t('SMTPmethod')">
-                    <v-select
-                      v-model="mailConfig.SMTPmethod"
-                      :items="['SMTP', 'Other']"
-                      class="w-full "
-                      outlined
-                    />
+                    <AppInput
+                        type="select"
+                        :options="SMTPmethodOptions"
+                        v-model:modelInput="mailConfig.SMTPmethod"
+                        :hasSubmitted="hasSubmitted"
+                        dark />
                   </AppLabel>
                 </v-col>
 
                 <!-- 主機位址 -->
                 <v-col cols="4">
                   <AppLabel :label="$t('Host')">
-                    <input v-model="mailConfig.host" type="text" class="w-full p-2 border-lg border-background rounded" />
+                    <AppInput v-model:modelInput="mailConfig.host" 
+                    @valid="val => mailValid.host = val" dark 
+                    :hasSubmitted="hasSubmitted" />
                   </AppLabel>
                 </v-col>
 
                 <!-- 埠號 -->
                 <v-col cols="4">
                   <AppLabel :label="$t('Port')">
-                    <input v-model="mailConfig.port" type="text" class="w-full p-2 border-lg border-background rounded" />
+                    <AppInput v-model:modelInput="mailConfig.port" 
+                    @valid="val => mailValid.port = val" dark 
+                    :hasSubmitted="hasSubmitted" />
                   </AppLabel>
                 </v-col>
 
@@ -233,63 +256,75 @@
                 <!-- 帳號 -->
                 <v-col cols="4">
                   <AppLabel :label="$t('Account')">
-                    <input v-model="mailConfig.account" type="email" class="w-full p-2 border-lg border-background rounded" />
+                    <AppInput v-model:modelInput="mailConfig.account" 
+                    @valid="val => mailValid.account = val" dark 
+                    :hasSubmitted="hasSubmitted" />
                   </AppLabel>
                 </v-col>
 
                 <!-- 密碼 -->
                 <v-col cols="4">
                   <AppLabel :label="$t('Password')">
-                    <input v-model="mailConfig.password" type="password" class="w-full p-2 border-lg border-background rounded" />
+                    <AppInput v-model:modelInput="mailConfig.password" 
+                    @valid="val => mailValid.password = val" dark 
+                    :hasSubmitted="hasSubmitted" />
                   </AppLabel>
                 </v-col>
 
                 <!-- 寄件者 -->
                 <v-col cols="4">
                   <AppLabel :label="$t('Sender')">
-                    <input v-model="mailConfig.sender" type="text" class="w-full p-2 border-lg border-background rounded" />
+                    <AppInput v-model:modelInput="mailConfig.sender" 
+                    @valid="val => mailValid.sender = val" dark 
+                    :hasSubmitted="hasSubmitted" />
                   </AppLabel>
                 </v-col>
 
                 <!-- 主旨 -->
                 <v-col cols="4">
                   <AppLabel :label="$t('Title2')">
-                    <input v-model="mailConfig.subject" type="text" class="w-full p-2 border-lg border-background rounded" />
+                    <AppInput v-model:modelInput="mailConfig.subject" 
+                    @valid="val => mailValid.subject = val" dark 
+                    :hasSubmitted="hasSubmitted" />
                   </AppLabel>
                 </v-col>
 
                 <!-- 收件者 -->
                 <v-col cols="4">
                   <AppLabel :label="$t('Recipient')">
-                    <input v-model="mailConfig.recipient" type="email" class="w-full p-2 border-lg border-background rounded" />
+                    <AppInput v-model:modelInput="mailConfig.recipient" 
+                    @valid="val => mailValid.recipient = val" dark 
+                    :hasSubmitted="hasSubmitted" />
                   </AppLabel>
                 </v-col>
 
                 <!-- 副本 -->
                 <v-col cols="4">
                   <AppLabel :label="$t('CC')">
-                    <input v-model="mailConfig.cc" type="email" class="w-full p-2 border-lg border-background rounded" />
+                    <AppInput v-model:modelInput="mailConfig.cc" 
+                    @valid="val => mailValid.cc = val" dark 
+                    :hasSubmitted="hasSubmitted" />
                   </AppLabel>
                 </v-col>
 
                 <!-- 密件副本 -->
                 <v-col cols="4">
                   <AppLabel :label="$t('BCC')">
-                    <input v-model="mailConfig.bcc" type="email" class="w-full p-2 border-lg border-background rounded" />
+                    <AppInput v-model:modelInput="mailConfig.bcc" 
+                    @valid="val => mailValid.bcc = val" dark 
+                    :hasSubmitted="hasSubmitted" />
                   </AppLabel>
                 </v-col>
 
                 <!-- 語言 -->
                 <v-col cols="4">
                   <AppLabel :label="$t('Language')">
-                  <v-select
-                    v-model="mailConfig.language"
-                    :items="languageOptions"
-                    item-title="label"
-                    item-value="value"
-                    class="w-full"
-                    outlined
-                  />
+                    <AppInput
+                        type="select"
+                        :options="languageOptions"
+                        v-model:modelInput="mailConfig.language"
+                        :hasSubmitted="hasSubmitted"
+                        dark />
                 </AppLabel>
                 </v-col>
               </v-row>
@@ -300,7 +335,7 @@
                 <!-- 欄位選擇 -->
                 <v-col cols="6">
                   <AppLabel :label="$t('IncludeFields')">
-                    <div class="p-2 border-lg border-background rounded">
+                    <div class="p-2 border rounded border-general">
                       <div v-for="(value, key) in mailConfig.fields" :key="key" class="flex items-center space-x-2">
                         <input type="checkbox" v-model="mailConfig.fields[key]" class="w-4 h-4" />
                         <label>{{ key }}</label>
@@ -311,7 +346,7 @@
                 <!-- 擴充欄位 -->
                 <v-col cols="6">
                   <AppLabel :label="$t('AdditionalFields')">
-                    <textarea v-model="mailConfig.additionalFields" class="w-full p-2 border-lg border-background rounded" rows="5"></textarea>
+                    <textarea v-model="mailConfig.additionalFields" class="w-full p-2 border rounded border-general" rows="5"></textarea>
                   </AppLabel>
                 </v-col>
 
@@ -325,24 +360,26 @@
               <v-row>
                 <v-col cols="4">
                   <AppLabel :label="$t('Token')">
-                    <input v-model="lineConfig.token" type="text" class="w-full p-2 border-lg border-background rounded" />
+                    <AppInput v-model:modelInput="lineConfig.token" 
+                    @valid="val => lineValid.token = val" dark 
+                    :hasSubmitted="hasSubmitted"/>
                   </AppLabel>
                 </v-col>
                 <v-col cols="4">
                   <AppLabel :label="$t('GroupId')">
-                    <input v-model="lineConfig.groupid" type="text" class="w-full p-2 border-lg border-background rounded" />
+                    <AppInput v-model:modelInput="lineConfig.groupid" 
+                    @valid="val => lineValid.groupid = val" dark 
+                    :hasSubmitted="hasSubmitted"/>
                   </AppLabel>
                 </v-col>
                 <v-col cols="4">
                   <AppLabel :label="$t('Language')">
-                  <v-select
-                    v-model="lineConfig.language"
-                    :items="languageOptions"
-                    item-title="label"
-                    item-value="value"
-                    class="w-full"
-                    outlined
-                  />
+                    <AppInput
+                        type="select"
+                        :options="languageOptions"
+                        v-model:modelInput="lineConfig.language"
+                        :hasSubmitted="hasSubmitted"
+                        dark />
                 </AppLabel>
                 </v-col>
                 <v-divider class="my-4"></v-divider>
@@ -351,7 +388,7 @@
                 <!-- 欄位選擇 -->
                 <v-col cols="6">
                   <AppLabel :label="$t('IncludeFields')">
-                    <div class="p-2 border-lg border-background rounded">
+                    <div class="p-2 border rounded border-general">
                       <div v-for="(value, key) in lineConfig.fields" :key="key" class="flex items-center space-x-2">
                         <input type="checkbox" v-model="lineConfig.fields[key]" class="w-4 h-4" />
                         <label>{{ key }}</label>
@@ -362,7 +399,7 @@
                 <!-- 擴充欄位 -->
                 <v-col cols="6">
                   <AppLabel :label="$t('AdditionalFields')">
-                    <textarea v-model="lineConfig.additionalFields" class="w-full p-2 border-lg border-background rounded" rows="5"></textarea>
+                    <textarea v-model="lineConfig.additionalFields" class="w-full p-2 border rounded border-general" rows="5"></textarea>
                   </AppLabel>
                 </v-col>
 
@@ -440,7 +477,7 @@
 
 <script setup>
 
-import { ref, computed ,watch, onMounted, defineExpose, defineEmits} from 'vue';
+import { ref, computed ,watch, onMounted, defineExpose, defineEmits, reactive} from 'vue';
 import useStore from '@/modules/config/stores/index';
 import FullCalendar from '@fullcalendar/vue3';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -461,16 +498,92 @@ const selectedAlbums = ref([]);
 
 const devices = ref([])
 const selectedDeviceds= ref([])
+const hasSubmitted = ref(false);
 
-const languageOptions = ref([
-  { value: 'en', label: 'English' },
-  { value: 'zh', label: '繁體中文' },
-  { value: 'ja', label: '日本語' },
-  { value: 'es', label: 'Español' },
-  { value: 'fr', label: 'Français' },
-  { value: 'th', label: 'แบบไทย' },
-]);
+const errors = ref({
+  eventName: '',
+  eventType: '',
+  selectedAlbums: '',
+  selectedDeviceds: ''
+});
 
+const eventTypeOptions = {
+  HTTP: 'http',
+  Mail: 'mail',
+  Line: 'line',
+  Telegram: 'telegram'
+};
+
+const methodOptions = {
+  GET: "GET",
+  POST:"POST"
+}
+
+const fieldDataOptions = {
+  channel: "channel",
+  time:"time",
+  albumn:"albumn"
+}
+const SMTPmethodOptions = {
+  SMTP : "SMTP",
+  others: "others"
+}
+
+const languageOptions = {
+  English :"en",
+  繁體中文:"zh",
+  日本語: "ja",
+  Español : "es",
+  Français:"fr",
+  แบบไทย:"th",
+}
+
+const httpValid = reactive({
+  host: false,
+  user: false,
+  pass: false,
+  port: false,
+  url: false,
+  check: computed(() =>
+    httpValid.host &&
+    httpValid.user &&
+    httpValid.pass &&
+    httpValid.port &&
+    httpValid.url
+  )
+});
+
+const mailValid = reactive({
+  host: false,
+  port: false,
+  account: false,
+  password: false,
+  sender: false,
+  subject: false,
+  recipient: false,
+  cc: false,
+  bcc: false, // 可選填，預設 true
+  check: computed(() =>
+    mailValid.host &&
+    mailValid.port &&
+    mailValid.account &&
+    mailValid.password &&
+    mailValid.sender &&
+    mailValid.subject &&
+    mailValid.recipient &&
+    mailValid.cc &&
+    mailValid.bcc
+  )
+});
+
+const lineValid = reactive({
+  token: false,
+  groupid: false,
+  check: computed(() =>
+    lineValid.token &&
+    lineValid.groupid 
+  )
+});
 const httpConfig = ref("")
 const mailConfig = ref({
   SMTPmethod: "SMTP",
@@ -521,7 +634,65 @@ const stepDescription = computed(() => {
     }
   });
 
+  function validateFields(configObj, validObj, fieldKeys) {
+  fieldKeys.forEach((key) => {
+    validObj[key] = !!configObj[key];
+  });
+}
+  function validateStep1() {
+  let valid = true;
+  errors.value = {
+    eventName: '',
+    eventType: '',
+    selectedAlbums: '',
+    selectedDeviceds: ''
+  };
+
+  if (!eventName.value.trim()) {
+    errors.value.eventName = '事件名稱為必填';
+    valid = false;
+  }
+
+  if (!eventType.value) {
+    errors.value.eventType = '事件類別為必填';
+    valid = false;
+  }
+
+  if (selectedAlbums.value.length === 0) {
+    errors.value.selectedAlbums = '請至少選擇一個相簿';
+    valid = false;
+  }
+
+  if (selectedDeviceds.value.length === 0) {
+    errors.value.selectedDeviceds = '請至少選擇一個設備';
+    valid = false;
+  }
+
+  return valid;
+}
   function nextStep() {
+    if (currentStep.value === 1 && !validateStep1()) {
+    return; // 驗證沒通過就中止
+  }
+  if (currentStep.value === 2) {
+    console.log("httpValid.check",httpValid)
+    if (eventType.value === 'http' && !httpValid.check) {
+      hasSubmitted.value = true; 
+      console.warn('HTTP 設定尚未填寫完整');
+      return;
+    }
+
+    if (eventType.value === 'mail' && !mailValid.check) {
+      hasSubmitted.value = true; 
+      console.warn('Mail 設定尚未填寫完整');
+      return;
+    }
+    if((eventType.value === 'line' || eventType.value === 'telegram') && !lineValid.check) {
+      hasSubmitted.value = true; 
+      console.warn('line/telegram設定尚未填寫完整');
+      return;
+    }
+  }
     if (currentStep.value < 4) currentStep.value++;
     if (currentStep.value === 3) {
         refreshEvents()
@@ -850,6 +1021,7 @@ function convertToFullCalendar(weeklySchedule) {
 function setModal(type, notifyData) {
     if (type === '') {
     modal.value = type;
+    resetForm()
     return
   }
     modal.value = type;
@@ -874,6 +1046,8 @@ function setModal(type, notifyData) {
    
     if (eventType.value === 'http') {
         httpConfig.value = { ...notifyData };
+        // 手動驗證 http 欄位
+        validateFields(httpConfig.value, httpValid, ['host', 'user', 'pass', 'port', 'url']);
         console.log("http",httpConfig.value)
     } else if (eventType.value === 'mail') {
         mailConfig.value.SMTPmethod = notifyData.method;
@@ -884,12 +1058,15 @@ function setModal(type, notifyData) {
         mailConfig.value.password = notifyData.pass;
         mailConfig.value.sender = notifyData.from;
         mailConfig.value.subject = notifyData.subject;
-        mailConfig.value.recipient = notifyData.to;
-        mailConfig.value.cc = notifyData.cc;
-        mailConfig.value.bcc = notifyData.bcc;
+        mailConfig.value.recipient = notifyData.to.join(',');
+        mailConfig.value.cc = notifyData.cc.join(',');
+        mailConfig.value.bcc = notifyData.bcc.join(',');
         mailConfig.value.language = notifyData.language;
         mailConfig.value.additionalFields = notifyData.note;
         mailConfig.value.fields = notifyData.data_list;
+        validateFields(mailConfig.value, mailValid, [
+            'host', 'port', 'account', 'password', 'sender', 'subject', 'recipient', 'cc', 'bcc'
+        ]);
         console.log("mail",mailConfig.value)
     }else{
         lineConfig.value.token = notifyData.token;
@@ -897,6 +1074,7 @@ function setModal(type, notifyData) {
         lineConfig.value.language = notifyData.language;
         lineConfig.value.additionalFields = notifyData.note;
         lineConfig.value.fields = notifyData.data_list;
+        validateFields(lineConfig.value, lineValid, ['token', 'groupid']);
         console.log("line",lineConfig.value)
     }
      
