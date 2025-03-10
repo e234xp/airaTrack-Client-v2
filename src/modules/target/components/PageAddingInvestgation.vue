@@ -98,13 +98,17 @@
           <template v-for="map in mapData" :key="map.uuid">
             <div id="🔥CameraMap" v-show="map.name === currentMapFloor">
               <img id="🔥CameraMap__Img" draggable="false" :src="map.img">
-              <template v-for="camera in map.cameras" :key="map.uuid">
+              <template v-for="camera in map.cameras" :key="camera.camera_id">
                 <template v-if="camera.type === 'live'">
-                  <img id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live.png" draggable="false"
+                  <img v-show="camera.checked" id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live-active.png" draggable="false"
+                    :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
+                  <img  v-show="!camera.checked" id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live.png" draggable="false"
                     :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
                 </template>
                 <template v-else-if="camera.type === 'archive'">
-                  <img id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png" draggable="false"
+                  <img v-show="camera.checked" id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive-active.png" draggable="false"
+                    :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
+                    <img v-show="!camera.checked" id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png" draggable="false"
                     :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
                 </template>
               </template>
@@ -140,7 +144,7 @@ console.log("device", devices.value)
 
 const liveChannelAmount = ref(0);
 const archiveAmount = ref(0);
-const currentMapFloor = ref('1F')
+const currentMapFloor = ref('')
 
 const searchQuery = ref('')
 const mapData = ref({})
@@ -184,7 +188,9 @@ onMounted(async () => {
   const archiveDevices = await store.getAllArchDevices()
   devices.value = archiveDevices.data
 
+  // 顯示樓層下拉選單
   getMapFloorList()
+
   // 預設顯示 地圖樓層資料的第一筆
   currentMapFloor.value = Object.keys(mapFloorList.value)[0]
 });
@@ -211,14 +217,19 @@ async function fetchMaps() {
     const mapsArray = maps.data
     // **第二步：遍歷所有地圖，根據 `uuid` 取得圖片**
     const mapsWithImages = await Promise.all(
-      mapsArray.map(async (map) => {
+      mapsArray.map(async (item) => {
         try {
-          const image = await store.getMapImage(map.uuid);
+          const image = await store.getMapImage(item.uuid);
           const img = `data:image/png;base64, ${image.background}`
-          return { ...map, img }; // 合併圖片
+
+          return { 
+            ...item,
+            cameras: item.cameras.map(i => ({...i, checked: false})),
+            img
+          }; // 合併圖片, 新增 checked: 屬性
         } catch (error) {
-          console.error(`取得地圖圖片失敗 (UUID: ${map.uuid})`, error);
-          return { ...map, img: null }; // 取得圖片失敗時，設為 `null`
+          console.error(`取得地圖圖片失敗 (UUID: ${item.uuid})`, error);
+          return { ...item, img: null }; // 取得圖片失敗時，設為 `null`
         }
       })
     );
@@ -282,7 +293,6 @@ async function handleAddTask(theForm) {
 
   router.push({ path: '/investigation' });
 }
-mapData.value = JSON.parse(localStorage.getItem('map'))
 </script>
 
 <style>
