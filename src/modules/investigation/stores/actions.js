@@ -147,6 +147,50 @@ export async function putCase(payload) {
 // =============================================
 // GET
 // =============================================
+
+export async function getAllMapImgs(uuids = []) {
+  const userStore = useUserStore();
+
+  // 將 uuids 陣列轉成 URL query string 格式
+  const queryString = uuids.map(uuid => `uuids=${uuid}`).join('&');
+
+  const result = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/maps/imageAll?${queryString}`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  });
+
+  return result;
+}
+export async function getAllMapDataList(uuids = []) {
+  const userStore = useUserStore();
+
+  // 將 uuids 陣列轉成 URL query string 格式
+  const queryString = uuids.map(uuid => `uuids=${uuid}`).join('&');
+
+  const result = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/maps?${queryString}`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  });
+
+  return result;
+}
+export async function getAllTaskDevices(uuids = []) {
+  const userStore = useUserStore();
+
+  // 將 uuids 陣列轉成 URL query string 格式
+  const queryString = uuids.map(uuid => `uuids=${uuid}`).join('&');
+
+  const result = await spiderman.apiService({
+    url: `${spiderman.system.apiBaseUrl}/airaTracker/devices?${queryString}`,
+    method: 'get',
+    headers: { sessionId: userStore.sessionId }
+  });
+
+  return result;
+}
+
 export async function getTaskResultAll(taskId, score, idx = 0) {
   const userStore = useUserStore();
   const result = await spiderman.apiService({

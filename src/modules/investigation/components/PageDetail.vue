@@ -261,6 +261,50 @@
 
           <FullLayout>
             <template #header>
+              <div class="flex flex-wrap gap-4">
+              <div v-for="map in mergedMapList" :key="map.uuid" class="mb-4">
+                <!-- 地圖名稱 -->
+                <h2 class="text-white text-xl mb-2">{{ map.name }}</h2>
+
+                <!-- 地圖圖片 -->
+                <div class="relative w-96 border border-gray-500 rounded overflow-hidden">
+                  <img
+                    :src="`data:image/png;base64,${map.img}`"
+                    alt="map"
+                    class="w-full h-auto"
+                  />
+
+                  <!-- 將 camera 渲染在地圖上 -->
+                  <div
+                    v-for="camera in map.cameras"
+                    :key="camera.camera_id"
+                    class="absolute flex flex-col items-center"
+                    :style="{
+                      left: `${camera.position.x * 100}%`,
+                      top: `${camera.position.y * 100}%`,
+                      transform: 'translate(-50%, -50%)'
+                    }"
+                  >
+                    <!-- 圓點 -->
+                    <v-tooltip location="top">
+                      <template v-slot:activator="{ props }">
+                        <div
+                          class="w-4 h-4 rounded-full"
+                          v-bind="props"
+                          :class="deviceList.some(device => device.camera_id === camera.camera_id)
+                            ? 'bg-red-700'
+                            : 'bg-red-200'"
+                        ></div>
+                      </template>
+                      {{ camera.name }}
+                    </v-tooltip>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </template>
+
+            <template #grow>
               <div class="mx-4 my-2 flex justify-between text-white text-xl">
                 <div>
                   {{
@@ -277,9 +321,6 @@
                   }}
                 </div> -->
               </div>
-            </template>
-
-            <template #grow>
               <ResultVideo
                 :video-url="videoUrl"
                 :duration="videoDuration"
@@ -478,7 +519,7 @@ const { findDevice } = devicesStore;
 const store = useStore();
 const { selectedTask, pdfForm, bookmarkForm, archiveForm, fromCase, dataType } = storeToRefs(store);
 const { setModal, setBookmarkForm, setPdfForm, setArchiveForm, setSelectedExport, 
-  getTaskResultAll, addBookmark, addCase, putCase } = store;
+  getTaskResultAll, addBookmark, addCase, putCase ,getAllTaskDevices, getAllMapDataList, getAllMapImgs} = store;
 const { setPage, setDataType, startDownload, batchDownloadVideo, deleteDownloadVideo } = store;
 
 const targetStore = useTarget();
@@ -515,6 +556,8 @@ const printPdf = ref(null);
 const serverAddress = ref('');
 const authKey = ref(null);
 const timerId = ref(0);
+const mergedMapList = ref(null)
+const deviceList = ref([]);
 
 const rangeList = new Map()
   .set('10 m', 10 * 60 * 1000)
@@ -561,7 +604,9 @@ const currentPage = ref(1);
 const caseList = ref([]);
 
 const targetDevice = computed(() => findDevice(selectedTask.value.target.camera_id));
+
 const taskResults = ref([]);
+
 const targetScore = ref(0);
 watch(targetScore, async (newScore, oldScore) => {
   if (newScore === 0) return;
@@ -583,10 +628,31 @@ async function setTaskResults(score, filter = false) {
   }, 500);
   if (!fromCase.value) {
     ({ result: taskResults.value, score_count: scoreCount.value, pagination: pagination.value } = await getTaskResultAll(selectedTask.value.task_id, score, ((currentPage.value - 1) * pageCount.value)));
+    console.log(taskResults.value)
+    const ids = taskResults.value.map(item => item.highest.cid);
+    console.log("ids",ids);
+    const deviceData = await getAllTaskDevices(ids);
+    console.log("device data from API:", deviceData);
+    deviceList.value = deviceData.data; // 儲存 device 資料
+    console.log("deviceList",deviceList.value)
+    const applyToMapList = deviceData.data.map(device => device.applyToMap[0]);
+    console.log(applyToMapList);
+    const mapDatas = await getAllMapDataList(applyToMapList)
+    console.log("mapDatas",mapDatas);
+    const mapImgs = await getAllMapImgs(applyToMapList)
+    console.log("mapImgs",mapImgs);
+    const imgMap = new Map(mapImgs.map(img => [img.uuid, img.background]));
+    mergedMapList.value = mapDatas.data.map(map => ({
+      ...map,
+      img: imgMap.get(map.uuid) || null
+    }));
+    console.log("mergedMapList",mergedMapList.value)
     if (filter) filterTaskResults();
+   
     clearTimeout(timerId.value);
   } else {
     taskResults.value = selectedTask.value.facesData;
+    console.log(taskResults.value)
     clearTimeout(timerId.value);
   }
   if (taskResults.value.length !== 0) setVideoResultIndex({ index: 0, results: taskResults.value, range: range.value });
@@ -850,6 +916,8 @@ function onNextPage() {
 onBeforeMount(async () => {
   ({ face_merge_score: targetScore.value } = await getTrackConfig());
 })
+
+
 </script>
 
 <style lang="scss">
