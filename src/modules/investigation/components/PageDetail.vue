@@ -261,47 +261,77 @@
 
           <FullLayout>
             <template #header>
-              <div class="flex flex-wrap gap-4">
-              <div v-for="map in mergedMapList" :key="map.uuid" class="mb-4">
-                <!-- 地圖名稱 -->
-                <h2 class="text-white text-xl mb-2">{{ map.name }}</h2>
-
-                <!-- 地圖圖片 -->
-                <div class="relative w-96 border border-gray-500 rounded overflow-hidden">
-                  <img
-                    :src="`data:image/png;base64,${map.img}`"
-                    alt="map"
-                    class="w-full h-auto"
-                  />
-
-                  <!-- 將 camera 渲染在地圖上 -->
-                  <div
-                    v-for="camera in map.cameras"
-                    :key="camera.camera_id"
-                    class="absolute flex flex-col items-center"
-                    :style="{
-                      left: `${camera.position.x * 100}%`,
-                      top: `${camera.position.y * 100}%`,
-                      transform: 'translate(-50%, -50%)'
-                    }"
+              <div class="relative w-full flex flex-wrap gap-4" ref="mapWrapper">
+                  <!-- 地圖箭頭畫布（寬高要和地圖 wrapper 一致） -->
+                  <svg
+                    class="absolute top-0 left-0 z-50 pointer-events-none"
+                    :width="svgWidth"
+                    :height="svgHeight"
                   >
-                    <!-- 圓點 -->
-                    <v-tooltip location="top">
-                      <template v-slot:activator="{ props }">
-                        <div
-                          class="w-4 h-4 rounded-full"
-                          v-bind="props"
-                          :class="deviceList.some(device => device.camera_id === camera.camera_id)
-                            ? 'bg-red-700'
-                            : 'bg-red-200'"
-                        ></div>
-                      </template>
-                      {{ camera.name }}
-                    </v-tooltip>
+                    <template v-for="(arrow, i) in svgArrows" :key="i">
+                      <line
+                        :x1="arrow.fromX"
+                        :y1="arrow.fromY"
+                        :x2="arrow.toX"
+                        :y2="arrow.toY"
+                        stroke="red"
+                        stroke-width="2"
+                        marker-end="url(#arrowhead)"
+                      />
+                    </template>
+
+                    <!-- 定義箭頭形狀 -->
+                    <defs>
+                      <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5"
+                        orient="auto" markerUnits="strokeWidth">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="red"/>
+                      </marker>
+                    </defs>
+                  </svg>
+
+                  <!-- 地圖渲染區 -->
+                  <div
+                    v-for="map in mergedMapList"
+                    :key="map.uuid"
+                    class="mb-4"
+                    :ref="el => setMapRef(map.uuid, el)"
+                  >
+                    <h2 class="text-white text-xl mb-2">{{ map.name }}</h2>
+                    <div class="relative w-96 border border-gray-500 rounded overflow-hidden">
+                      <img
+                        :src="`data:image/png;base64,${map.img}`"
+                        alt="map"
+                        class="w-full h-auto"
+                      />
+                      
+                      <!-- 將 camera 渲染在地圖上 -->
+                    <div
+                      v-for="camera in map.cameras"
+                      :key="camera.camera_id"
+                      class="absolute flex flex-col items-center"
+                      :style="{
+                        left: `${camera.position.x * 100}%`,
+                        top: `${camera.position.y * 100}%`,
+                        transform: 'translate(-50%, -50%)'
+                      }"
+                    >
+                      <!-- 圓點 -->
+                      <v-tooltip location="top">
+                        <template v-slot:activator="{ props }">
+                          <div
+                            class="w-4 h-4 rounded-full"
+                            v-bind="props"
+                            :class="deviceList.some(device => device.camera_id === camera.camera_id)
+                              ? 'bg-red-700'
+                              : 'bg-red-200'"
+                          ></div>
+                        </template>
+                        {{ camera.name }}
+                      </v-tooltip>
+                    </div>
+                  </div>
                   </div>
                 </div>
-              </div>
-            </div>
             </template>
 
             <template #grow>
@@ -559,6 +589,63 @@ const timerId = ref(0);
 const mergedMapList = ref(null)
 const deviceList = ref([]);
 
+const mapWrapper = ref(null);
+const svgWidth = ref(0);
+const svgHeight = ref(0);
+const svgArrows = ref([]);
+
+// 存每張 map 的 DOM 位置（給絕對定位用）
+const mapRefs = reactive({});
+function setMapRef(uuid, el) {
+  if (el) mapRefs[uuid] = el;
+}
+
+function computeSvgArrows(ids) {
+  // 儲存 camera_id 對應的地圖與相對位置
+  const cameraPosMap = new Map();
+  console.log("mergedMapList.value",mergedMapList.value)
+  const mapBox1 = mapRefs["08cc078e-b6d8-41fe-be66-bf9e78bd342b"].getBoundingClientRect();
+  console.log("mapBox1",mapBox1)
+  mergedMapList.value.forEach((map) => {
+    const mapBox = mapRefs[map.uuid]?.getBoundingClientRect();
+    console.log("mapbox",mapBox)
+    if (!mapBox) return;
+    const RADIUS_OFFSET = 8;
+    map.cameras.forEach((camera) => {
+      const absX = mapBox.left + camera.position.x * mapBox.width + RADIUS_OFFSET;
+      const absY = mapBox.top +28 + camera.position.y * (mapBox.height-38) + RADIUS_OFFSET;
+      cameraPosMap.set(camera.camera_id, {
+        x: absX,
+        y: absY
+      });
+    });
+  });
+
+  // SVG 畫布定位基準點
+  const wrapperBox = mapWrapper.value?.getBoundingClientRect();
+  if (!wrapperBox) return;
+
+  // 設定 SVG 大小
+  svgWidth.value = wrapperBox.width;
+  svgHeight.value = wrapperBox.height;
+
+  // 把 ids 中相鄰的點轉成線段
+  const arrows = [];
+  for (let i = 0; i < ids.length - 1; i++) {
+    const from = cameraPosMap.get(ids[i]);
+    const to = cameraPosMap.get(ids[i + 1]);
+    if (from && to) {
+      arrows.push({
+        fromX: from.x - wrapperBox.left,
+        fromY: from.y - wrapperBox.top,
+        toX: to.x - wrapperBox.left,
+        toY: to.y - wrapperBox.top
+      });
+    }
+  }
+
+  svgArrows.value = arrows;
+}
 const rangeList = new Map()
   .set('10 m', 10 * 60 * 1000)
   .set('30 m', 30 * 60 * 1000)
@@ -647,6 +734,7 @@ async function setTaskResults(score, filter = false) {
       img: imgMap.get(map.uuid) || null
     }));
     console.log("mergedMapList",mergedMapList.value)
+    computeSvgArrows(ids);
     if (filter) filterTaskResults();
    
     clearTimeout(timerId.value);
