@@ -391,6 +391,9 @@ async function handleAddTask(theForm) {
   position: relative;
   grid-column: 8 / -1;
   grid-row: 4 / -1;
+  aspect-ratio: 16 / 9;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 #🔥CameraMap__Img {

@@ -90,9 +90,9 @@
 
       <div v-if="currentStep === 3">
               <h3 class="mb-2">{{ $t('PlaceCamerasOnMap') }}</h3>
-              <div class="relative border w-full h-[600px] bg-gray-200" @dragover.prevent>
+              <div class="relative border w-full aspect-video bg-red-200" @dragover.prevent>
                   <div v-if="mapImage" class="relative w-full h-full">
-                      <img ref="imgRef" :src="mapImage" class="absolute top-0 left-0 w-full h-full object-contain" @load="onImageLoad"/>
+                      <img ref="imgRef" :src="mapImage" class="absolute top-0 left-0 w-full h-full" @load="onImageLoad"/>
 
                       <!-- 即時攝影機 (Live) -->
                       <div v-for="(camera, index) in selectedLiveCameras" :key="camera.camera_id"
@@ -142,8 +142,8 @@
       <div v-if="currentStep === 4">
         <!-- 完成步驟 -->
         <h3 class="mb-2">{{ $t('FinalMapPreview') }}</h3>
-        <div class="relative border w-full h-[600px] bg-gray-200">
-          <img v-if="mapImage" :src="mapImage" class="absolute top-0 left-0 w-full h-full object-contain" />
+        <div class="relative border w-full aspect-video bg-gray-200">
+          <img v-if="mapImage" :src="mapImage" class="absolute top-0 left-0 w-full h-full" />
           <div v-for="(camera, index) in selectedLiveCameras" :key="camera.camera_id"
             class="absolute"
             :style="{ left: camera.x + 'px', top: camera.y + 'px' }">
