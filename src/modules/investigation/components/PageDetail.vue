@@ -604,8 +604,6 @@ function computeSvgArrows(ids) {
   // 儲存 camera_id 對應的地圖與相對位置
   const cameraPosMap = new Map();
   console.log("mergedMapList.value",mergedMapList.value)
-  // const mapBox1 = mapRefs["08cc078e-b6d8-41fe-be66-bf9e78bd342b"].getBoundingClientRect();
-  // console.log("mapBox1",mapBox1)
   mergedMapList.value.forEach((map) => {
     const mapBox = mapRefs[map.uuid]?.getBoundingClientRect();
     console.log("mapbox",mapBox)
@@ -734,11 +732,14 @@ async function setTaskResults(score, filter = false) {
       img: imgMap.get(map.uuid) || null
     }));
     console.log("mergedMapList",mergedMapList.value)
-    computeSvgArrows(ids);
+          setTimeout(() => {
+        computeSvgArrows(ids);
+      }, 100);
     if (filter) filterTaskResults();
    
     clearTimeout(timerId.value);
   } else {
+    console.log("1111")
     taskResults.value = selectedTask.value.facesData;
     console.log(taskResults.value)
     clearTimeout(timerId.value);
