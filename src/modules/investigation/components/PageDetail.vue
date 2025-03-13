@@ -279,6 +279,17 @@
                         marker-end="url(#arrowhead)"
                       />
                     </template>
+                    <!-- 高亮箭頭（最後畫） -->
+                    <line
+                      v-if="currentArrow"
+                      :x1="currentArrow.fromX"
+                      :y1="currentArrow.fromY"
+                      :x2="currentArrow.toX"
+                      :y2="currentArrow.toY"
+                      stroke="#00FF00"
+                      stroke-width="4"
+                      marker-end="url(#arrowhead-highlight)"
+                    />
 
                     <!-- 定義箭頭形狀 -->
                     <defs>
@@ -286,7 +297,11 @@
                         orient="auto" markerUnits="strokeWidth">
                         <polygon points="0 0, 10 3.5, 0 7" fill="red"/>
                       </marker>
-                    </defs>
+                      <marker id="arrowhead-highlight" markerWidth="10" markerHeight="7" refX="10" refY="3.5"
+                        orient="auto" markerUnits="strokeWidth">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#00FF00"/>
+                      </marker>
+                     </defs>
                   </svg>
 
                   <!-- 地圖渲染區 -->
@@ -593,6 +608,8 @@ const mapWrapper = ref(null);
 const svgWidth = ref(0);
 const svgHeight = ref(0);
 const svgArrows = ref([]);
+const cameraPosMap = new Map();
+const currentArrow = ref(null);
 
 // 存每張 map 的 DOM 位置（給絕對定位用）
 const mapRefs = reactive({});
@@ -602,7 +619,7 @@ function setMapRef(uuid, el) {
 
 function computeSvgArrows(ids) {
   // 儲存 camera_id 對應的地圖與相對位置
-  const cameraPosMap = new Map();
+  cameraPosMap.clear();
   console.log("mergedMapList.value",mergedMapList.value)
   mergedMapList.value.forEach((map) => {
     const mapBox = mapRefs[map.uuid]?.getBoundingClientRect();
@@ -642,7 +659,34 @@ function computeSvgArrows(ids) {
     }
   }
 
-  svgArrows.value = arrows;
+  svgArrows.value = arrows.map(arrow => ({ ...arrow, highlight: false }));
+}
+
+function highlightCurrentArrow() {
+  const current = videoResultIndex.value;
+  if (current >= taskResults.value.length - 1) {
+    currentArrow.value = null;
+    return;
+  }
+console.log("1111")
+  const fromId = taskResults.value[current].highest.cid;
+  const toId = taskResults.value[current + 1].highest.cid;
+
+  const from = cameraPosMap.get(fromId);
+  const to = cameraPosMap.get(toId);
+  const wrapperBox = mapWrapper.value?.getBoundingClientRect();
+  if (!from || !to || !wrapperBox) {
+    currentArrow.value = null;
+    return;
+  }
+  console.log("22222")
+  currentArrow.value = {
+    fromX: from.x - wrapperBox.left,
+    fromY: from.y - wrapperBox.top,
+    toX: to.x - wrapperBox.left,
+    toY: to.y - wrapperBox.top
+  };
+  console.log("currentArrow",currentArrow.value)
 }
 const rangeList = new Map()
   .set('10 m', 10 * 60 * 1000)
@@ -1006,7 +1050,10 @@ onBeforeMount(async () => {
   ({ face_merge_score: targetScore.value } = await getTrackConfig());
 })
 
-
+watch(videoResultIndex, () => {
+  console.log("videoResultIndex",videoResultIndex.value)
+  highlightCurrentArrow();
+});
 </script>
 
 <style lang="scss">
