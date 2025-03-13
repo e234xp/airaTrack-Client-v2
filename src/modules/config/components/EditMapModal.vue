@@ -23,7 +23,7 @@
                 <input type="file" accept="image/*" class="mt-2 w-full p-2 border rounded" @change="onUploadMap" />
             </AppLabel>
             
-            <img v-if="mapImage" :src="mapImage" class="mt-4 w-full h-96 object-contain border" />
+            <img v-if="mapImage" :src="mapImage" class="mt-4 w-full change-height object-contain" />
         </div>
   
         <!-- 🔵 **步驟 2: 選擇攝影機** -->
