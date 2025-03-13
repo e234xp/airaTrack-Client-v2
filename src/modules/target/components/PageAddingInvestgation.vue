@@ -140,8 +140,6 @@ const { setPage, getLicense, addTask } = store;
 const devicesStore = useDevices();
 const { devices, livedevices } = storeToRefs(devicesStore);
 
-console.log("device", devices.value)
-
 const liveChannelAmount = ref(0);
 const archiveAmount = ref(0);
 const currentMapFloor = ref('')
@@ -209,11 +207,9 @@ function getMapFloorList() {
 }
 
 async function fetchMaps() {
-  console.log(" 重新獲取地圖資料...");
   try {
     // **第一步：取得所有地圖（不含圖片）**
     const maps = await store.getAllMaps();
-    console.log("地圖列表取得成功:", maps);
     const mapsArray = maps.data
     // **第二步：遍歷所有地圖，根據 `uuid` 取得圖片**
     const mapsWithImages = await Promise.all(
@@ -236,7 +232,6 @@ async function fetchMaps() {
 
     // **第三步：更新表格數據**
     mapData.value = mapsWithImages;
-    console.log("地圖資料更新完成:", mapData.value);
   } catch (error) {
     console.error("取得地圖資料失敗:", error);
   }
