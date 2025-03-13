@@ -30,7 +30,9 @@
               </AppLabel>
             </div>
           </div>
+
           <img id="🔥LineX" src="@/assets/images/line-x.png">
+
           <div id="🔥CameraList">
             <div id="🔥CameraList__X">
               <div class="w-1/2">
@@ -71,8 +73,9 @@
                         form.archchannels = spiderman.lodash.cloneDeep(devices);
                       }
                     }">{{ $t('All') }}</AppCheckBox>
-                  <AppCheckBox v-for="device in filterArchiveDevices" :key="device.camera_id" class="mb-2 text-base text-white"
-                    :placeholder="device.name" v-model:modelInput="form.archchannels" :value="device">{{ device.name }}
+                  <AppCheckBox v-for="device in filterArchiveDevices" :key="device.camera_id"
+                    class="mb-2 text-base text-white" :placeholder="device.name" v-model:modelInput="form.archchannels"
+                    :value="device">{{ device.name }}
                   </AppCheckBox>
                 </div>
               </div>
@@ -89,31 +92,41 @@
           </div>
 
           <img id="🔥LineY" src="@/assets/images/line-y.png">
-          
+
           <div id="🔥CameraMapSelect">
-            <AppInput dark  class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select"
-              :options="mapFloorList" v-model:modelInput="currentMapFloor" />
+            <AppInput dark class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select" :options="mapFloorList"
+              v-model:modelInput="currentMapFloor" />
           </div>
 
-          <template v-for="map in mapData" :key="map.uuid">
-            <div id="🔥CameraMap" v-show="map.name === currentMapFloor">
+          <template v-for="map in currentMapData" :key="map.uuid">
+            <div id="🔥CameraMap" v-show="map.name">
               <img id="🔥CameraMap__Img" draggable="false" :src="map.img">
               <template v-for="camera in map.cameras" :key="camera.camera_id">
-                <template v-if="camera.type === 'live'">
-                  <img v-show="camera.checked" id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live-active.png" draggable="false"
-                    :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
-                  <img  v-show="!camera.checked" id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live.png" draggable="false"
-                    :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
+
+                <template v-for="livedevice in livedevices" :key="livedevice.camera_id">
+                  <template v-if="livedevice.name === camera.name">
+                    <img v-show="camera.checked" id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live-active.png"
+                      draggable="false" @click="toggleImgLive(livedevice, camera)"
+                      :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
+                    <img v-show="!camera.checked" id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live.png"
+                      draggable="false" @click="toggleImgLive(livedevice, camera)"
+                      :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
+                  </template>
                 </template>
-                <template v-else-if="camera.type === 'archive'">
-                  <img v-show="camera.checked" id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive-active.png" draggable="false"
-                    :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
-                    <img v-show="!camera.checked" id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png" draggable="false"
-                    :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
+
+                <template v-for="device in devices" :key="device.camera_id">
+                  <template v-if="device.name === camera.name">
+                    <img v-show="camera.checked" id="🔥CameraMap__ArchiveDot"
+                      src="@/assets/images/camera-archive-active.png" draggable="false" @click="toggleImgArch(device, camera)"
+                      :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
+                    <img v-show="!camera.checked" id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png" @click="toggleImgArch(device, camera)"
+                      draggable="false" :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
+                  </template>
                 </template>
               </template>
             </div>
           </template>
+
         </section>
       </template>
 
@@ -145,97 +158,9 @@ const archiveAmount = ref(0);
 const currentMapFloor = ref('')
 
 const searchQuery = ref('')
-const mapData = ref({})
+const mapData = ref([])
+const currentMapData = computed(() => mapData.value.filter(item => item.name === currentMapFloor.value))
 const mapFloorList = ref({})
-const filterArchiveDevices = computed(() => {
-  if (!searchQuery.value) {
-    return devices.value; // 如果搜尋框為空，顯示所有項目
-  }
-  return devices.value.filter(device =>
-    device.name.toLowerCase().includes(searchQuery.value.toLowerCase()) // 小寫比對
-  )
-})
-
-const filterLiveDevices = computed(() => {
-  if (!searchQuery.value) {
-    return livedevices.value; // 如果搜尋框為空，顯示所有項目
-  }
-  return livedevices.value.filter(liveDevice =>
-    liveDevice.name.toLowerCase().includes(searchQuery.value.toLowerCase()) // 小寫比對
-  )
-})
-
-onMounted(async () => {
-  const { license } = await getLicense();
-
-  // filter 掉過期的
-  const validLicenses = license.filter(({ trial_end_time: trialEndTime }) => {
-    const now = spiderman.dayjs().valueOf();
-    return trialEndTime ? now > trialEndTime : true;
-  });
-
-  
-  // 找出兩個 channel 的 limit
-  liveChannelAmount.value = validLicenses
-    .reduce((accumulator, current) => accumulator + current.channel_amount, 0);
-
-  archiveAmount.value = validLicenses.some(({ frs }) => frs) ? 999 : 0;
-
-  fetchMaps()
-
-  const archiveDevices = await store.getAllArchDevices()
-  devices.value = archiveDevices.data
-
-  // 顯示樓層下拉選單
-  getMapFloorList()
-
-  // 預設顯示 地圖樓層資料的第一筆
-  currentMapFloor.value = Object.keys(mapFloorList.value)[0]
-});
-
-function getMapFloorList() {
-  mapFloorList.value = mapData.value?.reduce((accumulator, currentItem) => {
-    // 每次迭代，currentItem 都是數組中的一個元素
-    // accumulator 是累積的結果，初始值是 {}
-    
-    // 將當前 item 的 name 作為 key 和 value
-    accumulator[currentItem.name] = currentItem.name;
-    
-    // 返回更新後的 accumulator
-    return accumulator;
-  }, {})
-}
-
-async function fetchMaps() {
-  try {
-    // **第一步：取得所有地圖（不含圖片）**
-    const maps = await store.getAllMaps();
-    const mapsArray = maps.data
-    // **第二步：遍歷所有地圖，根據 `uuid` 取得圖片**
-    const mapsWithImages = await Promise.all(
-      mapsArray.map(async (item) => {
-        try {
-          const image = await store.getMapImage(item.uuid);
-          const img = `data:image/png;base64, ${image.background}`
-
-          return { 
-            ...item,
-            cameras: item.cameras.map(i => ({...i, checked: false})),
-            img
-          }; // 合併圖片, 新增 checked: 屬性
-        } catch (error) {
-          console.error(`取得地圖圖片失敗 (UUID: ${item.uuid})`, error);
-          return { ...item, img: null }; // 取得圖片失敗時，設為 `null`
-        }
-      })
-    );
-
-    // **第三步：更新表格數據**
-    mapData.value = mapsWithImages;
-  } catch (error) {
-    console.error("取得地圖資料失敗:", error);
-  }
-}
 
 const form = reactive({
   target: {
@@ -263,6 +188,87 @@ const form = reactive({
   archchannels: [],
 });
 
+const filterArchiveDevices = computed(() => {
+  if (!searchQuery.value) {
+    return devices.value; // 如果搜尋框為空，顯示所有項目
+  }
+  return devices.value.filter(device =>
+    device.name.toLowerCase().includes(searchQuery.value.toLowerCase()) // 小寫比對
+  )
+})
+
+const filterLiveDevices = computed(() => {
+  if (!searchQuery.value) {
+    return livedevices.value; // 如果搜尋框為空，顯示所有項目
+  }
+  return livedevices.value.filter(liveDevice =>
+    liveDevice.name.toLowerCase().includes(searchQuery.value.toLowerCase()) // 小寫比對
+  )
+})
+
+async function handleAddTask(theForm) {
+  const taskForm = spiderman.lodash.cloneDeep(theForm);
+  taskForm.search_start_time = spiderman.dayjs(theForm.search_start_time).valueOf();
+  taskForm.search_end_time = spiderman.dayjs(theForm.search_end_time).valueOf();
+
+  await addTask(taskForm);
+
+  router.push({ path: '/investigation' });
+}
+
+function toggleImgLive(deviceData, cameraData) {
+  cameraData.checked = !cameraData.checked
+}
+
+function toggleImgArch(deviceData, cameraData) {
+  cameraData.checked = !cameraData.checked
+}
+
+
+function getMapFloorList() {
+  mapFloorList.value = mapData.value?.reduce((accumulator, currentItem) => {
+    // 每次迭代，currentItem 都是數組中的一個元素
+    // accumulator 是累積的結果，初始值是 {}
+
+    // 將當前 item 的 name 作為 key 和 value
+    accumulator[currentItem.name] = currentItem.name;
+
+    // 返回更新後的 accumulator
+    return accumulator;
+  }, {})
+}
+
+async function fetchMaps() {
+  try {
+    // **第一步：取得所有地圖（不含圖片）**
+    const maps = await store.getAllMaps();
+    const mapsArray = maps.data
+    // **第二步：遍歷所有地圖，根據 `uuid` 取得圖片**
+    const mapsWithImages = await Promise.all(
+      mapsArray.map(async (item) => {
+        try {
+          const image = await store.getMapImage(item.uuid);
+          const img = `data:image/png;base64, ${image.background}`
+
+          return {
+            ...item,
+            cameras: item.cameras.map(i => ({ ...i, checked: false })),
+            img
+          }; // 合併圖片, 新增 checked: 屬性
+        } catch (error) {
+          console.error(`取得地圖圖片失敗 (UUID: ${item.uuid})`, error);
+          return { ...item, img: null }; // 取得圖片失敗時，設為 `null`
+        }
+      })
+    );
+
+    // **第三步：更新表格數據**
+    mapData.value = mapsWithImages;
+  } catch (error) {
+    console.error("取得地圖資料失敗:", error);
+  }
+}
+
 watch(() => form.search_start_time, () => {
   const start = spiderman.dayjs(form.search_start_time);
   const end = spiderman.dayjs(form.search_end_time);
@@ -279,15 +285,33 @@ watch(() => form.search_end_time, () => {
   }
 });
 
-async function handleAddTask(theForm) {
-  const taskForm = spiderman.lodash.cloneDeep(theForm);
-  taskForm.search_start_time = spiderman.dayjs(theForm.search_start_time).valueOf();
-  taskForm.search_end_time = spiderman.dayjs(theForm.search_end_time).valueOf();
+onMounted(async () => {
+  const { license } = await getLicense();
 
-  await addTask(taskForm);
+  // filter 掉過期的
+  const validLicenses = license.filter(({ trial_end_time: trialEndTime }) => {
+    const now = spiderman.dayjs().valueOf();
+    return trialEndTime ? now > trialEndTime : true;
+  });
 
-  router.push({ path: '/investigation' });
-}
+
+  // 找出兩個 channel 的 limit
+  liveChannelAmount.value = validLicenses
+    .reduce((accumulator, current) => accumulator + current.channel_amount, 0);
+
+  archiveAmount.value = validLicenses.some(({ frs }) => frs) ? 999 : 0;
+
+  fetchMaps()
+
+  const archiveDevices = await store.getAllArchDevices()
+  devices.value = archiveDevices.data
+
+  // 顯示樓層下拉選單
+  getMapFloorList()
+
+  // 預設顯示 地圖樓層資料的第一筆
+  currentMapFloor.value = Object.keys(mapFloorList.value)[0]
+});
 </script>
 
 <style>
@@ -399,11 +423,13 @@ async function handleAddTask(theForm) {
   position: absolute;
   width: 24px;
   height: 24px;
+  user-select: none;
 }
 
 #🔥CameraMap__ArchiveDot {
   position: absolute;
   width: 24px;
   height: 24px;
+  user-select: none;
 }
 </style>
