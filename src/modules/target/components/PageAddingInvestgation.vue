@@ -42,6 +42,7 @@
                 </div>
                 <div class="border-t-4 border-live-channel rounded bg-third py-2 px-4 overflow-y-auto"
                   style="height: calc(100% - 4rem)">
+
                   <AppCheckBox class="pb-2 mb-2 text-base text-white border-b-2 border-dashed border-panel"
                     :placeholder="$t('All')" :checked="form.livechannels.length === livedevices.length" @on-change="() => {
                       if (form.livechannels.length === livedevices.length) {
@@ -50,10 +51,13 @@
                         form.livechannels = spiderman.lodash.cloneDeep(livedevices);
                       }
                     }">{{ $t('All') }}</AppCheckBox>
+
                   <AppCheckBox v-for="livedevice in filterLiveDevices" :key="livedevice.camera_id"
                     class="mb-2 text-base text-white" :placeholder="livedevice.name"
-                    v-model:modelInput="form.livechannels" :value="livedevice">{{ livedevice.name }}
+                    @click.prevent="toggleClickLive(livedevice)" v-model:modelInput="form.livechannels"
+                    :value="livedevice">{{ livedevice.name }}
                   </AppCheckBox>
+
                 </div>
               </div>
 
@@ -117,10 +121,12 @@
                 <template v-for="device in devices" :key="device.camera_id">
                   <template v-if="device.name === camera.name">
                     <img v-show="camera.checked" id="🔥CameraMap__ArchiveDot"
-                      src="@/assets/images/camera-archive-active.png" draggable="false" @click="toggleImgArch(device, camera)"
+                      src="@/assets/images/camera-archive-active.png" draggable="false"
+                      @click="toggleImgArch(device, camera)"
                       :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
-                    <img v-show="!camera.checked" id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png" @click="toggleImgArch(device, camera)"
-                      draggable="false" :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
+                    <img v-show="!camera.checked" id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png"
+                      @click="toggleImgArch(device, camera)" draggable="false"
+                      :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
                   </template>
                 </template>
               </template>
@@ -217,13 +223,79 @@ async function handleAddTask(theForm) {
 }
 
 function toggleImgLive(deviceData, cameraData) {
-  cameraData.checked = !cameraData.checked
+  // 點擊後 地圖 icon active
+  if (cameraData.checked === false) {
+    cameraData.checked = true
+    form.livechannels.push(deviceData)
+  }
+
+  // 點擊後 地圖 icon inactive
+  else {
+    cameraData.checked = false
+    form.livechannels = form.livechannels.filter(item => item.name !== deviceData.name)
+  }
 }
 
 function toggleImgArch(deviceData, cameraData) {
-  cameraData.checked = !cameraData.checked
+  // 點擊後 地圖 icon active
+  if (cameraData.checked === false) {
+    cameraData.checked = true
+    form.archchannels.push(deviceData)
+  }
+
+  // 點擊後 地圖 icon inactive
+  else {
+    cameraData.checked = false
+    form.archchannels = form.archchannels.filter(item => item.name !== deviceData.name)
+  }
 }
 
+function toggleClickLive(deviceData) {
+  // 沒設定樓層 - 終止
+  if (deviceData.applyToMap.length === 0) return
+
+  // 同樓層 - 更新 攝影機/地圖icon
+  else if (isSameFloor()) {
+    if (isRepeatedCamera()) {
+      form.livechannels = form.livechannels.filter(item => item.name !== deviceData.name)
+      mapData.value = toChecked(false)
+    }
+    else {
+      form.livechannels.push(deviceData)
+      mapData.value = toChecked(true)
+    }
+  }
+
+  // 不同樓層 - 切換樓層、更新 攝影機/地圖icon
+  else {
+
+  }
+
+
+  function isSameFloor() {
+    return deviceData.applyToMap.includes(currentMapData.value[0].uuid)
+  }
+
+  function toChecked(boolean) {
+    return mapData.value.map(item => ({
+      ...item,
+      cameras: item.cameras.map(item => {
+        if (item.name === deviceData.name) {
+          return {
+            ...item,
+            checked: boolean,
+          }
+        }
+
+        else return item
+      })
+    }))
+  }
+
+  function isRepeatedCamera() {
+    return form.livechannels.some(item => item.name === deviceData.name)
+  }
+}
 
 function getMapFloorList() {
   mapFloorList.value = mapData.value?.reduce((accumulator, currentItem) => {
