@@ -16,7 +16,7 @@ import faceApi from './face-api';
 const system = {
   version: '2.00.02.250205',
   apiBaseUrl: import.meta.env.MODE === 'development'
-    ? 'https://192.168.10.72:8443'
+    ? 'https://192.168.10.62:8443'
     : '',
 };
 
