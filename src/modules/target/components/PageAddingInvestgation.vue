@@ -47,8 +47,10 @@
                     :placeholder="$t('All')" :checked="form.livechannels.length === livedevices.length" @on-change="() => {
                       if (form.livechannels.length === livedevices.length) {
                         form.livechannels = [];
+                        toCheckedAll(false, 'live')
                       } else {
                         form.livechannels = spiderman.lodash.cloneDeep(livedevices);
+                        toCheckedAll(true, 'live')
                       }
                     }">{{ $t('All') }}</AppCheckBox>
 
@@ -74,8 +76,10 @@
                     :disabled="archiveAmount === 0" @on-change="() => {
                       if (form.archchannels.length === devices.length) {
                         form.archchannels = [];
+                        toCheckedAll(false, 'archive')
                       } else {
                         form.archchannels = spiderman.lodash.cloneDeep(devices);
+                        toCheckedAll(true, 'archive')
                       }
                     }">{{ $t('All') }}</AppCheckBox>
 
@@ -356,6 +360,22 @@ function toggleClickArch(deviceData) {
   function isRepeatedCamera() {
     return form.archchannels.some(item => item.name === deviceData.name)
   }
+}
+
+function toCheckedAll(boolean, type) {
+  mapData.value = mapData.value.map(item => ({
+    ...item,
+    cameras: item.cameras.map(item => {
+      if (item.type === type) {
+        return {
+          ...item,
+          checked: boolean,
+        }
+      }
+
+      else return item
+    })
+  }))
 }
 
 function getMapFloorList() {
