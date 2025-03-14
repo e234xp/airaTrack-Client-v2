@@ -12,7 +12,7 @@
       <div v-if="currentStep === 1">
           <!-- 輸入地圖名稱 -->
       <AppLabel :label="$t('MapName')">
-          <input v-model="mapName" type="text" :placeholder="$t('EnterMapName')" class="mt-2 w-full p-2 border rounded" />
+          <input v-model="mapName" type="text" :placeholder="$t('StepEnterMapName')" class="mt-2 w-full p-2 border rounded" />
           <p v-if="mapNameError" class="text-red-500 text-sm mt-1">{{ $t('MapNameMustHave') }}</p>
       </AppLabel>
         <!-- 上傳地圖圖片 -->

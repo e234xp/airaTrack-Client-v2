@@ -167,10 +167,10 @@
 
 <script setup>
 import { ref, computed, defineProps, defineEmits, watch } from 'vue';
-import { storeToRefs } from 'pinia';
 import useStore from '@/modules/config/stores/index';
-import useDevices from '@/stores/devices';
 import successStore from '@/components/AppSuccess/success';
+import { useI18n } from 'vue-i18n';
+const i18n = useI18n();
 
 
 
@@ -179,10 +179,8 @@ const archdevices = ref([])
  // 存儲使用者選擇的攝影機
 const selectedLiveCameras = ref([]);
 const selectedArchiveCameras = ref([]);
-
 const searchLive = ref('');
 const searchArchive = ref('');
-
 const store = useStore();
 const props = defineProps({
     isOpen: Boolean,
@@ -200,9 +198,9 @@ const imgHeight = ref(0);
 const mapNameError = ref(false);
 const mapImageError = ref(false);
 
-watch(editedMap.name, (val) => {
-  if (val.trim()) mapNameError.value = false;
-});
+// watch(() => editedMap.value.name, (val) => {
+//   if (val.trim()) mapNameError.value = false;
+// });
 watch(mapImage, (val) => {
   if (val) mapImageError.value = false;
 });
@@ -291,10 +289,10 @@ function onImageLoad() {
     }
 const stepDescription = computed(() => {
     switch (currentStep.value) {
-      case 1: return '請上傳地圖圖片';
-      case 2: return '請選擇需要加入地圖的攝影機';
-      case 3: return '請拖拉攝影機到地圖上的適當位置';
-      case 4: return '這是最終的地圖預覽';
+      case 1: return i18n.t('StepUploadMapImage');
+      case 2: return i18n.t('StepSelectCameras');
+      case 3: return i18n.t('StepPlaceCamerasOnMap');
+      case 4: return i18n.t('StepsPreviewMap');
       default: return '';
     }
   });
