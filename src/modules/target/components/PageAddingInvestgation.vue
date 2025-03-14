@@ -423,7 +423,7 @@ async function fetchMaps() {
 }
 
 function changeFloorBg() {
-  currentMapDataCameras.value = currentMapData.value[0].cameras.map(item => item.name)
+  currentMapDataCameras.value = currentMapData.value[0]?.cameras.map(item => item.name)
 }
 
 watch(() => form.search_start_time, () => {
