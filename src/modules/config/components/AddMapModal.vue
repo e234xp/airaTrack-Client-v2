@@ -12,7 +12,7 @@
       <div v-if="currentStep === 1">
           <!-- 輸入地圖名稱 -->
       <AppLabel :label="$t('MapName')">
-          <input v-model="mapName" type="text" placeholder="請輸入地圖名稱" class="mt-2 w-full p-2 border rounded" />
+          <input v-model="mapName" type="text" :placeholder="$t('EnterMapName')" class="mt-2 w-full p-2 border rounded" />
           <p v-if="mapNameError" class="text-red-500 text-sm mt-1">{{ $t('MapNameMustHave') }}</p>
       </AppLabel>
         <!-- 上傳地圖圖片 -->
@@ -184,6 +184,8 @@
 import { ref, computed ,watch, onMounted} from 'vue';
 import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
+import { useI18n } from 'vue-i18n';
+const i18n = useI18n();
 
 
 
@@ -268,10 +270,10 @@ const filteredArchiveCameras = computed(() => {
 
 const stepDescription = computed(() => {
   switch (currentStep.value) {
-    case 1: return '請上傳地圖圖片';
-    case 2: return '請選擇需要加入地圖的攝影機';
-    case 3: return '請拖拉攝影機到地圖上的適當位置';
-    case 4: return '這是最終的地圖預覽';
+    case 1: return i18n.t('StepUploadMapImage');
+    case 2: return i18n.t('StepSelectCameras');
+    case 3: return i18n.t('StepPlaceCamerasOnMap');
+    case 4: return i18n.t('StepsPreviewMap');
     default: return '';
   }
 });

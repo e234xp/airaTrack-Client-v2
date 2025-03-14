@@ -16,7 +16,7 @@
                 <p v-if="mapNameError" class="text-red-500 text-sm mt-1">{{ $t('MapNameMustHave') }}</p>
             </AppLabel>
 
-            <AppLabel :label="$t('UUID')" class="mt-2">
+            <AppLabel :label="$t('MapUUID')" class="mt-2">
                 <input v-model="editedMap.uuid" type="text" class="w-full p-2 border rounded" disabled />
             </AppLabel>
 

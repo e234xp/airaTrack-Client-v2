@@ -222,6 +222,13 @@
   "URLParameters":"URL參數",
   "ExtraFields":"擴充欄位",
   "MapNameMustHave":"地圖名稱為必填",
-  "MapImageMustHave":"請上傳地圖檔案"
+  "MapImageMustHave":"請上傳地圖檔案",
+  "EditMap":"編輯地圖",
+  "MapUUID":"地圖ID",
+  "StepEnterMapName":"請輸入地圖名稱",
+  "StepUploadMapImage": "請上傳地圖圖片",
+  "StepSelectCameras": "請選擇需要加入地圖的攝影機",
+  "StepPlaceCamerasOnMap": "請拖拉攝影機到地圖上的適當位置",
+  "StepPreviewMap": "這是最終的地圖預覽"
 
 }
