@@ -1,9 +1,6 @@
 <template>
   <ProgressBarLayout>
     <FullLayout>
-      <!-- <template #header>
-        <NavigationBar />
-      </template> -->
 
       <template #grow>
         <div class="flex h-full font-thin">
@@ -258,10 +255,12 @@
               </template>
             </FullLayout>
           </div>
-
-          <FullLayout>
+          
+          <FullLayout :style="{ width: 'calc(100vw - 33rem)' }">
+            
             <template #header>
-              <div class="relative w-full flex flex-wrap gap-4" ref="mapWrapper">
+              <div class="relative w-full flex overflow-x-auto overflow-y-hidden" ref="mapWrapper">
+                <div class="flex flex-nowrap gap-4 min-w-max relative">
                   <!-- 地圖箭頭畫布（寬高要和地圖 wrapper 一致） -->
                   <svg
                     class="absolute top-0 left-0 z-50 pointer-events-none"
@@ -347,10 +346,11 @@
                   </div>
                   </div>
                 </div>
+              </div>
             </template>
 
-            <template #grow>
-              <div class="mx-4 my-2 flex justify-between text-white text-xl">
+            <template #grow >
+              <div class="mx-4 my-2 flex justify-between text-white text-xl ">
                 <div>
                   {{
                     videoResult
@@ -505,6 +505,7 @@
         </div>
       </template>
     </FullLayout>
+    
   </ProgressBarLayout>
 
   <PrintPdf
@@ -641,7 +642,10 @@ function computeSvgArrows(ids) {
   if (!wrapperBox) return;
 
   // 設定 SVG 大小
-  svgWidth.value = wrapperBox.width;
+  // svgWidth.value = wrapperBox.width;
+  //398是每個地圖固定寬度加上gap的寬度(382px+16px)
+  svgWidth.value = mergedMapList.value.length * 398
+  console.log("svgWidth.value",svgWidth.value)
   svgHeight.value = wrapperBox.height;
 
   // 把 ids 中相鄰的點轉成線段
@@ -659,7 +663,7 @@ function computeSvgArrows(ids) {
     }
   }
 
-  svgArrows.value = arrows.map(arrow => ({ ...arrow, highlight: false }));
+  svgArrows.value = arrows;
 }
 
 function highlightCurrentArrow() {
@@ -675,6 +679,7 @@ console.log("1111")
   const from = cameraPosMap.get(fromId);
   const to = cameraPosMap.get(toId);
   const wrapperBox = mapWrapper.value?.getBoundingClientRect();
+  console.log(from,to,wrapperBox)
   if (!from || !to || !wrapperBox) {
     currentArrow.value = null;
     return;
@@ -1052,7 +1057,9 @@ onBeforeMount(async () => {
 
 watch(videoResultIndex, () => {
   console.log("videoResultIndex",videoResultIndex.value)
-  highlightCurrentArrow();
+  setTimeout(() => {
+    highlightCurrentArrow();
+      }, 100);
 });
 </script>
 
@@ -1078,4 +1085,6 @@ watch(videoResultIndex, () => {
     width: calc(100% - 9rem);
   }
 }
+
+
 </style>
