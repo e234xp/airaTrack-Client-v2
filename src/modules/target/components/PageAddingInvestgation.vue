@@ -259,7 +259,11 @@ function toggleImgArch(deviceData, cameraData) {
 }
 
 function toggleClickLive(deviceData) {
-  if (noSettingFloor()) return
+  if (noSettingFloor()) {
+    // 使用者沒有設定 所以給空畫面
+    currentMapFloor.value = null
+    currentMapDataCameras.value = []
+  }
 
   else if (isSameFloor()) {
     if (isRepeatedCamera()) {
@@ -286,7 +290,7 @@ function toggleClickLive(deviceData) {
   }
 
   function isSameFloor() {
-    return deviceData.applyToMap.includes(currentMapData.value[0].uuid)
+    return deviceData.applyToMap.includes(currentMapData.value[0]?.uuid)
   }
 
   function toChecked(boolean) {
