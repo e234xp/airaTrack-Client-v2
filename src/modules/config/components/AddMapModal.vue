@@ -18,7 +18,7 @@
         <AppLabel :label="$t('UploadMap')" class="mt-2">
           <input type="file" accept="image/*" class="mt-2 w-full p-2 border rounded" @change="onUploadMap" />
         </AppLabel>
-        <img v-if="mapImage" :src="mapImage" class="mt-4 w-full h-96 object-contain border" />
+        <img v-if="mapImage" :src="mapImage" class="mt-4 w-full change-height object-contain" />
       </div>
 
       <div v-if="currentStep === 2" class="flex gap-4">
@@ -507,7 +507,9 @@ defineExpose({ setModal });
 
 
 <style>
-
+.change-height {
+  height: clamp(12rem, 10vw + 6rem, 24rem);
+}
 .delete-btn {
 width: 4px !important;
 height: 4px !important;
