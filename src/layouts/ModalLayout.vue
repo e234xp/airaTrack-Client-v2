@@ -25,9 +25,13 @@
         <slot name="description" />
       </div>
       <img id="🔥ModalLayout__LineY" src="@/assets/images/line-y.png">
-      <div id="🔥ModalLayout__Right" >
-        <slot/>
-        <slot name="footer" />
+      <div id="🔥ModalLayout__Right" class="flex flex-col h-full overflow-hidden">
+        <div class="flex-1 overflow-auto pr-2">
+          <slot />
+        </div>
+        <div class="mt-4 pt-4 border-t border-gray-600">
+          <slot name="footer" />
+        </div>
       </div>
     </div>
   </div>

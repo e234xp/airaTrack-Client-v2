@@ -13,6 +13,7 @@
         <div v-if="currentStep === 1">
             <AppLabel :label="$t('MapName')">
                 <input v-model="editedMap.name" type="text" class="mt-2 w-full p-2 border rounded" />
+                <p v-if="mapNameError" class="text-red-500 text-sm mt-1">{{ $t('MapNameMustHave') }}</p>
             </AppLabel>
 
             <AppLabel :label="$t('UUID')" class="mt-2">
@@ -20,7 +21,8 @@
             </AppLabel>
 
             <AppLabel :label="$t('UploadMap')" class="mt-2">
-                <input type="file" accept="image/*" class="mt-2 w-full p-2 border rounded" @change="onUploadMap" />
+                <input type="file" accept="image/*" class="mt-2 w-full p-2 border rounded file:bg-white file:text-black" @change="onUploadMap" />
+                <p v-if="mapImageError" class="text-red-500 text-sm mt-1">{{ $t('MapImageMustHave') }}</p>
             </AppLabel>
             
             <img v-if="mapImage" :src="mapImage" class="mt-4 w-full change-height object-contain" />
@@ -78,7 +80,7 @@
         <!-- 🔵 **步驟 3: 拖拉攝影機到地圖** -->
         <div v-if="currentStep === 3">
             <h3 class="mb-2">{{ $t('PlaceCamerasOnMap') }}</h3>
-            <div class="relative border w-full aspect-video bg-gray-200" @dragover.prevent>
+            <div class="relative border w-full aspect-video" @dragover.prevent>
                 <div v-if="mapImage" class="relative w-full h-full">
                     <img ref="imgRef" :src="mapImage" class="absolute top-0 left-0 w-full h-full" @load="onImageLoad"/>
 
@@ -127,7 +129,7 @@
         <div v-if="currentStep === 4">
           <!-- 完成步驟 -->
           <h3 class="mb-2">{{ $t('FinalMapPreview') }}</h3>
-          <div class="relative border w-full aspect-video bg-gray-200">
+          <div class="relative border w-full aspect-video">
             <img v-if="mapImage" :src="mapImage" class="absolute top-0 left-0 w-full h-full" />
             <div v-for="(camera, index) in selectedLiveCameras" :key="camera.camera_id"
               class="absolute"
@@ -171,8 +173,7 @@ import useDevices from '@/stores/devices';
 import successStore from '@/components/AppSuccess/success';
 
 
-// const devicesStore = useDevices();
-// const { devices, livedevices } = storeToRefs(devicesStore);
+
 const livedevices = ref([])
 const archdevices = ref([])
  // 存儲使用者選擇的攝影機
@@ -196,8 +197,15 @@ let offsetX = 0;
 let offsetY = 0;
 const imgWidth = ref(0);
 const imgHeight = ref(0);
+const mapNameError = ref(false);
+const mapImageError = ref(false);
 
-
+watch(editedMap.name, (val) => {
+  if (val.trim()) mapNameError.value = false;
+});
+watch(mapImage, (val) => {
+  if (val) mapImageError.value = false;
+});
 // **當進入步驟 2 時，調用 API**
 watch(currentStep, async (newStep) => {
   if (newStep === 2) {
@@ -591,6 +599,16 @@ async function onSaveMap() {
 
 function resetForm() {
   currentStep.value = 1;
+  editedMap.value = {};
+  mapImage.value = null;
+  selectedLiveCameras.value = [];
+  selectedArchiveCameras.value = [];
+  searchLive.value = '';
+  searchArchive.value = '';
+  mapNameError.value = false;
+  mapImageError.value = false;
+  imgWidth.value = 0;
+  imgHeight.value = 0;
 }
 // **關閉 Modal**
 function closeModal() {
@@ -599,7 +617,16 @@ function closeModal() {
 }
 
 // **步驟控制**
-function nextStep() { if (currentStep.value < 4) currentStep.value++; }
+function nextStep() {
+  if (currentStep.value === 1) {
+    mapNameError.value = !editedMap.value.name.trim();
+    mapImageError.value = !mapImage.value;
+
+    if (mapNameError.value || mapImageError.value) return;
+  }
+
+  if (currentStep.value < 4) currentStep.value++;
+}
 function prevStep() { if (currentStep.value > 1) currentStep.value--; }
 
 </script>

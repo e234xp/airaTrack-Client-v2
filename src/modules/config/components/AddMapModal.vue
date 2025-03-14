@@ -13,10 +13,12 @@
           <!-- 輸入地圖名稱 -->
       <AppLabel :label="$t('MapName')">
           <input v-model="mapName" type="text" placeholder="請輸入地圖名稱" class="mt-2 w-full p-2 border rounded" />
+          <p v-if="mapNameError" class="text-red-500 text-sm mt-1">{{ $t('MapNameMustHave') }}</p>
       </AppLabel>
         <!-- 上傳地圖圖片 -->
         <AppLabel :label="$t('UploadMap')" class="mt-2">
-          <input type="file" accept="image/*" class="mt-2 w-full p-2 border rounded" @change="onUploadMap" />
+          <input type="file" accept="image/*" class="mt-2 w-full p-2 border rounded file:bg-white file:text-black" @change="onUploadMap" />
+          <p v-if="mapImageError" class="text-red-500 text-sm mt-1">{{ $t('MapImageMustHave') }}</p>
         </AppLabel>
         <img v-if="mapImage" :src="mapImage" class="mt-4 w-full change-height object-contain" />
       </div>
@@ -90,7 +92,7 @@
 
       <div v-if="currentStep === 3">
               <h3 class="mb-2">{{ $t('PlaceCamerasOnMap') }}</h3>
-              <div class="relative border w-full aspect-video bg-red-200" @dragover.prevent>
+              <div class="relative border w-full aspect-video" @dragover.prevent>
                   <div v-if="mapImage" class="relative w-full h-full">
                       <img ref="imgRef" :src="mapImage" class="absolute top-0 left-0 w-full h-full" @load="onImageLoad"/>
 
@@ -142,7 +144,7 @@
       <div v-if="currentStep === 4">
         <!-- 完成步驟 -->
         <h3 class="mb-2">{{ $t('FinalMapPreview') }}</h3>
-        <div class="relative border w-full aspect-video bg-gray-200">
+        <div class="relative border w-full aspect-video">
           <img v-if="mapImage" :src="mapImage" class="absolute top-0 left-0 w-full h-full" />
           <div v-for="(camera, index) in selectedLiveCameras" :key="camera.camera_id"
             class="absolute"
@@ -202,14 +204,20 @@ const imgRef = ref(null);
 // 記錄拖曳偏移
 let offsetX = 0;
 let offsetY = 0;
-
-
 const imgWidth = ref(0);
 const imgHeight = ref(0);
 
+const mapNameError = ref(false);
+const mapImageError = ref(false);
+
 const emit = defineEmits(["fetch-maps"]);
 
-
+watch(mapName, (val) => {
+  if (val.trim()) mapNameError.value = false;
+});
+watch(mapImage, (val) => {
+  if (val) mapImageError.value = false;
+});
 
 // **當進入步驟 2 時，調用 API**
 watch(currentStep, async (newStep) => {
@@ -357,6 +365,13 @@ reader.onload = function (e) {
 
 
 function nextStep() {
+  if (currentStep.value === 1) {
+    mapNameError.value = !mapName.value.trim();
+    mapImageError.value = !mapImage.value;
+
+    if (mapNameError.value || mapImageError.value) return;
+  }
+
   if (currentStep.value < 4) currentStep.value++;
 }
 

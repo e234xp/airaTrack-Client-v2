@@ -220,6 +220,8 @@
   "ShowCompleteUrl":"顯示Url",
   "Path":"Path",
   "URLParameters":"URL參數",
-  "ExtraFields":"擴充欄位"
+  "ExtraFields":"擴充欄位",
+  "MapNameMustHave":"地圖名稱為必填",
+  "MapImageMustHave":"請上傳地圖檔案"
 
 }
