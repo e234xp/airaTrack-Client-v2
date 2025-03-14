@@ -77,7 +77,8 @@
                         form.archchannels = spiderman.lodash.cloneDeep(devices);
                       }
                     }">{{ $t('All') }}</AppCheckBox>
-                  <AppCheckBox v-for="device in filterArchiveDevices" :key="device.camera_id"
+
+                  <AppCheckBox v-for="device in filterArchiveDevices" :key="device.camera_id" @click.prevent="toggleClickArch(device)"
                     class="mb-2 text-base text-white" :placeholder="device.name" v-model:modelInput="form.archchannels"
                     :value="device">{{ device.name }}
                   </AppCheckBox>
@@ -298,6 +299,57 @@ function toggleClickLive(deviceData) {
 
   function isRepeatedCamera() {
     return form.livechannels.some(item => item.name === deviceData.name)
+  }
+}
+
+function toggleClickArch(deviceData) {
+  if (noSettingFloor()) return
+
+  else if (isSameFloor()) {
+    if (isRepeatedCamera()) {
+      form.archchannels = form.archchannels.filter(item => item.name !== deviceData.name) // 更新攝影機
+      mapData.value = toChecked(false) // 更新地圖 icon
+    }
+    else {
+      form.archchannels.push(deviceData) 
+      mapData.value = toChecked(true) 
+    }
+  }
+
+  else {
+    changeFloor()
+  }
+
+  function changeFloor() {
+    currentMapFloor.value = mapData.value.filter(item => item.uuid === deviceData.applyToMap[0])[0].name
+  }
+
+  function noSettingFloor() {
+    return deviceData.applyToMap.length === 0
+  }
+
+  function isSameFloor() {
+    return deviceData.applyToMap.includes(currentMapData.value[0].uuid)
+  }
+
+  function toChecked(boolean) {
+    return mapData.value.map(item => ({
+      ...item,
+      cameras: item.cameras.map(item => {
+        if (item.name === deviceData.name) {
+          return {
+            ...item,
+            checked: boolean,
+          }
+        }
+
+        else return item
+      })
+    }))
+  }
+
+  function isRepeatedCamera() {
+    return form.archchannels.some(item => item.name === deviceData.name)
   }
 }
 
