@@ -53,9 +53,10 @@
                     }">{{ $t('All') }}</AppCheckBox>
 
                   <AppCheckBox v-for="livedevice in filterLiveDevices" :key="livedevice.camera_id"
-                    class="mb-2 text-base text-white" :placeholder="livedevice.name"
-                    @click.prevent="toggleClickLive(livedevice)" v-model:modelInput="form.livechannels"
-                    :value="livedevice">{{ livedevice.name }}
+                    class="mb-2 text-base text-white"
+                    :class="{ 'bg-camera-live': currentMapDataCameras.includes(livedevice.name) }"
+                    :placeholder="livedevice.name" @click.prevent="toggleClickLive(livedevice)"
+                    v-model:modelInput="form.livechannels" :value="livedevice">{{ livedevice.name }}
                   </AppCheckBox>
 
                 </div>
@@ -78,9 +79,10 @@
                       }
                     }">{{ $t('All') }}</AppCheckBox>
 
-                  <AppCheckBox v-for="device in filterArchiveDevices" :key="device.camera_id" @click.prevent="toggleClickArch(device)"
-                    class="mb-2 text-base text-white" :placeholder="device.name" v-model:modelInput="form.archchannels"
-                    :value="device">{{ device.name }}
+                  <AppCheckBox v-for="device in filterArchiveDevices" :key="device.camera_id"
+                    @click.prevent="toggleClickArch(device)" class="mb-2 text-base text-white"
+                    :class="{ 'bg-camera-archive': currentMapDataCameras.includes(device.name) }"
+                    :placeholder="device.name" v-model:modelInput="form.archchannels" :value="device">{{ device.name }}
                   </AppCheckBox>
                 </div>
               </div>
@@ -99,8 +101,8 @@
           <img id="🔥LineY" src="@/assets/images/line-y.png">
 
           <div id="🔥CameraMapSelect">
-            <AppInput dark class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select" :options="mapFloorList"
-              v-model:modelInput="currentMapFloor" />
+            <AppInput dark class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select" @click="changeFloorBg"
+              :options="mapFloorList" v-model:modelInput="currentMapFloor" />
           </div>
 
           <template v-for="map in currentMapData" :key="map.uuid">
@@ -167,6 +169,7 @@ const currentMapFloor = ref('')
 const searchQuery = ref('')
 const mapData = ref([])
 const currentMapData = computed(() => mapData.value.filter(item => item.name === currentMapFloor.value))
+const currentMapDataCameras = ref([])
 const mapFloorList = ref({})
 
 const form = reactive({
@@ -260,8 +263,8 @@ function toggleClickLive(deviceData) {
       mapData.value = toChecked(false) // 更新地圖 icon
     }
     else {
-      form.livechannels.push(deviceData) 
-      mapData.value = toChecked(true) 
+      form.livechannels.push(deviceData)
+      mapData.value = toChecked(true)
     }
   }
 
@@ -271,6 +274,7 @@ function toggleClickLive(deviceData) {
 
   function changeFloor() {
     currentMapFloor.value = mapData.value.filter(item => item.uuid === deviceData.applyToMap[0])[0].name
+    changeFloorBg()
   }
 
   function noSettingFloor() {
@@ -311,8 +315,8 @@ function toggleClickArch(deviceData) {
       mapData.value = toChecked(false) // 更新地圖 icon
     }
     else {
-      form.archchannels.push(deviceData) 
-      mapData.value = toChecked(true) 
+      form.archchannels.push(deviceData)
+      mapData.value = toChecked(true)
     }
   }
 
@@ -322,6 +326,7 @@ function toggleClickArch(deviceData) {
 
   function changeFloor() {
     currentMapFloor.value = mapData.value.filter(item => item.uuid === deviceData.applyToMap[0])[0].name
+    changeFloorBg()
   }
 
   function noSettingFloor() {
@@ -397,6 +402,10 @@ async function fetchMaps() {
   }
 }
 
+function changeFloorBg() {
+  currentMapDataCameras.value = currentMapData.value[0].cameras.map(item => item.name)
+}
+
 watch(() => form.search_start_time, () => {
   const start = spiderman.dayjs(form.search_start_time);
   const end = spiderman.dayjs(form.search_end_time);
@@ -439,6 +448,9 @@ onMounted(async () => {
 
   // 預設顯示 地圖樓層資料的第一筆
   currentMapFloor.value = Object.keys(mapFloorList.value)[0]
+
+  // 抓取當前樓層 camera name
+  changeFloorBg()
 });
 </script>
 
@@ -559,5 +571,13 @@ onMounted(async () => {
   width: 24px;
   height: 24px;
   user-select: none;
+}
+
+.bg-camera-live {
+  background: #6c98dd;
+}
+
+.bg-camera-archive {
+  background: #c69b51;
 }
 </style>
