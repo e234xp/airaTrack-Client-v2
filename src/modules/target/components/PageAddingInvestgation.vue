@@ -251,26 +251,30 @@ function toggleImgArch(deviceData, cameraData) {
 }
 
 function toggleClickLive(deviceData) {
-  // 沒設定樓層 - 終止
-  if (deviceData.applyToMap.length === 0) return
+  if (noSettingFloor()) return
 
-  // 同樓層 - 更新 攝影機/地圖icon
   else if (isSameFloor()) {
     if (isRepeatedCamera()) {
-      form.livechannels = form.livechannels.filter(item => item.name !== deviceData.name)
-      mapData.value = toChecked(false)
+      form.livechannels = form.livechannels.filter(item => item.name !== deviceData.name) // 更新攝影機
+      mapData.value = toChecked(false) // 更新地圖 icon
     }
     else {
-      form.livechannels.push(deviceData)
-      mapData.value = toChecked(true)
+      form.livechannels.push(deviceData) 
+      mapData.value = toChecked(true) 
     }
   }
 
-  // 不同樓層 - 切換樓層、更新 攝影機/地圖icon
   else {
-
+    changeFloor()
   }
 
+  function changeFloor() {
+    currentMapFloor.value = mapData.value.filter(item => item.uuid === deviceData.applyToMap[0])[0].name
+  }
+
+  function noSettingFloor() {
+    return deviceData.applyToMap.length === 0
+  }
 
   function isSameFloor() {
     return deviceData.applyToMap.includes(currentMapData.value[0].uuid)
