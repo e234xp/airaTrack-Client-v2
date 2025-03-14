@@ -31,7 +31,7 @@
         <!-- 🔵 **步驟 2: 選擇攝影機** -->
         <div v-if="currentStep === 2" class="flex gap-4">
             <div class="w-1/2 border rounded bg-black p-4 overflow-auto">
-                <h3 class="text-xl text-white border-b-2 border-blue-500 pb-2">
+                <h3 class="text-xl text-white border-b-2 border-[#8fb5ec] pb-2">
                     {{ $t('LiveChannel') }} ({{ selectedLiveCameras.length }}/{{ livedevices.length }})
                 </h3>
                 <input v-model="searchLive" type="text" class="w-full p-2 mb-2 border rounded text-white" :placeholder="$t('Search')" />
@@ -54,7 +54,7 @@
             </div>
 
             <div class="w-1/2 border rounded bg-black p-4 overflow-auto">
-                <h3 class="text-xl text-white border-b-2 border-green-500 pb-2">
+                <h3 class="text-xl text-white border-b-2 border-[#f1c984] pb-2">
                     {{ $t('NxVideoArchive') }} ({{ selectedArchiveCameras.length }}/{{ archdevices.length }})
                 </h3>
                 <input v-model="searchArchive" type="text" class="w-full p-2 mb-2 border rounded text-white" :placeholder="$t('Search')" />
