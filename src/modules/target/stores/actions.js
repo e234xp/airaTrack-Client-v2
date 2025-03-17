@@ -1,5 +1,6 @@
 import spiderman from '@/spiderman';
 import useUserStore from '@/stores/user';
+import { ESTest } from 'mike-testt';
 
 // =============================================
 // POST
@@ -84,6 +85,20 @@ export async function getAllMaps() {
     method: 'get',
     headers: { sessionId: userStore.sessionId }
   })
+
+  {
+    ESTest(result.data, 'array')
+    ESTest(result.data[0].uuid, 'string')
+    ESTest(result.data[0].name, 'string')
+    ESTest(result.data[0].cameras, 'array')
+    ESTest(result.data[0].cameras[0].type, 'string')
+    ESTest(result.data[0].cameras[0].module, 'string')
+    ESTest(result.data[0].cameras[0].camera_id, 'string')
+    ESTest(result.data[0].cameras[0].name, 'string')
+    ESTest(result.data[0].cameras[0].position.x, 'number')
+    ESTest(result.data[0].cameras[0].position.y, 'number')
+    ESTest(result.data[0].last_modify_time, 'number')
+  }
   return result;
 }
 

@@ -1,5 +1,5 @@
 <template>
-    <ModalLayout :is-open="isOpen" @close="closeModal" >
+    <ModalLayout :is-open="isOpen" @close="closeModal">
       <template #header>
         {{ $t('EditMap') }}
       </template>

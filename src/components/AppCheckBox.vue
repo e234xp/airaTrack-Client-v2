@@ -1,20 +1,11 @@
 <template>
   <div class="flex justify-between w-full">
-    <label class="flex items-center select-none truncate">
+    <label class="flex items-center select-none ">
       <label id="🔗CheckBox">
         <input id="🔗CheckBox__Input" type="checkbox" v-model="input" :value="value" @change="$emit('onChange')" :disabled="disabled"
           :checked="checked">
       </label>
-      <!-- <input
-        type="checkbox"
-        class="w-4 h-4 accent-primary hover:accent-primary-hover"
-        v-model="input"
-        :value="value"
-        @change="$emit('onChange')"
-        :disabled="disabled"
-        :checked="checked"
-      > -->
-      <div class="pl-2" style="width: calc(100% - 1rem)">
+      <div class="pl-2">
         <slot />
       </div>
     </label>
@@ -99,7 +90,6 @@ const errorMessage = computed(() => generateMessage());
 <style>
 #🔗CheckBox {
   position: relative;
-  top: -2px;
   left: 2px;
   width: 16px;
   height: 16px;
