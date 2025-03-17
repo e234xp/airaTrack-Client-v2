@@ -750,7 +750,7 @@ function computeSvgArrows(ids) {
 //   console.log("currentArrow",currentArrow.value)
 // }
 function highlightCurrentArrow() {
-  currentArrow.value = null;
+  
   const current = videoResultIndex.value;
   const ids = taskResults.value.map(r => r.highest.cid);
 

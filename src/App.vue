@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+
     <div
       :style="{ backgroundImage: spiderman.base64Image.getStyle(background), height: `${height}px` }"
       class="bg-cover font-custom"
@@ -29,7 +29,7 @@
       @close="modalStore.close"
     />
   </div>
-</v-app>
+
 </template>
 
 <script setup>

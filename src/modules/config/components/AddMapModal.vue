@@ -105,7 +105,7 @@
                           @drag="onDragging($event, camera)"
                           @dragend="endDrag($event, camera)">
                           
-                          <v-tooltip location="top">
+                          <!-- <v-tooltip location="top">
                               <template v-slot:activator="{ props }">
                                 <img v-bind="props" src="@/assets/images/camera-live.png" class="w-6 h-6" draggable="false" />
                               </template>
@@ -114,7 +114,23 @@
                           <v-icon color="red" @click="removeCamera(camera, 'live')"
                               class="absolute top-[-40px] right-[-10px]">
                               mdi-close-circle
-                          </v-icon>
+                          </v-icon> -->
+                          <div class="relative group">
+                            <img
+                              src="@/assets/images/camera-live.png"
+                              class="w-6 h-6 cursor-pointer"
+                              draggable="false"
+                            />
+                            <div
+                              class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50"
+                            >
+                              {{ camera.name }}
+                            </div>
+                            <XCircle
+                              class="w-5 h-5 text-red-500 absolute top-[-40px] right-[-10px] cursor-pointer"
+                              @click="removeCamera(camera, 'live')"
+                            />
+                          </div>
                       </div>
 
                       <!-- 錄影攝影機 (Archive) -->
@@ -126,7 +142,7 @@
                           @drag="onDragging($event, camera)"
                           @dragend="endDrag($event, camera)">
 
-                          <v-tooltip location="top">
+                          <!-- <v-tooltip location="top">
                               <template v-slot:activator="{ props }">
                                 <img v-bind="props" src="@/assets/images/camera-archive.png" class="w-6 h-6" draggable="false" />
                               </template>
@@ -135,7 +151,7 @@
                           <v-icon color="red" @click="removeCamera(camera, 'archive')"
                               class="absolute top-[-40px] right-[-10px]">
                               mdi-close-circle
-                          </v-icon>
+                          </v-icon> -->
                       </div>
                   </div>
               </div>
@@ -185,6 +201,7 @@ import { ref, computed ,watch, onMounted} from 'vue';
 import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
 import { useI18n } from 'vue-i18n';
+import { XCircle } from 'lucide-vue-next'
 const i18n = useI18n();
 
 

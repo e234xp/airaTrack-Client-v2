@@ -12,22 +12,22 @@ import * as Layouts from './layouts/index';
 import App from './App.vue';
 import router from './router';
 import i18n from './plugins/i18n';
-import { createVuetify } from 'vuetify';
-import 'vuetify/styles';  // 引入 Vuetify 樣式
-import '@mdi/font/css/materialdesignicons.css';  // 引入 Material Design Icons
-import { aliases, mdi } from 'vuetify/iconsets/mdi';
-import * as components from 'vuetify/components';
-import * as directives from 'vuetify/directives';
+// import { createVuetify } from 'vuetify';
+// import 'vuetify/styles';  // 引入 Vuetify 樣式
+// import '@mdi/font/css/materialdesignicons.css';  // 引入 Material Design Icons
+// import { aliases, mdi } from 'vuetify/iconsets/mdi';
+// import * as components from 'vuetify/components';
+// import * as directives from 'vuetify/directives';
 
-const vuetify = createVuetify({
-  components, 
-  directives, 
-  icons: {
-    defaultSet: 'mdi',
-    aliases,
-    sets: { mdi },
-  },
-});
+// const vuetify = createVuetify({
+//   components, 
+//   directives, 
+//   icons: {
+//     defaultSet: 'mdi',
+//     aliases,
+//     sets: { mdi },
+//   },
+// });
 const app = createApp(App);
 
 // 引入global components
@@ -46,5 +46,5 @@ app
   .use(i18n)
   .use(print)
   .use(VueLazyload)
-  .use(vuetify)
+  // .use(vuetify)
   .mount('#app');
