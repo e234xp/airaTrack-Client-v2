@@ -56,7 +56,7 @@
 
                   <AppCheckBox v-for="livedevice in filterLiveDevices" :key="livedevice.camera_id"
                     class="mb-2 text-base text-white"
-                    :class="{ 'bg-camera-live': currentMapDataCamerasBg.includes(livedevice.name) }"
+                    :class="{ 'bg-camera-live': currentMapDataCamerasBg?.includes(livedevice.name) }"
                     :placeholder="livedevice.name" @click.prevent="toggleClickLive(livedevice)"
                     v-model:modelInput="form.livechannels" :value="livedevice">{{ livedevice.name }}
                   </AppCheckBox>
@@ -85,7 +85,7 @@
 
                   <AppCheckBox v-for="device in filterArchiveDevices" :key="device.camera_id"
                     @click.prevent="toggleClickArch(device)" class="mb-2 text-base text-white"
-                    :class="{ 'bg-camera-archive': currentMapDataCamerasBg.includes(device.name) }"
+                    :class="{ 'bg-camera-archive': currentMapDataCamerasBg?.includes(device.name) }"
                     :placeholder="device.name" v-model:modelInput="form.archchannels" :value="device">{{ device.name }}
                   </AppCheckBox>
                 </div>
@@ -463,7 +463,6 @@ function getMapFloorList() {
 
 function changeFloorBg() {
   {
-    ESTest(currentMapDataCamerasBg.value, 'array')
     ESTest(currentMapData.value, 'array')
   }
 
