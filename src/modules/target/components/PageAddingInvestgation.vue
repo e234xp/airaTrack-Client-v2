@@ -301,18 +301,14 @@ function toggleClickLive(deviceData) {
     // 使用者沒有設定 所以給空畫面
     currentMapFloor.value = ''
     currentMapDataCamerasBg.value = []
-
-    // 切換 攝影機/資料
-    toggleCamera()
   }
 
-  else if (isSameFloor()) {
-    toggleCamera()
-  }
-
-  else {
+  else if (isSameFloor() === false) {
     changeFloor()
   }
+
+  toggleCamera()
+
 
   function toggleCamera() {
     if (isRepeatedCamera()) {
@@ -372,18 +368,13 @@ function toggleClickArch(deviceData) {
     // 空畫面
     currentMapFloor.value = ''
     currentMapDataCamerasBg.value = []
-
-    // 切換 攝影機/資料
-    toggleCamera()
   }
 
-  else if (isSameFloor()) {
-    toggleCamera()
-  }
-
-  else {
+  else if (isSameFloor() === false) {
     changeFloor()
   }
+
+  toggleCamera()
 
   function toggleCamera() {
     if (isRepeatedCamera()) {
