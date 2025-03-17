@@ -273,7 +273,8 @@
                         :y1="arrow.fromY"
                         :x2="arrow.toX"
                         :y2="arrow.toY"
-                        stroke="red"
+                        :stroke="arrow.dashed ? 'gray' : 'red'"
+                        :stroke-dasharray="arrow.dashed ? '5,5' : ''"
                         stroke-width="2"
                         marker-end="url(#arrowhead)"
                       />
@@ -285,7 +286,8 @@
                       :y1="currentArrow.fromY"
                       :x2="currentArrow.toX"
                       :y2="currentArrow.toY"
-                      stroke="#00FF00"
+                      :stroke="currentArrow.dashed ? '#00FF00' : '#00FF00'"
+                      :stroke-dasharray="currentArrow.dashed ? '5,5' : ''"
                       stroke-width="4"
                       marker-end="url(#arrowhead-highlight)"
                     />
@@ -619,22 +621,66 @@ function setMapRef(uuid, el) {
   if (el) mapRefs[uuid] = el;
 }
 
+// function computeSvgArrows(ids) {
+//   // 儲存 camera_id 對應的地圖與相對位置
+//   cameraPosMap.clear();
+//   console.log("mergedMapList.value",mergedMapList.value)
+//   mergedMapList.value.forEach((map) => {
+//     const mapBox = mapRefs[map.uuid]?.getBoundingClientRect();
+//     console.log("mapbox",mapBox)
+//     if (!mapBox) return;
+//     const RADIUS_OFFSET = 8;
+//     map.cameras.forEach((camera) => {
+//       const absX = mapBox.left + camera.position.x * mapBox.width + RADIUS_OFFSET;
+//       const absY = mapBox.top +28 + camera.position.y * (mapBox.height-38) + RADIUS_OFFSET;
+//       cameraPosMap.set(camera.camera_id, {
+//         x: absX,
+//         y: absY
+//       });
+//     });
+//   });
+
+//   // SVG 畫布定位基準點
+//   const wrapperBox = mapWrapper.value?.getBoundingClientRect();
+//   if (!wrapperBox) return;
+
+//   // 設定 SVG 大小
+//   // svgWidth.value = wrapperBox.width;
+//   //398是每個地圖固定寬度加上gap的寬度(382px+16px)
+//   svgWidth.value = mergedMapList.value.length * 398
+//   console.log("svgWidth.value",svgWidth.value)
+//   svgHeight.value = wrapperBox.height;
+
+//   // 把 ids 中相鄰的點轉成線段
+//   const arrows = [];
+//   for (let i = 0; i < ids.length - 1; i++) {
+//     const from = cameraPosMap.get(ids[i]);
+//     const to = cameraPosMap.get(ids[i + 1]);
+//     if (from && to) {
+//       arrows.push({
+//         fromX: from.x - wrapperBox.left,
+//         fromY: from.y - wrapperBox.top,
+//         toX: to.x - wrapperBox.left,
+//         toY: to.y - wrapperBox.top
+//       });
+//     }
+//   }
+
+//   svgArrows.value = arrows;
+// }
+
 function computeSvgArrows(ids) {
   // 儲存 camera_id 對應的地圖與相對位置
   cameraPosMap.clear();
-  console.log("mergedMapList.value",mergedMapList.value)
   mergedMapList.value.forEach((map) => {
     const mapBox = mapRefs[map.uuid]?.getBoundingClientRect();
-    console.log("mapbox",mapBox)
     if (!mapBox) return;
+
     const RADIUS_OFFSET = 8;
     map.cameras.forEach((camera) => {
       const absX = mapBox.left + camera.position.x * mapBox.width + RADIUS_OFFSET;
-      const absY = mapBox.top +28 + camera.position.y * (mapBox.height-38) + RADIUS_OFFSET;
-      cameraPosMap.set(camera.camera_id, {
-        x: absX,
-        y: absY
-      });
+      const absY = mapBox.top + 28 + camera.position.y * (mapBox.height - 38) + RADIUS_OFFSET;
+      cameraPosMap.set(camera.camera_id, { x: absX, y: absY });
     });
   });
 
@@ -642,58 +688,120 @@ function computeSvgArrows(ids) {
   const wrapperBox = mapWrapper.value?.getBoundingClientRect();
   if (!wrapperBox) return;
 
-  // 設定 SVG 大小
-  // svgWidth.value = wrapperBox.width;
-  //398是每個地圖固定寬度加上gap的寬度(382px+16px)
-  svgWidth.value = mergedMapList.value.length * 398
-  console.log("svgWidth.value",svgWidth.value)
+  svgWidth.value = mergedMapList.value.length * 398;
   svgHeight.value = wrapperBox.height;
 
-  // 把 ids 中相鄰的點轉成線段
   const arrows = [];
-  for (let i = 0; i < ids.length - 1; i++) {
-    const from = cameraPosMap.get(ids[i]);
-    const to = cameraPosMap.get(ids[i + 1]);
-    if (from && to) {
-      arrows.push({
-        fromX: from.x - wrapperBox.left,
-        fromY: from.y - wrapperBox.top,
-        toX: to.x - wrapperBox.left,
-        toY: to.y - wrapperBox.top
-      });
+
+  let lastValidIndex = null; // 記錄上一個有位置的 index
+
+  for (let i = 0; i < ids.length; i++) {
+    const current = cameraPosMap.get(ids[i]);
+
+    if (current) {
+      if (lastValidIndex !== null && lastValidIndex !== i) {
+        const prev = cameraPosMap.get(ids[lastValidIndex]);
+
+        if (prev) {
+          const isDashed = i - lastValidIndex > 1;
+
+          arrows.push({
+            fromX: prev.x - wrapperBox.left,
+            fromY: prev.y - wrapperBox.top,
+            toX: current.x - wrapperBox.left,
+            toY: current.y - wrapperBox.top,
+            dashed: isDashed, // true 表示虛線
+          });
+        }
+      }
+
+      lastValidIndex = i; // 更新上一個有位置的 index
     }
   }
 
   svgArrows.value = arrows;
 }
 
+// function highlightCurrentArrow() {
+//   const current = videoResultIndex.value;
+//   if (current >= taskResults.value.length - 1) {
+//     currentArrow.value = null;
+//     return;
+//   }
+// console.log("1111")
+//   const fromId = taskResults.value[current].highest.cid;
+//   const toId = taskResults.value[current + 1].highest.cid;
+
+//   const from = cameraPosMap.get(fromId);
+//   const to = cameraPosMap.get(toId);
+//   const wrapperBox = mapWrapper.value?.getBoundingClientRect();
+//   console.log(from,to,wrapperBox)
+//   if (!from || !to || !wrapperBox) {
+//     currentArrow.value = null;
+//     return;
+//   }
+//   console.log("22222")
+//   currentArrow.value = {
+//     fromX: from.x - wrapperBox.left,
+//     fromY: from.y - wrapperBox.top,
+//     toX: to.x - wrapperBox.left,
+//     toY: to.y - wrapperBox.top
+//   };
+//   console.log("currentArrow",currentArrow.value)
+// }
 function highlightCurrentArrow() {
   const current = videoResultIndex.value;
-  if (current >= taskResults.value.length - 1) {
-    currentArrow.value = null;
-    return;
-  }
-console.log("1111")
-  const fromId = taskResults.value[current].highest.cid;
-  const toId = taskResults.value[current + 1].highest.cid;
+  const ids = taskResults.value.map(r => r.highest.cid);
 
-  const from = cameraPosMap.get(fromId);
-  const to = cameraPosMap.get(toId);
   const wrapperBox = mapWrapper.value?.getBoundingClientRect();
-  console.log(from,to,wrapperBox)
-  if (!from || !to || !wrapperBox) {
+  if (!wrapperBox) return;
+
+  // 找 from
+  let fromIndex = current;
+  let from = cameraPosMap.get(ids[fromIndex]);
+
+  // 找最近往後第一個有位置的 to
+  let toIndex = current + 1;
+  let to = null;
+  while (toIndex < ids.length) {
+    const nextTo = cameraPosMap.get(ids[toIndex]);
+    if (nextTo) {
+      to = nextTo;
+      break;
+    }
+    toIndex++;
+  }
+console.log("fronindex,toindex",fromIndex,toIndex)
+console.log("from,to",from,to)
+  if (!from) {
+      console.log("🚫 from 不存在，保留上一個箭頭");
+      return;
+    }
+  if (!from && !to) {
+    console.log("no")
     currentArrow.value = null;
     return;
   }
-  console.log("22222")
+
+  const fromX = (from?.x ?? to.x) - wrapperBox.left;
+  const fromY = (from?.y ?? to.y) - wrapperBox.top;
+  const toX = (to?.x ?? from.x) - wrapperBox.left;
+  const toY = (to?.y ?? from.y) - wrapperBox.top;
+
+
+  const skipped = toIndex - fromIndex > 1;
+
   currentArrow.value = {
-    fromX: from.x - wrapperBox.left,
-    fromY: from.y - wrapperBox.top,
-    toX: to.x - wrapperBox.left,
-    toY: to.y - wrapperBox.top
+    fromX,
+    fromY,
+    toX,
+    toY,
+    dashed: !(from && to) || skipped,
+    highlight: true,
   };
   console.log("currentArrow",currentArrow.value)
 }
+
 
 function playCameraVideo(cameraId) {
   const index = taskResults.value.findIndex(
