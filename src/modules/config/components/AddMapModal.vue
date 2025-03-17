@@ -1,5 +1,5 @@
 <template>
-  <ModalLayout :is-open="modal === 'add-map'" @close="setModal('')" width="80vw" height="75vh">
+  <ModalLayout :is-open="modal === 'add-map'" @close="setModal('')" >
     <template #header>
       {{ $t('AddMap') }}
     </template>

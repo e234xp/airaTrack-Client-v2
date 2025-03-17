@@ -323,6 +323,7 @@
                       v-for="camera in map.cameras"
                       :key="camera.camera_id"
                       class="absolute flex flex-col items-center"
+                      @click="playCameraVideo(camera.camera_id)"
                       :style="{
                         left: `${camera.position.x * 100}%`,
                         top: `${camera.position.y * 100}%`,
@@ -533,7 +534,7 @@
 
 <script setup>
 import {
-  computed, ref, watch, reactive, onBeforeMount
+  computed, ref, watch, reactive, onBeforeMount, nextTick
 } from 'vue';
 import { storeToRefs } from 'pinia';
 
@@ -692,6 +693,29 @@ console.log("1111")
     toY: to.y - wrapperBox.top
   };
   console.log("currentArrow",currentArrow.value)
+}
+
+function playCameraVideo(cameraId) {
+  const index = taskResults.value.findIndex(
+    (result) => result.highest.cid === cameraId
+  );
+console.log("index",index)
+  if (index !== -1) {
+    setVideoResultIndex({
+      index,
+      results: taskResults.value,
+      range: range.value,
+    });
+  } else {
+    console.warn("❗ 找不到該攝影機的影片資料：", cameraId);
+  }
+
+  nextTick(() => {
+    const el = document.getElementById(`result-${index}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
 }
 const rangeList = new Map()
   .set('10 m', 10 * 60 * 1000)
