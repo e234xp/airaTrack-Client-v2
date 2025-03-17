@@ -56,7 +56,7 @@
 
                   <AppCheckBox v-for="livedevice in filterLiveDevices" :key="livedevice.camera_id"
                     class="mb-2 text-base text-white"
-                    :class="{ 'bg-camera-live': currentMapDataCameras.includes(livedevice.name) }"
+                    :class="{ 'bg-camera-live': currentMapDataCamerasBg.includes(livedevice.name) }"
                     :placeholder="livedevice.name" @click.prevent="toggleClickLive(livedevice)"
                     v-model:modelInput="form.livechannels" :value="livedevice">{{ livedevice.name }}
                   </AppCheckBox>
@@ -85,7 +85,7 @@
 
                   <AppCheckBox v-for="device in filterArchiveDevices" :key="device.camera_id"
                     @click.prevent="toggleClickArch(device)" class="mb-2 text-base text-white"
-                    :class="{ 'bg-camera-archive': currentMapDataCameras.includes(device.name) }"
+                    :class="{ 'bg-camera-archive': currentMapDataCamerasBg.includes(device.name) }"
                     :placeholder="device.name" v-model:modelInput="form.archchannels" :value="device">{{ device.name }}
                   </AppCheckBox>
                 </div>
@@ -175,7 +175,7 @@ const currentMapFloor = ref('')
 const searchQuery = ref('')
 const mapData = ref([])
 const currentMapData = computed(() => mapData.value.filter(item => item.name === currentMapFloor.value))
-const currentMapDataCameras = ref([])
+const currentMapDataCamerasBg = ref([])
 const mapFloorList = ref({})
 
 const form = reactive({
@@ -292,7 +292,7 @@ function toggleClickLive(deviceData) {
   {
     ESTest(deviceData, 'object')
     ESTest(currentMapFloor.value, 'string')
-    ESTest(currentMapDataCameras.value, 'array')
+    ESTest(currentMapDataCamerasBg.value, 'array')
     ESTest(form.livechannels, 'array')
     ESTest(mapData.value, 'array')
   }
@@ -300,7 +300,7 @@ function toggleClickLive(deviceData) {
   if (noSettingFloor()) {
     // 使用者沒有設定 所以給空畫面
     currentMapFloor.value = ''
-    currentMapDataCameras.value = []
+    currentMapDataCamerasBg.value = []
   }
 
   else if (isSameFloor()) {
@@ -356,7 +356,7 @@ function toggleClickArch(deviceData) {
   {
     ESTest(deviceData, 'object')
     ESTest(currentMapFloor.value, 'string')
-    ESTest(currentMapDataCameras.value, 'array')
+    ESTest(currentMapDataCamerasBg.value, 'array')
     ESTest(form.archchannels, 'array')
     ESTest(mapData.value, 'array')
   }
@@ -364,7 +364,7 @@ function toggleClickArch(deviceData) {
   if (noSettingFloor()) {
     // 使用者沒有設定 所以給空畫面
     currentMapFloor.value = ''
-    currentMapDataCameras.value = []
+    currentMapDataCamerasBg.value = []
   }
 
   else if (isSameFloor()) {
@@ -458,11 +458,11 @@ function getMapFloorList() {
 
 function changeFloorBg() {
   {
-    ESTest(currentMapDataCameras.value, 'array')
+    ESTest(currentMapDataCamerasBg.value, 'array')
     ESTest(currentMapData.value, 'array')
   }
 
-  currentMapDataCameras.value = currentMapData.value[0]?.cameras.map(item => item.name)
+  currentMapDataCamerasBg.value = currentMapData.value[0]?.cameras.map(item => item.name)
 }
 
 async function fetchMaps() {
