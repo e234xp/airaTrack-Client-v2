@@ -156,6 +156,8 @@ import spiderman from '@/spiderman';
 
 import useStore from '@/modules/target/stores/index';
 import useDevices from '@/stores/devices';
+import { ESTest } from 'mike-testt';
+import { es } from 'vuetify/locale';
 
 const router = useRouter();
 
@@ -203,6 +205,11 @@ const form = reactive({
 });
 
 const filterArchiveDevices = computed(() => {
+  {
+    ESTest(searchQuery.value, 'string')
+    ESTest(devices.value, 'array')
+  }
+
   if (!searchQuery.value) {
     return devices.value; // 如果搜尋框為空，顯示所有項目
   }
@@ -212,6 +219,11 @@ const filterArchiveDevices = computed(() => {
 })
 
 const filterLiveDevices = computed(() => {
+  {
+    ESTest(searchQuery.value, 'string')
+    ESTest(livedevices.value, 'array')
+  }
+  
   if (!searchQuery.value) {
     return livedevices.value; // 如果搜尋框為空，顯示所有項目
   }
@@ -221,6 +233,12 @@ const filterLiveDevices = computed(() => {
 })
 
 async function handleAddTask(theForm) {
+  {
+    ESTest(theForm, 'object')
+    ESTest(spiderman, 'object')
+    ESTest(router, 'object')
+  }
+
   const taskForm = spiderman.lodash.cloneDeep(theForm);
   taskForm.search_start_time = spiderman.dayjs(theForm.search_start_time).valueOf();
   taskForm.search_end_time = spiderman.dayjs(theForm.search_end_time).valueOf();
@@ -231,6 +249,12 @@ async function handleAddTask(theForm) {
 }
 
 function toggleImgLive(deviceData, cameraData) {
+  {
+    ESTest(deviceData, 'object')
+    ESTest(cameraData, 'object')
+    ESTest(form.livechannels, 'array')
+  }
+
   // 點擊後 地圖 icon active
   if (cameraData.checked === false) {
     cameraData.checked = true
@@ -245,6 +269,12 @@ function toggleImgLive(deviceData, cameraData) {
 }
 
 function toggleImgArch(deviceData, cameraData) {
+  {
+    ESTest(deviceData, 'object')
+    ESTest(cameraData, 'object')
+    ESTest(form.archchannels, 'array')
+  }
+
   // 點擊後 地圖 icon active
   if (cameraData.checked === false) {
     cameraData.checked = true
@@ -259,9 +289,17 @@ function toggleImgArch(deviceData, cameraData) {
 }
 
 function toggleClickLive(deviceData) {
+  {
+    ESTest(deviceData, 'object')
+    ESTest(currentMapFloor.value, 'string')
+    ESTest(currentMapDataCameras.value, 'array')
+    ESTest(form.livechannels, 'array')
+    ESTest(mapData.value, 'array')
+  }
+
   if (noSettingFloor()) {
     // 使用者沒有設定 所以給空畫面
-    currentMapFloor.value = null
+    currentMapFloor.value = ''
     currentMapDataCameras.value = []
   }
 
@@ -315,7 +353,19 @@ function toggleClickLive(deviceData) {
 }
 
 function toggleClickArch(deviceData) {
-  if (noSettingFloor()) return
+  {
+    ESTest(deviceData, 'object')
+    ESTest(currentMapFloor.value, 'string')
+    ESTest(currentMapDataCameras.value, 'array')
+    ESTest(form.archchannels, 'array')
+    ESTest(mapData.value, 'array')
+  }
+
+  if (noSettingFloor()) {
+    // 使用者沒有設定 所以給空畫面
+    currentMapFloor.value = ''
+    currentMapDataCameras.value = []
+  }
 
   else if (isSameFloor()) {
     if (isRepeatedCamera()) {
@@ -342,7 +392,7 @@ function toggleClickArch(deviceData) {
   }
 
   function isSameFloor() {
-    return deviceData.applyToMap.includes(currentMapData.value[0].uuid)
+    return deviceData.applyToMap.includes(currentMapData.value[0]?.uuid)
   }
 
   function toChecked(boolean) {
@@ -367,6 +417,12 @@ function toggleClickArch(deviceData) {
 }
 
 function toCheckedAll(boolean, type) {
+  {
+    ESTest(boolean, 'boolean')
+    ESTest(type, 'string')
+    ESTest(mapData.value, 'array')
+  }
+
   mapData.value = mapData.value.map(item => ({
     ...item,
     cameras: item.cameras.map(item => {
@@ -383,6 +439,11 @@ function toCheckedAll(boolean, type) {
 }
 
 function getMapFloorList() {
+  {
+    ESTest(mapFloorList.value, 'object')
+    ESTest(mapData.value, 'array')
+  }
+
   mapFloorList.value = mapData.value?.reduce((accumulator, currentItem) => {
     // 每次迭代，currentItem 都是數組中的一個元素
     // accumulator 是累積的結果，初始值是 {}
@@ -393,6 +454,15 @@ function getMapFloorList() {
     // 返回更新後的 accumulator
     return accumulator;
   }, {})
+}
+
+function changeFloorBg() {
+  {
+    ESTest(currentMapDataCameras.value, 'array')
+    ESTest(currentMapData.value, 'array')
+  }
+
+  currentMapDataCameras.value = currentMapData.value[0]?.cameras.map(item => item.name)
 }
 
 async function fetchMaps() {
@@ -424,10 +494,6 @@ async function fetchMaps() {
   } catch (error) {
     console.error("取得地圖資料失敗:", error);
   }
-}
-
-function changeFloorBg() {
-  currentMapDataCameras.value = currentMapData.value[0]?.cameras.map(item => item.name)
 }
 
 watch(() => form.search_start_time, () => {
