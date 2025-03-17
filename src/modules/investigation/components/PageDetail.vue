@@ -273,7 +273,7 @@
                         :y1="arrow.fromY"
                         :x2="arrow.toX"
                         :y2="arrow.toY"
-                        :stroke="arrow.dashed ? 'gray' : 'red'"
+                        :stroke="arrow.dashed ? 'gray' : '#1BB73A'"
                         :stroke-dasharray="arrow.dashed ? '5,5' : ''"
                         stroke-width="2"
                         marker-end="url(#arrowhead)"
@@ -286,7 +286,7 @@
                       :y1="currentArrow.fromY"
                       :x2="currentArrow.toX"
                       :y2="currentArrow.toY"
-                      :stroke="currentArrow.dashed ? '#00FF00' : '#00FF00'"
+                      :stroke="currentArrow.dashed ? '#EA8424' : '#EA8424'"
                       :stroke-dasharray="currentArrow.dashed ? '5,5' : ''"
                       stroke-width="4"
                       marker-end="url(#arrowhead-highlight)"
@@ -296,50 +296,70 @@
                     <defs>
                       <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5"
                         orient="auto" markerUnits="strokeWidth">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="red"/>
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#1BB73A"/>
                       </marker>
                       <marker id="arrowhead-highlight" markerWidth="10" markerHeight="7" refX="10" refY="3.5"
                         orient="auto" markerUnits="strokeWidth">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#00FF00"/>
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#EA8424"/>
                       </marker>
                      </defs>
                   </svg>
 
                   <!-- 地圖渲染區 -->
                   <div
-                    v-for="map in mergedMapList"
-                    :key="map.uuid"
-                    class="mb-4"
-                    :ref="el => setMapRef(map.uuid, el)"
-                  >
+                      v-for="map in mergedMapList"
+                      :key="map.uuid"
+                      class="mb-4"
+                      :ref="el => setMapRef(map.uuid, el)"
+                    >
                     <h2 class="text-white text-xl mb-2">{{ map.name }}</h2>
-                    <div class="relative w-96 border border-gray-500 rounded overflow-hidden">
-                      <img
+                    <!-- <div
+                          class="relative w-96 rounded overflow-hidden transition-all duration-100"
+                          :class="{
+                            'border-4 border-blue-500': map.uuid === highlightMapUuid,
+                            'border border-gray-500': map.uuid !== highlightMapUuid
+                          }"
+                        > -->
+                        <div
+                            class="relative w-96 rounded overflow-hidden transition-all duration-100"
+                            :style="map.uuid === highlightMapUuid
+                              ? 'border: 6px solid #43A0D1;'   
+                              : 'border: 1px solid #6B7280;'" 
+                          >
+                     <img
                         :src="`data:image/png;base64,${map.img}`"
                         alt="map"
                         class="w-full h-auto"
                       />
                       
                       <!-- 將 camera 渲染在地圖上 -->
-                        <div
-                          v-for="camera in map.cameras"
-                          :key="camera.camera_id"
-                          class="absolute flex flex-col items-center"
-                          @click="playCameraVideo(camera.camera_id)"
-                          :style="{
-                            left: `${camera.position.x * 100}%`,
-                            top: `${camera.position.y * 100}%`,
-                            transform: 'translate(-50%, -50%)'
-                          }"
-                        >
-                          <div
-                            v-tooltip="camera.name"
-                            class="w-4 h-4 rounded-full"
-                            :class="deviceList.some(device => device.camera_id === camera.camera_id)
-                              ? 'bg-red-700'
-                              : 'bg-red-200'"
-                          ></div>
-                        
+                    <div
+                      v-for="camera in map.cameras"
+                      :key="camera.camera_id"
+                      class="absolute flex flex-col items-center"
+                      @click="playCameraVideo(camera.camera_id)"
+                      :style="{
+                        left: `${camera.position.x * 100}%`,
+                        top: `${camera.position.y * 100}%`,
+                        transform: 'translate(-50%, -50%)'
+                      }"
+                    >
+                      <!-- 圓點 -->
+                      <v-tooltip location="top">
+                        <template v-slot:activator="{ props }">
+                          <img
+                            v-bind="props"
+                            :src="deviceList.some(device => device.camera_id === camera.camera_id)
+                              ? cameraRed
+                              : cameraBlack"
+                            class="w-4 h-4"
+                            draggable="false"
+                            alt="camera icon"
+                          />
+                        </template>
+                        {{ camera.name }}
+                      </v-tooltip>
+
                     </div>
                   </div>
                   </div>
@@ -556,6 +576,8 @@ import useDevices from '@/stores/devices';
 import useUser from '@/stores/user';
 
 import downloadReport from '@/modules/investigation/composable/archive';
+import cameraRed from '@/assets/images/camera-red.png'
+import cameraBlack from '@/assets/images/camera-black.png'
 import { Tooltip } from 'floating-vue'
 
 const devicesStore = useDevices();
@@ -616,7 +638,15 @@ const mapRefs = reactive({});
 function setMapRef(uuid, el) {
   if (el) mapRefs[uuid] = el;
 }
+const highlightMapUuid = computed(() => {
+  const currentCid = videoResult.value?.highest.cid;
+  if (!currentCid) return null;
 
+  const map = mergedMapList.value.find(map =>
+    map.cameras.some(cam => cam.camera_id === currentCid)
+  );
+  return map?.uuid ?? null;
+});
 // function computeSvgArrows(ids) {
 //   // 儲存 camera_id 對應的地圖與相對位置
 //   cameraPosMap.clear();
