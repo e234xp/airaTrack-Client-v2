@@ -301,9 +301,20 @@ function toggleClickLive(deviceData) {
     // 使用者沒有設定 所以給空畫面
     currentMapFloor.value = ''
     currentMapDataCamerasBg.value = []
+
+    // 切換 攝影機/資料
+    toggleCamera()
   }
 
   else if (isSameFloor()) {
+    toggleCamera()
+  }
+
+  else {
+    changeFloor()
+  }
+
+  function toggleCamera() {
     if (isRepeatedCamera()) {
       form.livechannels = form.livechannels.filter(item => item.name !== deviceData.name) // 更新攝影機
       mapData.value = toChecked(false) // 更新地圖 icon
@@ -312,10 +323,6 @@ function toggleClickLive(deviceData) {
       form.livechannels.push(deviceData)
       mapData.value = toChecked(true)
     }
-  }
-
-  else {
-    changeFloor()
   }
 
   function changeFloor() {
@@ -362,12 +369,23 @@ function toggleClickArch(deviceData) {
   }
 
   if (noSettingFloor()) {
-    // 使用者沒有設定 所以給空畫面
+    // 空畫面
     currentMapFloor.value = ''
     currentMapDataCamerasBg.value = []
+
+    // 切換 攝影機/資料
+    toggleCamera()
   }
 
   else if (isSameFloor()) {
+    toggleCamera()
+  }
+
+  else {
+    changeFloor()
+  }
+
+  function toggleCamera() {
     if (isRepeatedCamera()) {
       form.archchannels = form.archchannels.filter(item => item.name !== deviceData.name) // 更新攝影機
       mapData.value = toChecked(false) // 更新地圖 icon
@@ -376,10 +394,6 @@ function toggleClickArch(deviceData) {
       form.archchannels.push(deviceData)
       mapData.value = toChecked(true)
     }
-  }
-
-  else {
-    changeFloor()
   }
 
   function changeFloor() {
