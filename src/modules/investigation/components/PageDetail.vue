@@ -800,15 +800,16 @@ function highlightCurrentArrow() {
   }
 console.log("fronindex,toindex",fromIndex,toIndex)
 console.log("from,to",from,to)
+  if (!from && !to) {
+      console.log("no")
+      currentArrow.value = null;
+      return;
+    }
   if (!from) {
       console.log("🚫 from 不存在，保留上一個箭頭");
       return;
     }
-  if (!from && !to) {
-    console.log("no")
-    currentArrow.value = null;
-    return;
-  }
+  
 
   const fromX = (from?.x ?? to.x) - wrapperBox.left;
   const fromY = (from?.y ?? to.y) - wrapperBox.top;
@@ -924,6 +925,7 @@ async function setTaskResults(score, filter = false) {
     console.log(taskResults.value)
     const ids = taskResults.value.map(item => item.highest.cid);
     console.log("ids",ids);
+    if (ids.length > 0) {
     const deviceData = await getAllTaskDevices(ids);
     console.log("device data from API:", deviceData);
     deviceList.value = deviceData.data; // 儲存 device 資料
@@ -939,10 +941,12 @@ async function setTaskResults(score, filter = false) {
       ...map,
       img: imgMap.get(map.uuid) || null
     }));
+    currentArrow.value = null;
     console.log("mergedMapList",mergedMapList.value)
           setTimeout(() => {
         computeSvgArrows(ids);
       }, 100);
+    }
     if (filter) filterTaskResults();
    
     clearTimeout(timerId.value);
