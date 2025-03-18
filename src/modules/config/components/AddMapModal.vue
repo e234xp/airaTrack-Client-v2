@@ -12,12 +12,12 @@
       <div v-if="currentStep === 1">
           <!-- 輸入地圖名稱 -->
       <AppLabel :label="$t('MapName')">
-          <input v-model="mapName" type="text" :placeholder="$t('StepEnterMapName')" class="mt-2 w-full p-2 border rounded" />
+          <AppInput v-model:modelInput="mapName" :placeholder="$t('StepEnterMapName')" class="mb-4" dark/>
           <p v-if="mapNameError" class="text-red-500 text-sm mt-1">{{ $t('MapNameMustHave') }}</p>
       </AppLabel>
         <!-- 上傳地圖圖片 -->
         <AppLabel :label="$t('UploadMap')" class="mt-2">
-          <input type="file" accept="image/*" class="mt-2 w-full p-2 border rounded file:bg-white file:text-black" @change="onUploadMap" />
+          <input type="file" accept="image/*" class="mt-2 w-full p-2 border border-general bg-third rounded file:bg-white file:text-black" @change="onUploadMap" />
           <p v-if="mapImageError" class="text-red-500 text-sm mt-1">{{ $t('MapImageMustHave') }}</p>
         </AppLabel>
         <img v-if="mapImage" :src="mapImage" class="mt-4 w-full change-height object-contain" />
@@ -115,22 +115,18 @@
                               class="absolute top-[-40px] right-[-10px]">
                               mdi-close-circle
                           </v-icon> -->
-                          <div class="relative group">
+                          <div class="relative">
                             <img
+                              v-tooltip="camera.name"
                               src="@/assets/images/camera-live.png"
                               class="w-6 h-6 cursor-pointer"
                               draggable="false"
                             />
-                            <div
-                              class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50"
-                            >
-                              {{ camera.name }}
-                            </div>
                             <XCircle
-                              class="w-5 h-5 text-red-500 absolute top-[-40px] right-[-10px] cursor-pointer"
+                              class="w-5 h-5 text-red-500 absolute top-[-20px] right-[-10px] cursor-pointer"
                               @click="removeCamera(camera, 'live')"
                             />
-                          </div>
+                        </div>
                       </div>
 
                       <!-- 錄影攝影機 (Archive) -->
@@ -152,6 +148,19 @@
                               class="absolute top-[-40px] right-[-10px]">
                               mdi-close-circle
                           </v-icon> -->
+
+                          <div class="relative">
+                            <img
+                              v-tooltip="camera.name"
+                              src="@/assets/images/camera-archive.png"
+                              class="w-6 h-6 cursor-pointer"
+                              draggable="false"
+                            />
+                            <XCircle
+                              class="w-5 h-5 text-red-500 absolute top-[-20px] right-[-10px] cursor-pointer"
+                              @click="removeCamera(camera, 'archive')"
+                            />
+                        </div>
                       </div>
                   </div>
               </div>
@@ -202,6 +211,7 @@ import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
 import { useI18n } from 'vue-i18n';
 import { XCircle } from 'lucide-vue-next'
+import { Tooltip } from 'floating-vue'
 const i18n = useI18n();
 
 

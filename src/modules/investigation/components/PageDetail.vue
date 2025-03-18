@@ -321,30 +321,25 @@
                       />
                       
                       <!-- 將 camera 渲染在地圖上 -->
-                    <div
-                      v-for="camera in map.cameras"
-                      :key="camera.camera_id"
-                      class="absolute flex flex-col items-center"
-                      @click="playCameraVideo(camera.camera_id)"
-                      :style="{
-                        left: `${camera.position.x * 100}%`,
-                        top: `${camera.position.y * 100}%`,
-                        transform: 'translate(-50%, -50%)'
-                      }"
-                    >
-                      <!-- 圓點 -->
-                      <v-tooltip location="top">
-                        <template v-slot:activator="{ props }">
+                        <div
+                          v-for="camera in map.cameras"
+                          :key="camera.camera_id"
+                          class="absolute flex flex-col items-center"
+                          @click="playCameraVideo(camera.camera_id)"
+                          :style="{
+                            left: `${camera.position.x * 100}%`,
+                            top: `${camera.position.y * 100}%`,
+                            transform: 'translate(-50%, -50%)'
+                          }"
+                        >
                           <div
+                            v-tooltip="camera.name"
                             class="w-4 h-4 rounded-full"
-                            v-bind="props"
                             :class="deviceList.some(device => device.camera_id === camera.camera_id)
                               ? 'bg-red-700'
                               : 'bg-red-200'"
                           ></div>
-                        </template>
-                        {{ camera.name }}
-                      </v-tooltip>
+                        
                     </div>
                   </div>
                   </div>
@@ -561,6 +556,7 @@ import useDevices from '@/stores/devices';
 import useUser from '@/stores/user';
 
 import downloadReport from '@/modules/investigation/composable/archive';
+import { Tooltip } from 'floating-vue'
 
 const devicesStore = useDevices();
 const { findDevice } = devicesStore;

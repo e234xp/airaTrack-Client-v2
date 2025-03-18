@@ -12,16 +12,16 @@
         <!-- 🔵 **步驟 1: 編輯地圖基本資訊** -->
         <div v-if="currentStep === 1">
             <AppLabel :label="$t('MapName')">
-                <input v-model="editedMap.name" type="text" class="mt-2 w-full p-2 border rounded" />
+              <AppInput v-model:modelInput="editedMap.name"  class="mb-4" dark/>
                 <p v-if="mapNameError" class="text-red-500 text-sm mt-1">{{ $t('MapNameMustHave') }}</p>
             </AppLabel>
 
             <AppLabel :label="$t('MapUUID')" class="mt-2">
-                <input v-model="editedMap.uuid" type="text" class="w-full p-2 border rounded" disabled />
+              <AppInput v-model:modelInput="editedMap.uuid"  class="mb-4" dark disabled/>
             </AppLabel>
 
             <AppLabel :label="$t('UploadMap')" class="mt-2">
-                <input type="file" accept="image/*" class="mt-2 w-full p-2 border rounded file:bg-white file:text-black" @change="onUploadMap" />
+                <input type="file" accept="image/*" class="mt-2 w-full p-2 border border-general bg-third rounded file:bg-white file:text-black" @change="onUploadMap" />
                 <p v-if="mapImageError" class="text-red-500 text-sm mt-1">{{ $t('MapImageMustHave') }}</p>
             </AppLabel>
             
@@ -91,16 +91,18 @@
                         @dragstart="startDrag($event, camera)"
                         @dragend="endDrag($event, camera)">
                         
-                        <v-tooltip location="top">
-                                <template v-slot:activator="{ props }">
-                                    <img v-bind="props" src="@/assets/images/camera-live.png" class="w-6 h-6" draggable="false" />
-                                </template>
-                                {{ camera.name }}
-                            </v-tooltip>
-                            <v-icon color="red" @click="removeCamera(camera, 'live')"
-                                class="absolute top-[-40px] right-[-10px]">
-                                mdi-close-circle
-                            </v-icon>
+                        <div class="relative">
+                            <img
+                              v-tooltip="camera.name"
+                              src="@/assets/images/camera-live.png"
+                              class="w-6 h-6 cursor-pointer"
+                              draggable="false"
+                            />
+                            <XCircle
+                              class="w-5 h-5 text-red-500 absolute top-[-20px] right-[-10px] cursor-pointer"
+                              @click="removeCamera(camera, 'live')"
+                            />
+                        </div>
                     </div>
 
                     <div v-for="camera in selectedArchiveCameras" :key="camera.camera_id"
@@ -110,16 +112,18 @@
                         @dragstart="startDrag($event, camera)"
                         @dragend="endDrag($event, camera)">
 
-                        <v-tooltip location="top">
-                                <template v-slot:activator="{ props }">
-                                    <img v-bind="props" src="@/assets/images/camera-archive.png" class="w-6 h-6" draggable="false" />
-                                </template>
-                                {{ camera.name }}
-                            </v-tooltip>
-                            <v-icon color="red" @click="removeCamera(camera, 'archive')"
-                                class="absolute top-[-40px] right-[-10px]">
-                                mdi-close-circle
-                            </v-icon>
+                        <div class="relative">
+                            <img
+                              v-tooltip="camera.name"
+                              src="@/assets/images/camera-archive.png"
+                              class="w-6 h-6 cursor-pointer"
+                              draggable="false"
+                            />
+                            <XCircle
+                              class="w-5 h-5 text-red-500 absolute top-[-20px] right-[-10px] cursor-pointer"
+                              @click="removeCamera(camera, 'archive')"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -170,6 +174,8 @@ import { ref, computed, defineProps, defineEmits, watch } from 'vue';
 import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
 import { useI18n } from 'vue-i18n';
+import { XCircle } from 'lucide-vue-next'
+import { Tooltip } from 'floating-vue'
 const i18n = useI18n();
 
 

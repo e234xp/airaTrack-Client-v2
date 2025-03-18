@@ -26,6 +26,7 @@
     "face-api.js": "^0.22.2",
     "fetch-timeout": "0.0.2",
     "file-saver": "2.0.5",
+    "floating-vue": "^5.2.2",
     "global": "^4.4.0",
     "hls.js": "1.4.13",
     "http-server": "^14.1.1",
