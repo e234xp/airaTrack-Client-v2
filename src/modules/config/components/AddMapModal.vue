@@ -105,16 +105,6 @@
                           @drag="onDragging($event, camera)"
                           @dragend="endDrag($event, camera)">
                           
-                          <!-- <v-tooltip location="top">
-                              <template v-slot:activator="{ props }">
-                                <img v-bind="props" src="@/assets/images/camera-live.png" class="w-6 h-6" draggable="false" />
-                              </template>
-                              {{ camera.name }}
-                          </v-tooltip>
-                          <v-icon color="red" @click="removeCamera(camera, 'live')"
-                              class="absolute top-[-40px] right-[-10px]">
-                              mdi-close-circle
-                          </v-icon> -->
                           <div class="relative">
                             <img
                               v-tooltip="camera.name"
@@ -130,24 +120,13 @@
                       </div>
 
                       <!-- 錄影攝影機 (Archive) -->
-                      <div v-for="(camera, index) in selectedArchiveCameras" :key="camera.camera_id"
+                      <div v-for="camera in selectedArchiveCameras" :key="camera.camera_id"
                           class="absolute cursor-pointer"
                           :style="{ left: camera.x + 'px', top: camera.y + 'px' }"
                           draggable="true"
                           @dragstart="startDrag($event, camera)"
                           @drag="onDragging($event, camera)"
                           @dragend="endDrag($event, camera)">
-
-                          <!-- <v-tooltip location="top">
-                              <template v-slot:activator="{ props }">
-                                <img v-bind="props" src="@/assets/images/camera-archive.png" class="w-6 h-6" draggable="false" />
-                              </template>
-                              {{ camera.name }}
-                          </v-tooltip>
-                          <v-icon color="red" @click="removeCamera(camera, 'archive')"
-                              class="absolute top-[-40px] right-[-10px]">
-                              mdi-close-circle
-                          </v-icon> -->
 
                           <div class="relative">
                             <img

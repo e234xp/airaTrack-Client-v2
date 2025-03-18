@@ -117,9 +117,11 @@
                 <template v-for="livedevice in livedevices" :key="livedevice.camera_id">
                   <template v-if="livedevice.name === camera.name">
                     <img v-show="camera.checked" id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live-active.png"
+                      v-tooltip="camera.name"
                       draggable="false" @click="toggleImgLive(livedevice, camera)"
                       :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
                     <img v-show="!camera.checked" id="🔥CameraMap__LiveDot" src="@/assets/images/camera-live.png"
+                      v-tooltip="camera.name"
                       draggable="false" @click="toggleImgLive(livedevice, camera)"
                       :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
                   </template>
@@ -129,9 +131,11 @@
                   <template v-if="device.name === camera.name">
                     <img v-show="camera.checked" id="🔥CameraMap__ArchiveDot"
                       src="@/assets/images/camera-archive-active.png" draggable="false"
+                      v-tooltip="camera.name"
                       @click="toggleImgArch(device, camera)"
                       :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
                     <img v-show="!camera.checked" id="🔥CameraMap__ArchiveDot" src="@/assets/images/camera-archive.png"
+                      v-tooltip="camera.name"
                       @click="toggleImgArch(device, camera)" draggable="false"
                       :style="`left: ${camera.position.x * 100}%; top: ${camera.position.y * 100}%`">
                   </template>
