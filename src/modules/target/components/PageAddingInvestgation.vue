@@ -157,7 +157,6 @@ import spiderman from '@/spiderman';
 import useStore from '@/modules/target/stores/index';
 import useDevices from '@/stores/devices';
 import { ESTest } from 'mike-testt';
-import { es } from 'vuetify/locale';
 
 const router = useRouter();
 

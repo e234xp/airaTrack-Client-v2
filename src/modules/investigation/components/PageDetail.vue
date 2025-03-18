@@ -345,10 +345,9 @@
                       }"
                     >
                       <!-- 圓點 -->
-                      <v-tooltip location="top">
-                        <template v-slot:activator="{ props }">
+                      
                           <img
-                            v-bind="props"
+                            v-tooltip="camera.name"
                             :src="deviceList.some(device => device.camera_id === camera.camera_id)
                               ? cameraRed
                               : cameraBlack"
@@ -356,9 +355,7 @@
                             draggable="false"
                             alt="camera icon"
                           />
-                        </template>
-                        {{ camera.name }}
-                      </v-tooltip>
+                      
 
                     </div>
                   </div>
