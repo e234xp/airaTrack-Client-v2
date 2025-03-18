@@ -647,6 +647,15 @@ const highlightMapUuid = computed(() => {
   );
   return map?.uuid ?? null;
 });
+
+watch(highlightMapUuid, (uuid) => {
+  if (!uuid) return;
+  // 找到對應的 map DOM 元素
+  const mapEl = mapRefs[uuid];
+  if (mapEl) {
+    mapEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+  }
+});
 // function computeSvgArrows(ids) {
 //   // 儲存 camera_id 對應的地圖與相對位置
 //   cameraPosMap.clear();
