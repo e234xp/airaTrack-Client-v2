@@ -105,7 +105,7 @@
           <img id="🔥LineY" src="@/assets/images/line-y.png">
 
           <div id="🔥CameraMapSelect">
-            <AppInput dark class="w-1/6 mb-2 relative left-[83.25%] mb-4" type="select" @click="changeFloorBg"
+            <AppInput dark class="w-1/6 relative left-[81%] mb-4" type="select" @click="changeFloorBg"
               :options="mapFloorList" v-model:modelInput="currentMapFloor" />
           </div>
 

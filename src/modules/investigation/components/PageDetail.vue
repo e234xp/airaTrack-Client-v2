@@ -575,7 +575,6 @@ import useUser from '@/stores/user';
 import downloadReport from '@/modules/investigation/composable/archive';
 import cameraRed from '@/assets/images/camera-red.png'
 import cameraBlack from '@/assets/images/camera-black.png'
-import { Tooltip } from 'floating-vue'
 
 const devicesStore = useDevices();
 const { findDevice } = devicesStore;

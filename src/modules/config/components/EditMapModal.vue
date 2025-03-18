@@ -175,7 +175,6 @@ import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
 import { useI18n } from 'vue-i18n';
 import { XCircle } from 'lucide-vue-next'
-import { Tooltip } from 'floating-vue'
 const i18n = useI18n();
 
 

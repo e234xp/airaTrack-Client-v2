@@ -185,15 +185,13 @@
 </template>
 
 <script setup>
-import { ref, computed ,watch, onMounted} from 'vue';
+import { ref, computed ,watch} from 'vue';
 import useStore from '@/modules/config/stores/index';
 import successStore from '@/components/AppSuccess/success';
 import { useI18n } from 'vue-i18n';
 import { XCircle } from 'lucide-vue-next'
-import { Tooltip } from 'floating-vue'
+
 const i18n = useI18n();
-
-
 
 const store = useStore();
 const livedevices = ref([])
