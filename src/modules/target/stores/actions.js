@@ -1,6 +1,6 @@
 import spiderman from '@/spiderman';
 import useUserStore from '@/stores/user';
-import { ESTest } from 'mike-testt';
+import { ESTest } from 'escss-estest';
 
 // =============================================
 // POST
